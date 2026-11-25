@@ -46,14 +46,14 @@ export default function ModulesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10 space-y-6">
       <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700">
+        <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-400">
           <Boxes className="size-3.5" />
           Modular Monolith · M7 Contracts
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
           Kiến trúc mở rộng theo Module AI
         </h1>
-        <p className="max-w-2xl text-sm leading-relaxed text-slate-600">
+        <p className="max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
           Hệ thống áp dụng kiến trúc Modular Monolith: mỗi module sở hữu riêng API router, service, model SQLAlchemy, Alembic migration và UI route. Các module tương lai chỉ triển khai khi có phê duyệt phạm vi rõ ràng.
         </p>
       </div>
@@ -63,18 +63,20 @@ export default function ModulesPage() {
           <Card key={mod.name} className="card-lift flex flex-col justify-between p-5">
             <CardHeader className="p-0 pb-3">
               <div className="flex items-center justify-between gap-2">
-                <h2 className="font-semibold text-slate-900">{mod.name}</h2>
+                <h2 className="font-semibold text-slate-900 dark:text-slate-100">{mod.name}</h2>
                 {mod.active ? (
-                  <CheckCircle2 className="size-4 text-teal-700" />
+                  <CheckCircle2 className="size-4 text-teal-700 dark:text-teal-400" />
                 ) : (
-                  <Clock className="size-4 text-slate-400" />
+                  <Clock className="size-4 text-slate-400 dark:text-slate-500" />
                 )}
               </div>
               <Badge variant={mod.active ? "accent" : "secondary"} className="mt-1 w-fit">
                 {mod.status}
               </Badge>
             </CardHeader>
-            <CardContent className="p-0 text-sm leading-relaxed text-slate-600">{mod.scope}</CardContent>
+            <CardContent className="p-0 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+              {mod.scope}
+            </CardContent>
           </Card>
         ))}
       </div>

@@ -24,15 +24,15 @@ export function FavoriteButton({
   return (
     <Button
       type="button"
-      variant={active ? "accent" as never : "outline"}
+      variant="outline"
       size={showLabel ? "default" : "sm"}
       aria-label={active ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
       aria-pressed={active}
       onClick={() => setFavorites((prev) => toggleFavoriteId(prev, repoId))}
       className={cn(
         active
-          ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
-          : "border-slate-200 bg-white text-slate-600 hover:text-rose-600",
+          ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-500/35 dark:bg-rose-500/15 dark:text-rose-300 dark:hover:bg-rose-500/25"
+          : "border-slate-200 bg-white text-slate-600 hover:text-rose-600 dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-rose-400",
         !showLabel && "h-8 px-2.5"
       )}
     >

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   color-scheme: light;
@@ -8,6 +9,15 @@
   --ink-primary: #0f172a;
   --ink-secondary: #475569;
   --accent: #0f766e;
+}
+
+.dark {
+  color-scheme: dark;
+  --surface-page: #090d16;
+  --surface-card: #111827;
+  --ink-primary: #f1f5f9;
+  --ink-secondary: #94a3b8;
+  --accent: #2dd4bf;
 }
 
 @theme inline {
@@ -42,6 +52,10 @@ body {
 .card-lift:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+.dark .card-lift:hover {
+  box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(45, 212, 191, 0.14);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -53,7 +53,7 @@ export default async function DetailPage({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/"
-          className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+          className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
         >
           <ArrowLeft className="size-4" />
           Quay lại Thư viện
@@ -83,15 +83,19 @@ export default async function DetailPage({
             </div>
 
             <h1 className="mt-4 text-2xl font-bold tracking-tight break-words sm:text-3xl">
-              {owner && <span className="font-normal text-slate-400">{owner}/</span>}
-              <span className="text-slate-900">{name}</span>
+              {owner && <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>}
+              <span className="text-slate-900 dark:text-slate-50">{name}</span>
             </h1>
 
-            <p className="mt-3 text-base leading-relaxed text-slate-700">{repo.description_vi}</p>
+            <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+              {repo.description_vi}
+            </p>
 
             {repo.description_upstream && (
-              <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600">
-                <span className="font-semibold text-slate-800">Mô tả gốc trên GitHub: </span>
+              <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  Mô tả gốc trên GitHub:{" "}
+                </span>
                 {repo.description_upstream}
               </div>
             )}
@@ -99,7 +103,7 @@ export default async function DetailPage({
 
           <Card className="p-6 sm:p-8">
             <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
-              <h2 className="text-lg font-bold tracking-tight text-slate-900">
+              <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
                 Hướng dẫn cài đặt &amp; sử dụng (đối chiếu tài liệu gốc)
               </h2>
               <Badge variant="outline">Chỉ tham khảo · Không tự chạy lệnh</Badge>
@@ -108,13 +112,13 @@ export default async function DetailPage({
             {repo.guide_vi ? (
               <GuideRenderer content={repo.guide_vi} />
             ) : (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
                 Hướng dẫn chi tiết đang chờ đồng bộ từ README upstream. Bạn có thể mở trực tiếp{" "}
                 <a
                   href={repo.readme_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="font-medium text-teal-700 underline"
+                  className="font-medium text-teal-700 underline dark:text-teal-400"
                 >
                   README gốc trên GitHub
                 </a>{" "}
@@ -136,7 +140,7 @@ export default async function DetailPage({
             <Button asChild variant="outline" className="w-full justify-between">
               <a href={repo.readme_url} target="_blank" rel="noreferrer">
                 <span className="inline-flex items-center gap-2">
-                  <BookOpen className="size-4 text-slate-500" />
+                  <BookOpen className="size-4 text-slate-500 dark:text-slate-400" />
                   Đọc README gốc
                 </span>
                 <ArrowUpRight className="size-3.5 text-slate-400" />
@@ -146,7 +150,7 @@ export default async function DetailPage({
               <Button asChild variant="outline" className="w-full justify-between">
                 <a href={repo.homepage} target="_blank" rel="noreferrer">
                   <span className="inline-flex items-center gap-2">
-                    <Globe className="size-4 text-slate-500" />
+                    <Globe className="size-4 text-slate-500 dark:text-slate-400" />
                     Website dự án
                   </span>
                   <ArrowUpRight className="size-3.5 text-slate-400" />
@@ -156,55 +160,55 @@ export default async function DetailPage({
           </Card>
 
           <Card className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Số liệu GitHub
             </h3>
             <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
                   <Star className="size-3.5 fill-amber-400 text-amber-500" />
                   Stars
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                   {formatCompactNumber(repo.stars)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
                   <GitFork className="size-3.5 text-slate-400" />
                   Forks
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                   {formatCompactNumber(repo.forks)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
                   <Eye className="size-3.5 text-slate-400" />
                   Watchers
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
                   {formatCompactNumber(repo.watchers)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
                   <FileCode2 className="size-3.5 text-slate-400" />
                   Nhánh chính
                 </div>
-                <div className="mt-1 truncate font-mono text-xs font-semibold text-slate-800">
+                <div className="mt-1 truncate font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">
                   {repo.default_branch || "—"}
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 space-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
+            <div className="mt-4 space-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="size-3.5" />
                   Upstream
                 </span>
-                <span className="tabular-nums font-medium text-slate-700">
+                <span className="tabular-nums font-medium text-slate-700 dark:text-slate-300">
                   {formatViDate(repo.updated_at)}
                 </span>
               </div>
@@ -213,7 +217,7 @@ export default async function DetailPage({
                   <Calendar className="size-3.5" />
                   Đồng bộ
                 </span>
-                <span className="tabular-nums font-medium text-slate-700">
+                <span className="tabular-nums font-medium text-slate-700 dark:text-slate-300">
                   {formatViDate(repo.synced_at)}
                 </span>
               </div>
@@ -222,14 +226,14 @@ export default async function DetailPage({
 
           {repo.topics && repo.topics.length > 0 && (
             <Card className="p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Chủ đề (Topics)
               </h3>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {repo.topics.map((topic) => (
                   <span
                     key={topic}
-                    className="rounded-md border border-slate-200/80 bg-slate-50 px-2 py-0.5 text-xs text-slate-600"
+                    className="rounded-md border border-slate-200/80 bg-slate-50 px-2 py-0.5 text-xs text-slate-600 dark:border-slate-700/80 dark:bg-slate-950/70 dark:text-slate-300"
                   >
                     #{topic}
                   </span>
@@ -240,12 +244,12 @@ export default async function DetailPage({
 
           <Card className="p-5">
             <CardHeader className="p-0 pb-2">
-              <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 <Link2 className="size-3.5" />
                 Provenance
               </h3>
             </CardHeader>
-            <CardContent className="p-0 space-y-2 text-xs text-slate-500">
+            <CardContent className="p-0 space-y-2 text-xs text-slate-500 dark:text-slate-400">
               <p className="tabular-nums">GitHub ID: {repo.github_id ?? "Chưa đồng bộ"}</p>
               {safeSources.length > 0 ? (
                 <ul className="space-y-1">
@@ -255,7 +259,7 @@ export default async function DetailPage({
                         href={src}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-start gap-1 break-all text-teal-700 hover:underline"
+                        className="inline-flex items-start gap-1 break-all text-teal-700 hover:underline dark:text-teal-400"
                       >
                         <span>{src}</span>
                         <ArrowUpRight className="mt-0.5 size-3 shrink-0" />

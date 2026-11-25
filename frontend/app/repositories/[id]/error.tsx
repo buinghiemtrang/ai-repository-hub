@@ -9,8 +9,10 @@ export default function ErrorPage({ reset }: { error: Error; reset: () => void }
   return (
     <div className="mx-auto max-w-xl px-4 py-16">
       <Card className="p-8 text-center">
-        <h1 className="text-xl font-bold text-slate-900">Không tải được chi tiết repository</h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+          Không tải được chi tiết repository
+        </h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
           Không kết nối được tới API backend. Hãy kiểm tra Docker Compose và thử lại.
         </p>
         <div className="mt-5 flex justify-center gap-3">

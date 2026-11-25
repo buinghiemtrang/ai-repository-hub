@@ -40,15 +40,15 @@ const SORT_OPTIONS = [
 
 const LANG_COLORS: Record<string, string> = {
   Python: "bg-sky-500",
-  TypeScript: "bg-blue-600",
+  TypeScript: "bg-blue-500",
   JavaScript: "bg-amber-400",
-  Rust: "bg-orange-600",
-  Go: "bg-cyan-500",
-  "Jupyter Notebook": "bg-orange-500",
-  "C++": "bg-pink-600",
-  Shell: "bg-emerald-500",
+  Rust: "bg-orange-500",
+  Go: "bg-cyan-400",
+  "Jupyter Notebook": "bg-orange-400",
+  "C++": "bg-pink-500",
+  Shell: "bg-emerald-400",
   HTML: "bg-rose-500",
-  Java: "bg-red-600",
+  Java: "bg-red-500",
   Svelte: "bg-orange-500",
 };
 
@@ -201,34 +201,44 @@ export function RepositoryLibrary() {
       {/* Editorial Header */}
       <section className="flex flex-col justify-between gap-5 pb-6 md:flex-row md:items-end">
         <div className="max-w-2xl space-y-2.5">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-teal-700 uppercase">
-            <span className="size-1.5 rounded-full bg-teal-600" />
+          <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-teal-700 uppercase dark:text-teal-400">
+            <span className="size-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
             Repository Library
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-slate-50">
             Thư viện AI Repository tiếng Việt
           </h1>
-          <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px]">
+          <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px] dark:text-slate-400">
             Tuyển chọn các dự án AI mã nguồn mở công khai trên GitHub — mô tả tiếng Việt ngắn gọn, số liệu đồng bộ thực tế và hướng dẫn đối chiếu từ README gốc.
           </p>
         </div>
 
         {stats && (
-          <div className="flex shrink-0 flex-wrap items-center gap-4 border-t border-slate-200/80 pt-3 text-xs text-slate-500 md:border-t-0 md:pt-0">
+          <div className="flex shrink-0 flex-wrap items-center gap-4 border-t border-slate-200/80 pt-3 text-xs text-slate-500 md:border-t-0 md:pt-0 dark:border-slate-800 dark:text-slate-400">
             <div>
-              <span className="block text-[11px] uppercase tracking-wider text-slate-400">Tổng catalog</span>
-              <span className="tabular-nums text-lg font-bold text-slate-900">{stats.total}</span>
-              <span className="ml-1 text-slate-500">repo</span>
+              <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Tổng catalog
+              </span>
+              <span className="tabular-nums text-lg font-bold text-slate-900 dark:text-slate-100">
+                {stats.total}
+              </span>
+              <span className="ml-1 text-slate-500 dark:text-slate-400">repo</span>
             </div>
-            <div className="h-7 w-px bg-slate-200" />
+            <div className="h-7 w-px bg-slate-200 dark:bg-slate-800" />
             <div>
-              <span className="block text-[11px] uppercase tracking-wider text-slate-400">Danh mục</span>
-              <span className="tabular-nums text-lg font-bold text-slate-900">{stats.categories.length}</span>
+              <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Danh mục
+              </span>
+              <span className="tabular-nums text-lg font-bold text-slate-900 dark:text-slate-100">
+                {stats.categories.length}
+              </span>
             </div>
-            <div className="hidden h-7 w-px bg-slate-200 sm:block" />
+            <div className="hidden h-7 w-px bg-slate-200 sm:block dark:bg-slate-800" />
             <div className="w-full sm:w-auto">
-              <span className="block text-[11px] uppercase tracking-wider text-slate-400">Đồng bộ cuối</span>
-              <span className="tabular-nums text-xs font-medium text-slate-700">
+              <span className="block text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Đồng bộ cuối
+              </span>
+              <span className="tabular-nums text-xs font-medium text-slate-700 dark:text-slate-300">
                 {formatViDate(stats.last_synced_at, "Chưa đồng bộ")}
               </span>
             </div>
@@ -237,14 +247,14 @@ export function RepositoryLibrary() {
       </section>
 
       {/* Command Toolbar */}
-      <section className="rounded-2xl border border-slate-200/90 bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.05),0_10px_28px_-14px_rgba(15,23,42,0.08)]">
+      <section className="rounded-2xl border border-slate-200/90 bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.05),0_10px_28px_-14px_rgba(15,23,42,0.08)] dark:border-slate-800/90 dark:bg-slate-900/90 dark:shadow-[0_10px_30px_-14px_rgba(0,0,0,0.65)]">
         <div className="grid gap-2.5 md:grid-cols-[1fr_170px_175px_auto]">
           <div className="relative">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <Input
               ref={searchRef}
               aria-label="Tìm repository"
-              className="border-slate-200/75 bg-slate-50/70 pl-10 pr-12 focus-visible:bg-white"
+              className="border-slate-200/75 bg-slate-50/70 pl-10 pr-12 focus-visible:bg-white dark:border-slate-800 dark:bg-slate-950/75 dark:focus-visible:bg-slate-950"
               placeholder="Tìm tên repo, mô tả tiếng Việt hoặc tiếng Anh (có/không dấu)..."
               value={q}
               maxLength={200}
@@ -261,12 +271,12 @@ export function RepositoryLibrary() {
                   setQ("");
                   setPage(1);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-400 hover:bg-slate-200/60 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
               >
                 <X className="size-3.5" />
               </button>
             ) : (
-              <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-400 sm:inline-block">
+              <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-400 sm:inline-block dark:border-slate-700 dark:bg-slate-900 dark:text-slate-500">
                 /
               </kbd>
             )}
@@ -279,7 +289,7 @@ export function RepositoryLibrary() {
               setLanguage(e.target.value);
               setPage(1);
             }}
-            className="h-10 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 text-sm text-slate-700 focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/80"
+            className="h-10 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 text-sm text-slate-700 focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/80 dark:border-slate-800 dark:bg-slate-950/75 dark:text-slate-200 dark:focus-visible:bg-slate-950 dark:focus-visible:ring-teal-400/70"
           >
             <option value="">Mọi ngôn ngữ</option>
             {stats?.languages.map((lang) => (
@@ -296,7 +306,7 @@ export function RepositoryLibrary() {
               setSort(e.target.value);
               setPage(1);
             }}
-            className="h-10 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 text-sm text-slate-700 focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/80"
+            className="h-10 rounded-xl border border-slate-200/80 bg-slate-50/70 px-3 text-sm text-slate-700 focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600/80 dark:border-slate-800 dark:bg-slate-950/75 dark:text-slate-200 dark:focus-visible:bg-slate-950 dark:focus-visible:ring-teal-400/70"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -315,8 +325,8 @@ export function RepositoryLibrary() {
             className={cn(
               "pressable inline-flex h-10 items-center justify-center gap-2 rounded-xl border px-3.5 text-sm font-medium",
               onlyFavorites
-                ? "border-rose-200 bg-rose-50 text-rose-700"
-                : "border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50"
+                ? "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/35 dark:bg-rose-500/15 dark:text-rose-300"
+                : "border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-950/70 dark:text-slate-200 dark:hover:bg-slate-800"
             )}
           >
             <Heart className={cn("size-4", onlyFavorites && "fill-rose-500 text-rose-500")} />
@@ -325,7 +335,7 @@ export function RepositoryLibrary() {
         </div>
 
         {/* Category Filter Strip */}
-        <div className="mt-3 flex items-start gap-2 border-t border-slate-100 pt-3">
+        <div className="mt-3 flex items-start gap-2 border-t border-slate-100 pt-3 dark:border-slate-800/80">
           <nav
             aria-label="Lọc theo danh mục"
             className={cn(
@@ -342,8 +352,8 @@ export function RepositoryLibrary() {
               className={cn(
                 "pressable shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium",
                 category === ""
-                  ? "bg-slate-900 text-white"
-                  : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                  ? "bg-slate-900 text-white dark:bg-teal-600 dark:text-white"
+                  : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white"
               )}
             >
               Mọi danh mục {stats ? `(${stats.total})` : ""}
@@ -359,12 +369,17 @@ export function RepositoryLibrary() {
                 className={cn(
                   "pressable shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium",
                   category === cat.name
-                    ? "bg-teal-700 text-white"
-                    : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900"
+                    ? "bg-teal-700 text-white dark:bg-teal-600"
+                    : "bg-slate-100/80 text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700/80 dark:hover:text-white"
                 )}
               >
                 {cat.name}{" "}
-                <span className={cn("tabular-nums", category === cat.name ? "text-teal-100" : "text-slate-400")}>
+                <span
+                  className={cn(
+                    "tabular-nums",
+                    category === cat.name ? "text-teal-100" : "text-slate-400 dark:text-slate-500"
+                  )}
+                >
                   {cat.count}
                 </span>
               </button>
@@ -375,7 +390,7 @@ export function RepositoryLibrary() {
             <button
               type="button"
               onClick={() => setExpandCategories((v) => !v)}
-              className="pressable hidden shrink-0 items-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 sm:inline-flex"
+              className="pressable hidden shrink-0 items-center gap-1 rounded-lg border border-slate-200/80 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 sm:inline-flex dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <span>{expandCategories ? "Thu gọn" : "Tất cả"}</span>
               {expandCategories ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
@@ -385,7 +400,7 @@ export function RepositoryLibrary() {
       </section>
 
       {/* Results Status Bar */}
-      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
         <p className="tabular-nums" aria-live="polite">
           {loading
             ? "Đang tải danh sách…"
@@ -396,7 +411,7 @@ export function RepositoryLibrary() {
           <button
             type="button"
             onClick={resetFilters}
-            className="pressable inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-teal-700 hover:bg-teal-50"
+            className="pressable inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium text-teal-700 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950/60"
           >
             <RotateCcw className="size-3" />
             Đặt lại bộ lọc
@@ -406,7 +421,7 @@ export function RepositoryLibrary() {
 
       {/* Error State */}
       {error && (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
           <span>{error}</span>
           <Button type="button" variant="outline" size="sm" onClick={() => setRetry((x) => x + 1)}>
             Thử lại
@@ -434,8 +449,10 @@ export function RepositoryLibrary() {
       {/* Empty State */}
       {!error && !loading && data?.items.length === 0 && (
         <Card className="mt-4 p-12 text-center">
-          <p className="text-base font-semibold text-slate-800">Không tìm thấy repository phù hợp</p>
-          <p className="mt-1.5 text-sm text-slate-500">
+          <p className="text-base font-semibold text-slate-800 dark:text-slate-100">
+            Không tìm thấy repository phù hợp
+          </p>
+          <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
             Thử từ khóa khác, bỏ chọn danh mục hoặc tắt bộ lọc chỉ xem yêu thích.
           </p>
           {hasActiveFilters && (
@@ -457,7 +474,7 @@ export function RepositoryLibrary() {
             return (
               <Card
                 key={repo.id}
-                className="card-lift group flex flex-col justify-between p-5 hover:border-slate-300/90"
+                className="card-lift group flex flex-col justify-between p-5 hover:border-slate-300/90 dark:hover:border-slate-700"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2">
@@ -467,7 +484,7 @@ export function RepositoryLibrary() {
                         setCategory(repo.category);
                         setPage(1);
                       }}
-                      className="inline-flex max-w-[65%] items-center gap-1.5 truncate rounded-md bg-teal-50/90 px-2 py-0.5 text-[11px] font-medium text-teal-800 hover:bg-teal-100"
+                      className="inline-flex max-w-[65%] items-center gap-1.5 truncate rounded-md bg-teal-50/90 px-2 py-0.5 text-[11px] font-medium text-teal-800 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
                     >
                       <span className="truncate">{repo.category}</span>
                     </button>
@@ -475,9 +492,9 @@ export function RepositoryLibrary() {
                     <div className="flex items-center gap-1.5">
                       <span
                         title="GitHub Stars"
-                        className="tabular-nums inline-flex items-center gap-1 rounded-md bg-amber-50/90 px-2 py-0.5 text-[11px] font-semibold text-amber-800"
+                        className="tabular-nums inline-flex items-center gap-1 rounded-md bg-amber-50/90 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
                       >
-                        <Star className="size-3 fill-amber-400 text-amber-500" />
+                        <Star className="size-3 fill-amber-400 text-amber-500 dark:text-amber-400" />
                         {formatCompactNumber(repo.stars)}
                       </span>
                       <button
@@ -485,7 +502,7 @@ export function RepositoryLibrary() {
                         aria-label={isFav ? "Bỏ yêu thích" : "Yêu thích"}
                         aria-pressed={isFav}
                         onClick={() => handleToggleFavorite(repo.id)}
-                        className="pressable rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                        className="pressable rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-500/15 dark:hover:text-rose-400"
                       >
                         <Heart className={cn("size-3.5", isFav && "fill-rose-500 text-rose-500")} />
                       </button>
@@ -494,19 +511,21 @@ export function RepositoryLibrary() {
 
                   <Link href={`/repositories/${repo.id}`} className="mt-3 block">
                     <h2 className="text-[15px] leading-snug break-words">
-                      {owner && <span className="font-normal text-slate-400">{owner}/</span>}
-                      <span className="font-semibold text-slate-900 group-hover:text-teal-700">
+                      {owner && (
+                        <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>
+                      )}
+                      <span className="font-semibold text-slate-900 group-hover:text-teal-700 dark:text-slate-100 dark:group-hover:text-teal-300">
                         {name}
                       </span>
                     </h2>
                   </Link>
 
-                  <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-slate-600">
+                  <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-slate-600 dark:text-slate-400">
                     {repo.description_vi}
                   </p>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs text-slate-500">
+                <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800/80 dark:text-slate-400">
                   <div className="flex min-w-0 items-center gap-3">
                     {repo.language && (
                       <span className="inline-flex items-center gap-1.5 truncate">
@@ -515,7 +534,7 @@ export function RepositoryLibrary() {
                       </span>
                     )}
                     <span className="tabular-nums inline-flex items-center gap-1" title="Forks">
-                      <GitFork className="size-3 text-slate-400" />
+                      <GitFork className="size-3 text-slate-400 dark:text-slate-500" />
                       {formatCompactNumber(repo.forks)}
                     </span>
                     {repo.archived && <Badge variant="warning">Archived</Badge>}
@@ -524,7 +543,7 @@ export function RepositoryLibrary() {
                   <div className="flex shrink-0 items-center gap-2">
                     <Link
                       href={`/repositories/${repo.id}`}
-                      className="font-medium text-slate-700 hover:text-teal-700"
+                      className="font-medium text-slate-700 hover:text-teal-700 dark:text-slate-300 dark:hover:text-teal-300"
                     >
                       Chi tiết →
                     </Link>
@@ -533,7 +552,7 @@ export function RepositoryLibrary() {
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`Mở ${repo.full_name} trên GitHub`}
-                      className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                      className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                     >
                       <ArrowUpRight className="size-3.5" />
                     </a>
@@ -561,7 +580,7 @@ export function RepositoryLibrary() {
 
           {pageNumbers(page, totalPages).map((entry, idx) =>
             entry === "..." ? (
-              <span key={`dots-${idx}`} className="px-2 text-xs text-slate-400">
+              <span key={`dots-${idx}`} className="px-2 text-xs text-slate-400 dark:text-slate-500">
                 …
               </span>
             ) : (
