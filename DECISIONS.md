@@ -31,3 +31,7 @@ Only verified and user-approved decisions are recorded here.
 - **Motion Library**: Added `motion@14.14.0` (`MotionConfig reducedMotion="user"`, `AnimatePresence`, `layoutId` transitions) inside `frontend/package.json` for editorial choreography and Specimen Folio drawer transitions.
 - **Real Icon Inventory**: Bundled `46` CC0/MIT SVGs locally in `frontend/public/icons/` (`icons.mjs` + `icons-credits.json`) for fast offline-safe rendering across both Docker Linux and local dev without third-party CDN runtime failures.
 - **Honest Catalog Metrics**: Replaced any synthetic/placeholder trending percentages with real database counts (`Bộ sưu tập biên tập`) and Top 5 catalog `stargazers_count` (`Nổi bật theo GitHub Stars`).
+
+## D7 — P2.2 Polish & Backward-Compatible News Section Counts (2026-11-25)
+- **Direction Confirmation**: User approved continuing with `P2.1 — Vellum Digital Editorial` typography, palette, logo, and editorial system into `P2.2 — Vellum Digital Polish` (`/prototypes/2-2`) while preserving `/prototypes/2-1`.
+- **Backward-Compatible Backend Extension**: Added `section_counts` and `all_count` to `/news/feed` and `/news/items` (`backend/app/news/router.py`) using a single `GROUP BY` aggregate query computed before `section`/`offset`/`limit` filtering, avoiding per-category client requests and keeping all prior response fields intact.

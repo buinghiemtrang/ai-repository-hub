@@ -27,9 +27,20 @@ This directory stores visual audit captures, prototype references, and design it
 - `p2-1-news.png` — **P2.1**, Integrated AI News magazine view (`Tạp chí Tin`)
 - `p2-1-studio.png` — **P2.1**, Integrated AI Studio workbench preview (`Xưởng AI`)
 
+### Phase 2.2 — Vellum Digital Polish Verification (2026-11-25)
+- `p2-2-1440.png` — **P2.2 · Vellum Digital Polish** (`/prototypes/2-2`), Desktop `1440×900`, Light mode (Repo cards visible above the fold at `y = 562px`)
+- `p2-2-1024.png` — **P2.2**, Small desktop / landscape tablet `1024×768`
+- `p2-2-390.png` — **P2.2**, Mobile `390×844`
+- `p2-2-dark.png` — **P2.2**, Desktop `1440×900`, Dark mode (`#131110`)
+- `p2-2-folio.png` — **P2.2**, Upgraded Specimen Folio Quick Preview (position badge, structured README, focus trap)
+- `p2-2-news.png` — **P2.2**, AI News Magazine with live category counts, brand/semantic icons, and non-Repo Cover Story priority
+- `p2-2-news-detail.png` — **P2.2**, AI News Detail Reader drawer (`NewsDetailDrawer22`)
+- `p2-2-studio.png` — **P2.2**, AI Studio Workbench with SVG architecture workflow diagram & interactive stages
+
 ## Active Prototype Code
 - Comparison index: [frontend/app/prototypes/page.tsx](../../frontend/app/prototypes/page.tsx)
 - P1: [frontend/app/prototypes/1/page.tsx](../../frontend/app/prototypes/1/page.tsx)
-- P2: [frontend/app/prototypes/2/page.tsx](../../frontend/app/prototypes/2/page.tsx) (keep intact for comparing against `P2.1`)
-- P2.1: [frontend/app/prototypes/2-1/page.tsx](../../frontend/app/prototypes/2-1/page.tsx) & [frontend/components/prototypes/vellum/](../../frontend/components/prototypes/vellum/)
+- P2: [frontend/app/prototypes/2/page.tsx](../../frontend/app/prototypes/2/page.tsx) (keep intact for comparison)
+- P2.1: [frontend/app/prototypes/2-1/page.tsx](../../frontend/app/prototypes/2-1/page.tsx) & [frontend/components/prototypes/vellum/](../../frontend/components/prototypes/vellum/) (baseline direction approved by user)
+- P2.2: [frontend/app/prototypes/2-2/page.tsx](../../frontend/app/prototypes/2-2/page.tsx) & [frontend/components/prototypes/vellum22/](../../frontend/components/prototypes/vellum22/) (latest polish candidate awaiting user acceptance)
 - P3: [frontend/app/prototypes/3/page.tsx](../../frontend/app/prototypes/3/page.tsx)

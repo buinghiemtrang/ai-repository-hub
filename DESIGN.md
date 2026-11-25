@@ -61,11 +61,11 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
   2. Lacks real visual richness: images, logos, brand/tool icons, and repository thumbnails.
   3. Animation and micro-interaction quality has not yet been refined or verified in browser QA.
   4. Duplicate `@owner/repo` block when a repo lacks a custom OG image (`proto2-1440.png`).
-- **Status**: **`P2.1 — Vellum Digital Editorial`** prototype is now built and visually verified at `/prototypes/2-1` while **keeping `P2` (`/prototypes/2`), `P1`, and `P3` intact for side-by-side comparison**. Official production routes remain untouched pending explicit user review and approval of `P2.1`.
+- **Status**: User reviewed **`P2.1 — Vellum Digital Editorial`** and agreed to continue developing along this direction. **`P2.2 — Vellum Digital Polish`** is now implemented and visually verified at `/prototypes/2-2` while preserving `P1`, `P2`, `P2.1`, and `P3` intact for comparison. Official production pages remain untouched pending explicit user acceptance of `P2.2`.
 
-## 5. P2.1 — Vellum Digital Editorial System Spec (Prototype Draft — Pending Approval)
+## 5. P2.1 → P2.2 — Vellum Digital Editorial Design System
 
-> **Status Distinction**: `P2` is the approved art direction baseline; `P2.1` (`/prototypes/2-1`) is the concrete interactive design system draft awaiting final user approval before Phase 3/4 production rollout.
+> **Status Distinction**: `P2.1` is the direction agreed by the user to continue developing; `P2.2` (`/prototypes/2-2`) is the UI/UX, category-count, icon, layout, and motion polish candidate awaiting final user acceptance before Phase 3/4 production rollout.
 
 ### 5.1 Brand & Visual Language
 - **Identity**: Bespoke geometric architectural press mark SVG (`VellumHeader.tsx`) paired with editorial wordmark **AI Repo Hub** (`Vellum Digital · P2.1`).
@@ -105,3 +105,20 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
 ### 5.7 Verified Responsive & Visual QA Checklist
 - Headless Chrome CDP verified on `/prototypes/2-1` across `1920`, `1440`, `1280`, `1024`, `768`, `390` viewports: `0` horizontal overflow, `70/70` loaded images (`broken: 0`), `0` console errors, verified Vietnamese webfont stack (`Newsreader`, `Hanken Grotesk`, `JetBrains Mono`), Light + Dark modes, List toggle, Search, Quick-Peek Folio, News, Studio, and `prefers-reduced-motion: reduce`.
 - Screenshots stored under `docs/design/screenshots/p2-1-*.png`.
+
+## 6. P2.2 — Vellum Digital Polish Enhancements (Awaiting Acceptance)
+
+1. **News Category Counts & Accurate Icons (`VellumNewsView22.tsx`, `VellumIcons22.tsx`)**:
+   - Single-request feed aggregation (`days_limit=90`) plus backward-compatible `section_counts` / `all_count` on backend `/news/feed` and `/news/items` (`GROUP BY NewsItem.section` ignoring active `section` filter and pagination).
+   - Live count displayed in compact `tabular-nums` mono beside every category (`Tất cả chuyên mục` + 9 sections, including `0`-count sections gracefully), updating immediately on date or search query change and deduplicated via `Set<string>`.
+   - Replaced erroneous `github.svg` fallback on non-GitHub categories with exact brand SVGs (`Claude`, `Grok`, `ChatGPT/OpenAI`, `Gemini`) + crisp backing badge when selected on terracotta `#C84B24`, and semantic Lucide icons (`FolderGit2`, `ShieldAlert`, `Users`, `BookMarked`, `Sparkles`).
+2. **Library Above-the-Fold & Visual De-duplication (`VellumLibraryView22.tsx`, `RepoThumbnail22.tsx`)**:
+   - Paired compact Featured Spotlight (`8 cols`, `231px` height) beside Top 5 GitHub Stars (`4 cols`) + slim 4-col Collections row (`~54px`), lifting first Repo Grid card row from `1030px` (P2.1) to **`562px` (P2.2)** — visible above the fold at `1440×900`.
+   - Removed redundant language pills and brand text duplicates from `RepoThumbnail22` and List rows.
+3. **AI News Cover Selection & Detail Reader (`NewsDetailDrawer22.tsx`)**:
+   - Prioritizes high-signal non-Repo AI news (`Tin quan trọng` / `picked`) for front-page Cover Story when viewing `Tất cả chuyên mục`.
+   - Added full pagination across News cards and interactive slide-over **AI News Detail** drawer with image preview, sources, tags, TTS speech, and direct `Mở Repo Folio` jump.
+4. **AI Studio Workbench Clarity (`VellumStudioView22.tsx`)**:
+   - Removed internal source file path (`backend/app/...`) from user UI; added inline SVG Workflow Architecture diagram, interactive clickable Stages `01`–`03`, explicit `Prototype UI · Sắp mở` labels, and in-prototype Library deep-linking.
+5. **Motion & Signature Folio Upgrade (`RepoQuickPeek22.tsx`)**:
+   - Restores focus to clicked trigger on close, moves focus inside `[role="dialog"]` on open, traps `Tab`/`Shift+Tab`, supports `←` / `→` / `Esc`, adds image scale settle reveal, `Copy URL` feedback, structured README section cards, and eliminates filter/search card stagger jitter.
