@@ -46,7 +46,18 @@ This directory stores visual audit captures, prototype references, and design it
 - `p2-2-1-390.png` — Mobile `390×844` with `>= 44×44px` touch targets (`overflow: false`)
 - `p2-2-1-320.png` — Small Mobile `320×568` (`overflow: false`)
 
-## Active Prototype Code
+### Phase 3–5 — Vellum Design System 1.0 Official Rollout (2026-11-25)
+- `home-v1-1440.png` — Official Repository Library (`/`), Desktop `1440×900`, Light mode (`CLS 0`, AVIF spotlight)
+- `home-v1-dark.png` — Official Repository Library (`/`), Desktop `1440×900`, Dark mode (`.vellum-plate-0..4` specimens)
+- `home-v1-320.png` — Official Repository Library (`/`), Small Mobile `320×568`
+- `detail-v1-1440.png` — Official Repository Detail (`/repositories/1`), Desktop `1440×900`
+- `news-v1-1440.png` — Official AI News Magazine (`/news`), Desktop `1440×900`
+- `studio-v1-1440.png` — Official AI Studio (`/studio`), Desktop `1440×900`
+- `sync-v1-1440.png` — Official Sync Ledger (`/sync`), Desktop `1440×900`
+- `modules-v1-1440.png` — Official Architecture Modules (`/modules`), Desktop `1440×900`
+- Full Acceptance & Verification Report: [VELLUM_1_0_MIGRATION_REPORT.md](VELLUM_1_0_MIGRATION_REPORT.md)
+
+## Active Prototype Code (Archived Internal Comparison)
 - Comparison index: [frontend/app/prototypes/page.tsx](../../frontend/app/prototypes/page.tsx)
 - P1: [frontend/app/prototypes/1/page.tsx](../../frontend/app/prototypes/1/page.tsx)
 - P2: [frontend/app/prototypes/2/page.tsx](../../frontend/app/prototypes/2/page.tsx) (keep intact for comparison)

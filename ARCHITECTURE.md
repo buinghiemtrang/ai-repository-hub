@@ -44,18 +44,18 @@ AI Repository Hub is built as a **Modular Monolith**:
 
 ## 4. Frontend Structure (`frontend/`)
 
-- **App Shell** (`components/AppShell.tsx`, `app/layout.tsx`): Collapsible workspace sidebar + sticky top bar + `ThemeToggle`. Bypasses chrome on `/prototypes/*` so design prototypes run standalone.
+- **App Shell** (`components/AppShell.tsx`, `app/layout.tsx`, `app/globals.css`, `next.config.ts`): Vellum Design System 1.0 header & footer with `Công cụ AI` and `Hệ thống` menus, `/` shortcut, `ThemeToggle`, `Hanken Grotesk` + `Newsreader` + `JetBrains Mono` fonts, and `sharp` AVIF/WebP image optimization. Bypasses official chrome on `/prototypes/*`.
 - **API Proxies** (Next.js Route Handlers with explicit GET allowlists):
   - `app/api/repositories/[[...parts]]/route.ts` -> FastAPI `/repositories/*`
   - `app/api/news/[[...parts]]/route.ts` -> FastAPI `/news/*`
-- **Active Pages**:
-  - `/` (`components/repositories/RepositoryLibrary.tsx`)
-  - `/repositories/[id]` (`app/repositories/[id]/page.tsx`, `GuideRenderer.tsx`, `FavoriteButton.tsx`)
-  - `/news` (`components/news/NewsFeedWorkspace.tsx`, `NewsCard.tsx`, `NewsAudioPlayer.tsx` using browser `speechSynthesis`)
-  - `/studio` (`app/studio/page.tsx` — modular extension launcher for future AI tools)
+- **Active Pages (Vellum Design System 1.0)**:
+  - `/` (`app/page.tsx` SSR prefetch + `components/repositories/RepositoryLibrary.tsx`, `RepoQuickPeek22.tsx`, `RepoThumbnail22.tsx`)
+  - `/repositories/[id]` (`app/repositories/[id]/page.tsx`, `error.tsx`, `not-found.tsx`, `GuideRenderer.tsx`, `FavoriteButton.tsx`, `RepoImage.tsx`)
+  - `/news` (`app/news/page.tsx` SSR prefetch + `components/news/NewsFeedWorkspace.tsx`, `NewsAudioPlayer.tsx`, `NewsDetailDrawer22.tsx`)
+  - `/studio` (`app/studio/page.tsx` + `components/studio/VellumStudioWorkspace.tsx`)
   - `/sync` (`app/sync/page.tsx` — Repository & News scheduler logs)
   - `/modules` (`app/modules/page.tsx` — Modular Monolith contract status)
-  - `/prototypes`, `/prototypes/1`, `/prototypes/2`, `/prototypes/3` — Isolated Phase 2 design direction prototypes consuming live API data.
+  - `/prototypes/*` — Archived Phase 2/P2.1/P2.2/P2.2.1 internal comparison routes (unlinked from official chrome).
 
 ## 5. Planned Future Modules (Awaiting Explicit Scope)
 - `ai_studio` (Video AI, Image & POD Design, Voiceover)

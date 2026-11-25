@@ -40,3 +40,10 @@ Only verified and user-approved decisions are recorded here.
 - **React #310 Root Cause Fix (`AppShell.tsx`)**: Resolved unconditional Rules-of-Hooks invariant by moving `if (pathname.startsWith("/prototypes"))` below all `useState` / `useEffect` calls rather than adding fragile reload workarounds.
 - **Zero-Duplication RC Gating (`rc` prop)**: Implemented `P2.2.1` (`/prototypes/2-2-1`) reusing shared `vellum22` components via `rc={true}` and dedicated `VELLUM_DARK_RC`/`VELLUM_LIGHT_RC` tokens so `P2.2` stays intact for direct visual diffing.
 - **Shared Safe Markdown (`GuideRenderer.tsx`)**: Consolidated README rendering in `GuideRenderer` (supporting headings, lists, tables, safe allowlisted links, and fenced code blocks with Copy button; zero `dangerouslySetInnerHTML`) reused across both `/repositories/[id]` and Folio Quick Preview.
+
+## D9 — Vellum Design System 1.0 Approval & Full Production Rollout (2026-11-25)
+- **Decision**: Promoted approved `P2.2.1` into **Vellum Design System 1.0** (`DESIGN.md` Section 8) across all official production routes (`/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules`), archiving `/prototypes/*` without exposing prototype controls in official chrome.
+- **Performance & Hydration Architecture**:
+  - Added Next.js `next.config.ts` + `sharp` (`AVIF`/`WebP` optimization for allowlisted GitHub image hosts) and isolated `P1`/`P3` prototype fonts away from `app/layout.tsx`.
+  - Standardized CSS custom properties (`--v-*` and `.vellum-plate-0..4` in `globals.css`) + `useSyncExternalStore` for `localStorage` (`repo-favorites`, `aihub_news_voice`, `aihub_news_rate`, `theme`) so Light/Dark mode and client state stay SSR-hydration-safe with `CLS = 0`.
+  - Added server-side initial data prefetching on `/` and `/news` and replaced legacy `eslint` gap with `eslint-config-next`.

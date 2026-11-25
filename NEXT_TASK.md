@@ -1,25 +1,18 @@
 # Next Task — Resume Plan
 
-**Active Branch:** `redesign/taste-skill`
-**Current Phase:** **`P2.2.1 — Stabilization & Release Candidate`** implemented and verified at `/prototypes/2-2-1`; awaiting user acceptance of **Vellum Design System 1.0** before Phase 3/4 production rollout.
+**Active Branch:** `redesign/taste-skill` (pushed & synchronized with GitHub; rollback tag/branch at `checkpoint/p2-2-1-baseline`)  
+**Current Phase:** **UI/UX Redesign Milestone Complete — Vellum Design System 1.0** live across all official routes (`/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules`).
 
 ## Priority Queue
 
-1. **Review & Accept `P2.2.1` Release Candidate (`/prototypes/2-2-1`) (User Decision Gate)**
-   - Compare `/prototypes/2-2-1` against `/prototypes/2-2` and `/prototypes`.
-   - Do **not** modify official production pages (`/`, `/news`, `/studio`, `/sync`, `/modules`, `/repositories/[id]`) until the user explicitly approves Vellum Design System 1.0 rollout.
+1. **User Review of Official Production UI & Branch Merge Approval**
+   - Review the live Vellum Design System 1.0 production site (`http://localhost:3000`) and [docs/design/VELLUM_1_0_MIGRATION_REPORT.md](docs/design/VELLUM_1_0_MIGRATION_REPORT.md).
+   - Confirm whether to merge `redesign/taste-skill` -> `main` (and whether `/prototypes/*` historical archive routes should remain accessible by direct URL or be pruned later).
 
-2. **Phase 3 — Finalize Design System (`DESIGN.md` + Production Tokens + Shared UI)**
-   - After user acceptance, promote `VELLUM_LIGHT_RC` / `VELLUM_DARK_RC`, `Newsreader` + `Hanken Grotesk` + `JetBrains Mono`, `GuideRenderer`, `RepoThumbnail`, `RepoQuickPeek`, and `NewsDetailDrawer` into production routes cleanly.
+2. **Phase 2 Functional Roadmap (Requires Explicit User Scope Approval First)**
+   - **Priority A — AI Studio Core** (`video_studio`, `image_studio`, `voice_studio`): Agree on supported external/local provider APIs, async job queue semantics, artifact storage limits, and `.env` credential contracts before implementing backend slices.
+   - **Priority B — MCP Registry, AI Skills & Models / Workflows** (`mcp`, `ai_skills`, `models`, `workflows`): Approve DB migrations and read/write admin guards under `docs/MODULE_CONTRACTS.md`.
 
-3. **Phase 4 — Implement Approved Design Across All Production Pages**
-   - Redesign `/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules` consistently across desktop, tablet (`768`/`1024`), and mobile (`390`) without removing any existing feature or changing backend/DB/API behavior.
-   - Confirm with user before keeping or removing `/prototypes/*` routes after rollout.
-
-4. **Phase 5 — Production Visual & Functional QA**
-   - Validate in headless Chrome (`shoot.mjs`, `consistency.mjs`, before/after screenshots, dark/light, loading/empty/error/hover/focus/active states).
-   - Run full `npm run typecheck`, `npm run build`, and backend `unittest discover`.
-
-## Definition of Done for Next Milestone (Phase 3/4 Promotion)
-- User explicitly approves `P2.1 — Vellum Digital Editorial` (and any feedback tweaks are resolved on `/prototypes/2-1`).
-- Production pages match the approved P2.1 design system cleanly across Light/Dark and all 6 viewports with zero regressions.
+## Definition of Done for Next Milestone
+- User explicitly approves merging `redesign/taste-skill` -> `main` and/or specifies exact scope for the next feature slice in `/studio` or `/modules`.
+- All new features preserve Modular Monolith isolation, Linux/Windows Docker Compose portability, backend `unittest discover` coverage, and Vellum Design System 1.0 UI consistency.

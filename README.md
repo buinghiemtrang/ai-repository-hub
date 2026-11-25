@@ -7,7 +7,7 @@ Nền tảng cá nhân phát triển theo kiến trúc **Modular Monolith** cho 
 
 ## Công nghệ
 
-- **Frontend**: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui (`lucide-react`, `cva`, `clsx`, `tailwind-merge`)
+- **Frontend**: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + **Vellum Design System 1.0** (`motion`, `lucide-react`, `sharp` AVIF/WebP optimization)
 - **Backend**: FastAPI + SQLAlchemy 2.0 + Alembic + PostgreSQL 16 (`unaccent`)
 - **Hạ tầng**: Docker Compose v2 (tương thích Linux và Windows Docker Desktop)
 
@@ -31,10 +31,10 @@ Mặc định các cổng chỉ mở trên loopback (`127.0.0.1`):
 - Giao diện web: `http://localhost:3000`
 - Tin tức AI & mục Repo: `http://localhost:3000/news`
 - AI Studio: `http://localhost:3000/studio`
-- Prototype thiết kế (đang đánh giá): `http://localhost:3000/prototypes`
 - Trạng thái đồng bộ: `http://localhost:3000/sync`
 - Kiến trúc Modules: `http://localhost:3000/modules`
 - Backend API Docs (Swagger): `http://localhost:8000/docs`
+- Kho lưu trữ prototype nội bộ: `http://localhost:3000/prototypes`
 
 Backend tự động chạy `alembic upgrade head` và seed dữ liệu khởi tạo khi container khởi động. Dữ liệu PostgreSQL nằm trong named volume `db_data`.
 
@@ -95,7 +95,7 @@ Tham khảo `.env.example` (không bao giờ commit `.env`):
 
 - [AGENTS.md](AGENTS.md) — Quy tắc làm việc & khôi phục ngữ cảnh cho AI agents
 - [ARCHITECTURE.md](ARCHITECTURE.md) — Kiến trúc hệ thống, module & API
-- [DESIGN.md](DESIGN.md) — Quy chuẩn Taste Skill, Audit & Art Direction (`P2` -> `P2.1`)
+- [DESIGN.md](DESIGN.md) — Quy chuẩn Taste Skill & **Vellum Design System 1.0**
 - [PROJECT_STATUS.md](PROJECT_STATUS.md) — Tiến độ đã hoàn thành & còn lại
 - [NEXT_TASK.md](NEXT_TASK.md) — Việc tiếp theo cần làm & tiêu chí xong
 - [DECISIONS.md](DECISIONS.md) — Các quyết định kỹ thuật & thiết kế đã chốt

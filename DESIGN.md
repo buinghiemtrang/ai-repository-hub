@@ -61,7 +61,21 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
   2. Lacks real visual richness: images, logos, brand/tool icons, and repository thumbnails.
   3. Animation and micro-interaction quality has not yet been refined or verified in browser QA.
   4. Duplicate `@owner/repo` block when a repo lacks a custom OG image (`proto2-1440.png`).
-- **Status**: User confirmed **`P2.1 / P2.2`** direction (Vellum Digital Editorial). **`P2.2.1 — Stabilization & Release Candidate`** is now implemented and verified at `/prototypes/2-2-1` while **keeping `P1`, `P2`, `P2.1`, and `P2.2` intact for comparison**. Official production pages remain untouched pending final user acceptance of Vellum Design System 1.0.
+- **Status**: **Vellum Design System 1.0** is officially approved and rolled out across all canonical production routes (`/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules`). Historical prototypes (`/prototypes`, `/prototypes/1`, `/2`, `/2-1`, `/2-2`, `/2-2-1`, `/3`) are preserved as internal archive without prototype switcher chrome in official UI.
+
+---
+
+## 8. Vellum Design System 1.0 — Official Production Rollout
+
+1. **Authoritative CSS Custom Properties (`frontend/app/globals.css`, `frontend/components/prototypes/vellum/tokens.ts`)**:
+   - Production UI consumes CSS custom properties under `:root` (`--v-bg: #f5f2eb`, `--v-surface: #fbf9f4`, `--v-surface-alt: #eae5d9`, `--v-ink: #171614`, `--v-muted: #57534b`, `--v-accent: #c03a17`, `--v-accent-soft: rgba(192, 58, 23, 0.09)`, `--v-accent-ink: #ffffff`) and `.dark` (`--v-bg: #131110`, `--v-surface: #1b1917`, `--v-surface-alt: #25221f`, `--v-ink: #f4f0e8`, `--v-muted: #b8b0a4`, `--v-accent: #ec7650`, `--v-accent-soft: rgba(236, 118, 80, 0.18)`, `--v-accent-ink: #131110`).
+   - `.vellum-plate-0`..`4` provide CSS-adaptive Light & Dark specimen plate palettes without SSR hydration mismatch.
+2. **Global Typography & Assets (`frontend/app/layout.tsx`, `next.config.ts`, `app/icon.svg`)**:
+   - Official routes load only `Hanken Grotesk`, `Newsreader`, and `JetBrains Mono` (`subsets: ["latin", "vietnamese"]`); `P1`/`P3` prototype fonts (`Geist`, `Bricolage Grotesque`, `IBM Plex`) are isolated in `app/prototypes/1/layout.tsx` & `app/prototypes/3/layout.tsx`.
+   - Allowlisted GitHub image hosts use Next.js `<Image>` + `sharp` (`AVIF`/`WebP`, `86400s` cache TTL).
+3. **Production Route & Shell Migration**:
+   - `AppShell.tsx`: Official Vellum top navigation (`Thư viện Repo`, `Tạp chí Tin`, `Xưởng AI`, `Công cụ AI`, `Hệ thống`), `/` keyboard shortcut, live Favorites counter (`repo-favorites`), `ThemeToggle`, mobile drawer, and clean footer. Zero `/prototypes` links or comparison banners.
+   - Official pages migrated & verified: `/`, `/repositories/[id]`, `/news` (`NewsFeedWorkspace` + `NewsAudioPlayer` + `NewsDetailDrawer22` + `RepoQuickPeek22`), `/studio` (`VellumStudioWorkspace`), `/sync`, `/modules`. Detailed metrics & QA evidence live in [docs/design/VELLUM_1_0_MIGRATION_REPORT.md](docs/design/VELLUM_1_0_MIGRATION_REPORT.md).
 
 ## 5. P2.1 → P2.2 → P2.2.1 — Vellum Digital Editorial Design System
 
@@ -106,7 +120,7 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
 - Headless Chrome CDP verified on `/prototypes/2-1` across `1920`, `1440`, `1280`, `1024`, `768`, `390` viewports: `0` horizontal overflow, `70/70` loaded images (`broken: 0`), `0` console errors, verified Vietnamese webfont stack (`Newsreader`, `Hanken Grotesk`, `JetBrains Mono`), Light + Dark modes, List toggle, Search, Quick-Peek Folio, News, Studio, and `prefers-reduced-motion: reduce`.
 - Screenshots stored under `docs/design/screenshots/p2-1-*.png`.
 
-## 6. P2.2 — Vellum Digital Polish Enhancements (Awaiting Acceptance)
+## 6. P2.2 — Vellum Digital Polish Enhancements (Merged into Vellum 1.0)
 
 1. **News Category Counts & Accurate Icons (`VellumNewsView22.tsx`, `VellumIcons22.tsx`)**:
    - Single-request feed aggregation (`days_limit=90`) plus backward-compatible `section_counts` / `all_count` on backend `/news/feed` and `/news/items` (`GROUP BY NewsItem.section` ignoring active `section` filter and pagination).
