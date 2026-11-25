@@ -3,18 +3,32 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const DIRECTIONS = [
   {
+    id: "2-2",
+    name: "Phương án P2.2 · Vellum Digital Polish",
+    subtitle: "Tinh chỉnh UI/UX, News Category Counts + Icon đúng, Library gọn trên 1 màn hình, News Reader Drawer & Studio Diagram",
+    href: "/prototypes/2-2",
+    typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
+    palette: "Warm Paper #F7F4ED (Light) / Obsidian #131110 (Dark) · Accent: Vermilion #C84B24",
+    layout: "Compact Spotlight + Top 5 Stars + Inline Collections + Grid/List + Folio & Article Drawers",
+    bestFor: "Ứng viên hoàn thiện mới nhất chờ bạn kiểm tra và nghiệm thu.",
+    bg: "#f7f4ed",
+    ink: "#1b1917",
+    accent: "#c84b24",
+    recommended: true,
+  },
+  {
     id: "2-1",
     name: "Phương án P2.1 · Vellum Digital Editorial",
-    subtitle: "Nâng cấp từ P2 — Giàu hình ảnh, Thumbnail & Logo SVG, Motion System + Specimen Folio",
+    subtitle: "Giữ nguyên bản trước đó để đối chiếu trực tiếp Before / After với P2.2",
     href: "/prototypes/2-1",
     typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
-    palette: "Vellum #F5F2EB (Light) / Warm Charcoal #131110 (Dark) · Accent: Vermilion #C03A17",
-    layout: "Press Masthead + Featured Spotlight + Editorial Collections + Visual Grid / Compact List + Quick-Peek Folio",
-    bestFor: "Bản ứng viên chính thức mới: cân bằng editorial, khám phá trực quan bằng thumbnail/logo và motion mượt.",
+    palette: "Warm Paper #F7F4ED (Light) / Obsidian #131110 (Dark) · Accent: Vermilion #C84B24",
+    layout: "Press Masthead + Spotlight + Editorial Collections + Visual Grid / List + Quick-Peek Folio",
+    bestFor: "Mốc nền được bạn đồng ý tiếp tục phát triển; dùng để đối chiếu trước khi tinh chỉnh P2.2.",
     bg: "#f5f2eb",
     ink: "#171614",
     accent: "#c03a17",
-    recommended: true,
+    recommended: false,
   },
   {
     id: "2",
@@ -67,13 +81,13 @@ export default function PrototypesIndexPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-6">
           <div className="space-y-2">
             <div className="text-xs font-medium uppercase tracking-widest text-black/50">
-              Phase 2 → P2.1 · Art Direction Comparison
+              Phase 2 → P2.1 → P2.2 · Art Direction Comparison
             </div>
             <h1 className="text-3xl font-medium tracking-tight">
-              AI Repo Hub — So sánh P2.1 &amp; các Phương án P1 / P2 / P3
+              AI Repo Hub — So sánh P2.2 &amp; các Phương án P1 / P2 / P2.1 / P3
             </h1>
             <p className="max-w-3xl text-sm leading-relaxed text-black/65">
-              Bản <strong>P2.1 (Vellum Digital Editorial)</strong> nâng cấp từ P2 với hệ thống repository thumbnail, 46 logo SVG thật, bộ sưu tập biên tập, chuyển đổi Grid/List, Motion System và Quick-Peek Folio. Các bản P1, P2, P3 vẫn được giữ nguyên để đối chiếu.
+              Bản <strong>P2.2 (Vellum Digital Polish)</strong> giữ nguyên bản sắc P2.1 và hoàn thiện trải nghiệm: đếm số lượng tin theo từng chuyên mục chuẩn xác, thay đúng logo thương hiệu/icon chuyên mục, đưa lưới Repo lên sớm hơn trên màn hình, bổ sung Folio Reader cho Tin tức và Workflow Diagram trong Xưởng AI.
             </p>
           </div>
           <Link
@@ -85,7 +99,7 @@ export default function PrototypesIndexPage() {
           </Link>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {DIRECTIONS.map((d) => (
             <div
               key={d.id}
@@ -144,7 +158,7 @@ export default function PrototypesIndexPage() {
                   borderColor: d.recommended ? "#c03a17" : "#181715",
                 }}
               >
-                <span>Mở {d.id === "2-1" ? "P2.1" : `P${d.id}`} trực tiếp</span>
+                <span>Mở {d.id === "2-2" ? "P2.2" : d.id === "2-1" ? "P2.1" : `P${d.id}`} trực tiếp</span>
                 <ArrowRight className="size-3.5" />
               </Link>
             </div>
