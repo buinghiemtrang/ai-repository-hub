@@ -12,7 +12,12 @@ class APITest(unittest.TestCase):
             d=r.json()
             self.assertGreaterEqual(d["total"],8)
             self.assertLessEqual(len(d["items"]),12)
-            self.assertEqual(c.get("/repositories/"+str(d["items"][0]["id"])).status_code,200)
+            first=d["items"][0]["id"]
+            self.assertEqual(c.get("/repositories/"+str(first)).status_code,200)
             self.assertEqual(c.get("/repositories",params={"page":0}).status_code,422)
             self.assertEqual(c.get("/repositories",params={"q":"__unlikely_no_results_123__"}).json()["total"],0)
             self.assertIn("AI Agent",c.get("/repositories/categories").json())
+            self.assertGreaterEqual(c.get("/repositories",params={"q":"tro ly ai"}).json()["total"],1)
+            self.assertEqual(c.get("/repositories",params={"favorite_ids":""}).json()["total"],0)
+            self.assertEqual(c.get("/repositories",params={"favorite_ids":str(first)}).json()["total"],1)
+            self.assertEqual(c.get("/repositories",params={"favorite_ids":"bad"}).status_code,422)
