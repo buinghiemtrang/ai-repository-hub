@@ -1,0 +1,6 @@
+@import "tailwindcss";
+:root { color-scheme: light; }
+body { background:#fafafa; color:#202124; font-family:Arial,sans-serif; }
+button, select { cursor:pointer; }
+button:disabled { cursor:default; opacity:.45; }
+a:hover { text-decoration:underline; }
