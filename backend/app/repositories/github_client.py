@@ -46,15 +46,24 @@ def _safe_homepage(raw: str | None) -> str | None:
 
 def _get_with_retry(client: httpx.Client, url: str, headers: dict[str, str] | None = None, max_retries: int = 2) -> httpx.Response:
     last_exc: Exception | None = None
+    current_url = url
+    redirects = 0
     for attempt in range(max_retries + 1):
         try:
-            res = client.get(url, headers=headers)
+            res = client.get(current_url, headers=headers)
+            if res.status_code in (301, 302, 307, 308) and redirects < 3:
+                loc = res.headers.get("Location", "")
+                parsed = urlsplit(loc)
+                if parsed.scheme == "https" and parsed.netloc.lower() == "api.github.com":
+                    current_url = loc
+                    redirects += 1
+                    continue
             if res.status_code in (403, 429):
                 remaining = res.headers.get("X-RateLimit-Remaining", "")
                 if res.status_code == 429 or remaining == "0" or "rate limit" in res.text.lower():
-                    raise RateLimitError(f"GitHub rate limited ({res.status_code}) on {url}")
+                    raise RateLimitError(f"GitHub rate limited ({res.status_code}) on {current_url}")
                 if res.status_code == 403:
-                    raise RateLimitError(f"GitHub denied access (403) on {url}")
+                    raise RateLimitError(f"GitHub denied access (403) on {current_url}")
             if res.status_code >= 500 and attempt < max_retries:
                 time.sleep(1.5 * (attempt + 1))
                 continue
