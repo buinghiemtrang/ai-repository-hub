@@ -138,10 +138,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const searchStr = searchParams.toString();
 
-  if (pathname.startsWith("/prototypes")) {
-    return <>{children}</>;
-  }
-
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -156,6 +152,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname, searchStr]);
+
+  if (pathname.startsWith("/prototypes")) {
+    return <>{children}</>;
+  }
 
   const toggleCollapsed = () => {
     setCollapsed((prev) => {
