@@ -20,6 +20,10 @@ services:
       DB_NAME: ${POSTGRES_DB:-aihub}
       DB_HOST: db
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      ADMIN_API_KEY: ${ADMIN_API_KEY:-}
+      SYNC_SCHEDULER_ENABLED: ${SYNC_SCHEDULER_ENABLED:-true}
+      SYNC_INTERVAL_HOURS: ${SYNC_INTERVAL_HOURS:-24}
+      SYNC_MIN_AGE_HOURS: ${SYNC_MIN_AGE_HOURS:-12}
     depends_on:
       db:
         condition: service_healthy
