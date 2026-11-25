@@ -42,14 +42,14 @@ export default function SyncStatusPage() {
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10 space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700">
-            <span className="size-1.5 rounded-full bg-teal-600" />
+          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-400">
+            <span className="size-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
             Metadata Scheduler
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
             Trạng thái đồng bộ dữ liệu
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Theo dõi lịch đồng bộ metadata tự động và nhật ký thực thi từ GitHub API.
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function SyncStatusPage() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
           {error}
         </div>
       )}
@@ -76,42 +76,52 @@ export default function SyncStatusPage() {
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Lịch tự động</div>
-              <div className="mt-1.5 flex items-center gap-2 font-semibold text-slate-900">
-                <Clock className="size-4 text-teal-700" />
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Lịch tự động
+              </div>
+              <div className="mt-1.5 flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-100">
+                <Clock className="size-4 text-teal-700 dark:text-teal-400" />
                 {status.scheduler.enabled ? `Bật (mỗi ${status.scheduler.interval_hours}h)` : "Đang tắt"}
               </div>
             </Card>
             <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Giới hạn mỗi đợt</div>
-              <div className="tabular-nums mt-1.5 font-semibold text-slate-900">
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Giới hạn mỗi đợt
+              </div>
+              <div className="tabular-nums mt-1.5 font-semibold text-slate-900 dark:text-slate-100">
                 {status.scheduler.batch_limit} repo
               </div>
             </Card>
             <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">Tuổi tối thiểu</div>
-              <div className="tabular-nums mt-1.5 font-semibold text-slate-900">
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                Tuổi tối thiểu
+              </div>
+              <div className="tabular-nums mt-1.5 font-semibold text-slate-900 dark:text-slate-100">
                 {status.scheduler.min_age_hours} giờ
               </div>
             </Card>
             <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400">GitHub Token</div>
-              <div className="mt-1.5 flex items-center gap-1.5 font-semibold text-slate-900">
-                <ShieldCheck className="size-4 text-teal-700" />
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                GitHub Token
+              </div>
+              <div className="mt-1.5 flex items-center gap-1.5 font-semibold text-slate-900 dark:text-slate-100">
+                <ShieldCheck className="size-4 text-teal-700 dark:text-teal-400" />
                 {status.scheduler.has_github_token ? "Đã cấu hình" : "Chưa cấu hình (60 req/h)"}
               </div>
             </Card>
           </div>
 
           <Card className="overflow-hidden">
-            <CardHeader className="border-b border-slate-100">
-              <h2 className="text-base font-semibold text-slate-900">10 lần đồng bộ gần nhất</h2>
+            <CardHeader className="border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                10 lần đồng bộ gần nhất
+              </h2>
             </CardHeader>
             <CardContent className="p-0">
               {status.recent_runs.length === 0 ? (
-                <p className="p-6 text-sm text-slate-500">
+                <p className="p-6 text-sm text-slate-500 dark:text-slate-400">
                   Chưa có bản ghi đồng bộ nào. Chạy CLI{" "}
-                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs">
+                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs dark:bg-slate-800 dark:text-slate-200">
                     docker compose exec backend python -m app.repositories.sync
                   </code>{" "}
                   hoặc đợi lịch tự động chạy.
@@ -119,7 +129,7 @@ export default function SyncStatusPage() {
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
-                    <thead className="border-b border-slate-200 bg-slate-50/80 text-xs text-slate-500">
+                    <thead className="border-b border-slate-200 bg-slate-50/80 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
                       <tr>
                         <th className="px-5 py-3 font-medium">ID</th>
                         <th className="px-5 py-3 font-medium">Nguồn kích hoạt</th>
@@ -129,24 +139,26 @@ export default function SyncStatusPage() {
                         <th className="px-5 py-3 font-medium">Ghi chú</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                       {status.recent_runs.map((run) => (
-                        <tr key={run.id} className="hover:bg-slate-50/70">
-                          <td className="tabular-nums px-5 py-3 font-mono text-xs text-slate-500">
+                        <tr key={run.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
+                          <td className="tabular-nums px-5 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
                             #{run.id}
                           </td>
-                          <td className="px-5 py-3 font-medium text-slate-800">{run.trigger}</td>
+                          <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-200">
+                            {run.trigger}
+                          </td>
                           <td className="px-5 py-3">
                             <Badge variant={statusVariant(run.status)}>{run.status}</Badge>
                           </td>
-                          <td className="tabular-nums px-5 py-3 text-slate-700">
+                          <td className="tabular-nums px-5 py-3 text-slate-700 dark:text-slate-300">
                             {run.synced_count}/{run.total_repos} thành công
                             {run.failed_count > 0 ? ` · ${run.failed_count} lỗi` : ""}
                           </td>
-                          <td className="tabular-nums px-5 py-3 text-xs text-slate-500">
+                          <td className="tabular-nums px-5 py-3 text-xs text-slate-500 dark:text-slate-400">
                             {formatViDate(run.started_at)}
                           </td>
-                          <td className="px-5 py-3 text-xs text-slate-600">
+                          <td className="px-5 py-3 text-xs text-slate-600 dark:text-slate-400">
                             {run.error_summary || "—"}
                           </td>
                         </tr>
@@ -158,8 +170,8 @@ export default function SyncStatusPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-50/75 p-5 text-xs leading-relaxed text-slate-600">
-            <strong className="text-slate-800">Bảo mật vận hành:</strong> Endpoint kích hoạt đồng bộ thủ công (
+          <Card className="bg-slate-50/75 p-5 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-400">
+            <strong className="text-slate-800 dark:text-slate-200">Bảo mật vận hành:</strong> Endpoint kích hoạt đồng bộ thủ công (
             <code className="font-mono">POST /repositories/sync/trigger</code>) được bảo vệ bởi header{" "}
             <code className="font-mono">X-Admin-Key</code> và chỉ bật khi{" "}
             <code className="font-mono">ADMIN_API_KEY</code> được cấu hình trên backend. Không bao giờ gửi token lên trình duyệt.

@@ -96,11 +96,11 @@ export function GuideRenderer({ content }: { content: string }) {
   const blocks = parseGuideBlocks(content);
 
   return (
-    <div className="space-y-4 text-sm leading-6 text-slate-700">
+    <div className="space-y-4 text-sm leading-6 text-slate-700 dark:text-slate-300">
       {blocks.map((block, idx) => {
         if (block.type === "heading") {
           return (
-            <h3 key={idx} className="pt-2 text-base font-semibold text-slate-900">
+            <h3 key={idx} className="pt-2 text-base font-semibold text-slate-900 dark:text-slate-100">
               {block.text}
             </h3>
           );
@@ -109,9 +109,9 @@ export function GuideRenderer({ content }: { content: string }) {
           return (
             <div
               key={idx}
-              className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3.5 text-xs leading-5 text-amber-900"
+              className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50/80 p-3.5 text-xs leading-5 text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
             >
-              <ShieldAlert className="mt-0.5 size-4 shrink-0 text-amber-700" />
+              <ShieldAlert className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-400" />
               <p>{block.text}</p>
             </div>
           );
@@ -121,7 +121,7 @@ export function GuideRenderer({ content }: { content: string }) {
             <ul key={idx} className="space-y-1.5 pl-1">
               {block.items.map((item, itemIdx) => (
                 <li key={itemIdx} className="flex items-start gap-2.5">
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-teal-600" />
+                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-teal-600 dark:bg-teal-400" />
                   <span className="break-words">{item}</span>
                 </li>
               ))}
@@ -132,7 +132,7 @@ export function GuideRenderer({ content }: { content: string }) {
           return <CodeBlock key={idx} lang={block.lang} code={block.code} />;
         }
         return (
-          <p key={idx} className="text-slate-700">
+          <p key={idx} className="text-slate-700 dark:text-slate-300">
             {block.text}
           </p>
         );
