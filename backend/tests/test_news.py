@@ -76,6 +76,8 @@ class NewsAPITests(unittest.TestCase):
             self.assertGreaterEqual(len(feed["days"]), 1)
             self.assertTrue(any(s["name"] == "Repo" for s in feed["sections"]))
             self.assertGreaterEqual(feed["stats"]["repo_items"], 1)
+            self.assertIn("section_counts", feed)
+            self.assertGreaterEqual(feed["section_counts"].get("Repo", 0), 1)
 
             latest_date = feed["days"][0]["date"]
             day_res = c.get(f"/news/day/{latest_date}")
@@ -83,9 +85,13 @@ class NewsAPITests(unittest.TestCase):
             self.assertEqual(day_res.json()["date"], latest_date)
             self.assertEqual(c.get("/news/day/not-a-date").status_code, 422)
 
-            repo_items = c.get("/news/items", params={"section": "Repo"})
+            repo_items = c.get("/news/items", params={"section": "Repo", "limit": 1})
             self.assertEqual(repo_items.status_code, 200)
-            self.assertGreaterEqual(repo_items.json()["total"], 1)
+            repo_payload = repo_items.json()
+            self.assertGreaterEqual(repo_payload["total"], 1)
+            self.assertIn("section_counts", repo_payload)
+            self.assertGreater(repo_payload["all_count"], repo_payload["total"])
+            self.assertEqual(repo_payload["section_counts"]["Repo"], repo_payload["total"])
 
             search_res = c.get("/news/items", params={"q": "bao mat"})
             self.assertEqual(search_res.status_code, 200)

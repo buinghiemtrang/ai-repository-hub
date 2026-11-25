@@ -72,9 +72,11 @@ export interface NewsFeedPayload {
   sections: NewsSectionMeta[];
   days: NewsDay[];
   weekly: WeeklyDigest[];
+  section_counts?: Record<string, number>;
   stats: {
     total_days: number;
     total_items: number;
+    all_items?: number;
     repo_items: number;
   };
 }

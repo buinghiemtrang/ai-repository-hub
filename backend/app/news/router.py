@@ -142,14 +142,27 @@ def get_feed(days_limit: int = Query(35, ge=1, le=90), db: Session = Depends(get
     repo_items = sum(
         1 for d in days for it in d["items"] if it["section"] == "Repo" and not it["tip"]
     )
+    section_counts: dict[str, int] = {s["name"]: 0 for s in SECTIONS}
+    seen_ids: set[str] = set()
+    for d in days:
+        for it in d["items"]:
+            it_id = it.get("id")
+            if it_id and it_id in seen_ids:
+                continue
+            if it_id:
+                seen_ids.add(it_id)
+            sec = it.get("section") or "Ứng dụng thực tế"
+            section_counts[sec] = section_counts.get(sec, 0) + 1
     return {
         "generated": datetime.now(UTC_PLUS_7).isoformat(),
         "sections": SECTIONS,
         "days": days,
         "weekly": weekly,
+        "section_counts": section_counts,
         "stats": {
             "total_days": len(days),
             "total_items": total_items,
+            "all_items": len(seen_ids),
             "repo_items": repo_items,
         },
     }
@@ -200,10 +213,10 @@ def search_items(
     offset: int = Query(0, ge=0, le=5000),
     db: Session = Depends(get_db),
 ):
-    stmt = select(NewsItem)
+    base_stmt = select(NewsItem)
     if q.strip():
         term = normalize_vi(q.strip())
-        stmt = stmt.where(
+        base_stmt = base_stmt.where(
             or_(
                 *(
                     func.unaccent(func.coalesce(col, "")).icontains(term, autoescape=True)
@@ -218,15 +231,27 @@ def search_items(
                 )
             )
         )
-    if section:
-        stmt = stmt.where(NewsItem.section == section)
     if batch in ("morning", "noon"):
-        stmt = stmt.where(NewsItem.batch == batch)
+        base_stmt = base_stmt.where(NewsItem.batch == batch)
     if from_date:
-        stmt = stmt.where(NewsItem.day_date >= from_date)
+        base_stmt = base_stmt.where(NewsItem.day_date >= from_date)
     if to_date:
-        stmt = stmt.where(NewsItem.day_date <= to_date)
+        base_stmt = base_stmt.where(NewsItem.day_date <= to_date)
 
+    # Single aggregate query across all matching items regardless of active section or pagination
+    base_subq = base_stmt.subquery()
+    count_rows = db.execute(
+        select(base_subq.c.section, func.count(func.distinct(base_subq.c.id))).group_by(
+            base_subq.c.section
+        )
+    ).all()
+    section_counts: dict[str, int] = {s["name"]: 0 for s in SECTIONS}
+    for sec_name, cnt in count_rows:
+        if sec_name:
+            section_counts[sec_name] = int(cnt)
+    all_count = db.scalar(select(func.count(func.distinct(base_subq.c.id)))) or 0
+
+    stmt = base_stmt.where(NewsItem.section == section) if section else base_stmt
     total = db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
     rows = db.scalars(
         stmt.order_by(NewsItem.day_date.desc(), NewsItem.is_picked.desc(), NewsItem.id.asc())
@@ -235,6 +260,8 @@ def search_items(
     ).all()
     return {
         "total": total,
+        "all_count": all_count,
+        "section_counts": section_counts,
         "limit": limit,
         "offset": offset,
         "items": [_serialize_item(r) for r in rows],
