@@ -1,43 +1,63 @@
 # AI Repository Hub
 
-Nền tảng cá nhân, mở rộng theo kiến trúc Modular Monolith cho các module AI. Module đầu tiên: **Repository Library** — tham khảo hành vi công khai của Mochi Studio Skills, biên soạn mô tả tiếng Việt và hướng dẫn đối chiếu trực tiếp từ tài liệu gốc (GitHub API & README), không sao chép mã nguồn hoặc thương hiệu.
+Nền tảng cá nhân phát triển theo kiến trúc **Modular Monolith** cho hệ sinh thái công cụ AI:
+- **Repository Library** (`/`): 487+ repository AI mã nguồn mở kèm mô tả tiếng Việt, ảnh xem trước và hướng dẫn đối chiếu từ README gốc.
+- **Tin tức AI & mục Repo** (`/news`): Bản tin tổng hợp độc lập theo ngày/tuần từ nguồn RSS/Atom/JSON công khai kết hợp mục **Repo** từ thư viện, tìm kiếm không dấu và trình đọc Podcast/TTS tiếng Việt.
+- **AI Studio Workspace** (`/studio`): Khung giao diện sẵn sàng mở rộng cho các công cụ sáng tạo tương lai (Video AI, Ảnh AI, Voiceover, Flows, MCP & AI Skills).
 
 ## Công nghệ
 
-- **Frontend**: Next.js 16 + TypeScript + Tailwind CSS v4 + shadcn/ui components (`lucide-react`, `cva`, `clsx`, `tailwind-merge`)
-- **Backend**: FastAPI + SQLAlchemy 2.0 + Alembic + PostgreSQL 16 + `unaccent`
-- **Hạ tầng**: Docker Compose v2 (hỗ trợ Linux và Windows Docker Desktop)
+- **Frontend**: Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4 + shadcn/ui (`lucide-react`, `cva`, `clsx`, `tailwind-merge`)
+- **Backend**: FastAPI + SQLAlchemy 2.0 + Alembic + PostgreSQL 16 (`unaccent`)
+- **Hạ tầng**: Docker Compose v2 (tương thích Linux và Windows Docker Desktop)
 
-## Chạy nhanh trên Linux / Windows
+## Thiết lập & Chạy trên Linux / Windows
 
-Yêu cầu: Git và Docker Compose v2 (Windows dùng Docker Desktop với Linux containers).
+### Yêu cầu
+- Git
+- Docker Engine / Docker Compose v2 (trên **Windows**: Docker Desktop bật backend WSL2 + Linux containers; khi dùng Git trên Windows nên giữ LF line endings nhờ `.gitattributes`).
+- (Tùy chọn chạy local ngoài Docker): Node.js 22+ và Python 3.12+.
+
+### Khởi chạy nhanh
 
 ```sh
 git clone https://github.com/buinghiemtrang/ai-repository-hub.git
 cd ai-repository-hub
-cp .env.example .env   # Tùy chọn: thêm GITHUB_TOKEN / ADMIN_API_KEY
-docker compose up --build
+cp .env.example .env   # Trên Windows PowerShell: Copy-Item .env.example .env
+docker compose up -d --build
 ```
 
-- Giao diện web: http://localhost:3000
-- Trang trạng thái đồng bộ: http://localhost:3000/sync
-- Lộ trình modules: http://localhost:3000/modules
-- API Docs (Swagger): http://localhost:8000/docs
+Mặc định các cổng chỉ mở trên loopback (`127.0.0.1`):
+- Giao diện web: `http://localhost:3000`
+- Tin tức AI & mục Repo: `http://localhost:3000/news`
+- AI Studio: `http://localhost:3000/studio`
+- Prototype thiết kế (đang đánh giá): `http://localhost:3000/prototypes`
+- Trạng thái đồng bộ: `http://localhost:3000/sync`
+- Kiến trúc Modules: `http://localhost:3000/modules`
+- Backend API Docs (Swagger): `http://localhost:8000/docs`
 
-Docker Compose chỉ publish cổng trên loopback (`127.0.0.1`). Dữ liệu PostgreSQL lưu trong named volume `db_data`. Backend tự động chạy `alembic upgrade head` khi khởi động.
+Backend tự động chạy `alembic upgrade head` và seed dữ liệu khởi tạo khi container khởi động. Dữ liệu PostgreSQL nằm trong named volume `db_data`.
 
-## Đồng bộ dữ liệu GitHub & Lịch tự động
+## Biến môi trường (`.env`)
 
-- **Lịch tự động**: Chạy nền trong backend theo chu kỳ `SYNC_INTERVAL_HOURS` (mặc định `24` giờ), bỏ qua repo đã đồng bộ trong vòng `SYNC_MIN_AGE_HOURS` (mặc định `12` giờ), giới hạn batch `SYNC_BATCH_LIMIT`, tự động dừng an toàn khi gặp rate limit (`403`/`429`) và ghi nhật ký vào bảng `sync_runs`.
-- **Đồng bộ thủ công qua CLI**:
+Tham khảo `.env.example` (không bao giờ commit `.env`):
+- `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`: Thông tin DB cục bộ.
+- `GITHUB_TOKEN`: Token GitHub (tùy chọn, nâng rate limit sync repo lên 5000 req/h).
+- `ADMIN_API_KEY`: Khóa bảo vệ endpoint đồng bộ thủ công (`POST /repositories/sync/trigger`, `POST /news/sync/trigger`).
+- `SYNC_SCHEDULER_ENABLED`, `SYNC_INTERVAL_HOURS`, `SYNC_MIN_AGE_HOURS`: Lịch đồng bộ metadata repo.
+- `NEWS_SYNC_ENABLED`, `NEWS_SYNC_INTERVAL_HOURS`: Lịch thu thập tin tức RSS công khai & cập nhật mục Repo.
+
+## Đồng bộ dữ liệu & CLI
+
+- **Đồng bộ GitHub Repo thủ công**:
   ```sh
   docker compose exec backend python -m app.repositories.sync
   ```
-- **Endpoint thủ công (`POST /repositories/sync/trigger`)**: Mặc định bị vô hiệu hóa (`503`) cho tới khi cấu hình `ADMIN_API_KEY` trong `.env`; khi bật cần truyền header `X-Admin-Key`. Không bao giờ đưa token/key lên frontend hoặc git.
-
-## Discovery & Import catalog
-
-Xem hướng dẫn chi tiết tại [crawler/README.md](crawler/README.md). Không tự động thực thi lệnh trong README của repo bên ngoài.
+- **Đồng bộ Tin tức RSS & mục Repo thủ công**:
+  ```sh
+  docker compose exec backend python -m app.news.sync
+  ```
+- **Discovery & Import catalog**: Xem [crawler/README.md](crawler/README.md). Không tự ý chạy lệnh trong README của repo bên ngoài.
 
 ## Sao lưu & Khôi phục PostgreSQL
 
@@ -52,21 +72,32 @@ Xem hướng dẫn chi tiết tại [crawler/README.md](crawler/README.md). Khô
   ./scripts/restore.ps1 -BackupFile backups\aihub_YYYYMMDD_HHMMSS.sql -Yes
   ```
 
-## Kiểm thử
+## Kiểm thử & Build
 
 - **Backend unit & integration tests**:
   ```sh
   docker compose run --rm --no-deps -e SYNC_SCHEDULER_ENABLED=false -v "$(pwd)/backend/tests:/app/tests:ro" backend python -m unittest discover -s tests -v
   ```
-- **Frontend build & typecheck**:
+  *(Trên Windows PowerShell, thay `"$(pwd)/backend/tests"` bằng `"${PWD}/backend/tests"`)*
+- **Frontend typecheck & production build**:
   ```sh
-  cd frontend && npm ci && npm run build && npm run typecheck
+  cd frontend && npm ci && npm run typecheck && npm run build
   ```
 
-## Kiến trúc Modular Monolith & Tài liệu
+## Quy trình làm việc đa máy (Linux công ty ↔ Windows cá nhân)
 
-- [docs/ROADMAP.md](docs/ROADMAP.md)
-- [docs/STATUS.md](docs/STATUS.md)
-- [docs/M1_MOCHI_ANALYSIS.md](docs/M1_MOCHI_ANALYSIS.md)
-- [docs/MODULE_CONTRACTS.md](docs/MODULE_CONTRACTS.md)
-- [modules/README.md](modules/README.md)
+1. Luôn kiểm tra nhánh đang làm việc (`git status` và `git branch`) trước khi kéo/đẩy code.
+2. Khi chuyển máy: `git fetch origin && git checkout <branch> && git pull`.
+3. Tạo `.env` riêng trên từng máy từ `.env.example` (không đồng bộ `.env` qua Git).
+4. Đọc `AGENTS.md`, `PROJECT_STATUS.md`, `NEXT_TASK.md` và `DESIGN.md` khi bắt đầu phiên làm việc mới với AI coding agent.
+
+## Tài liệu dự án (Project Memory)
+
+- [AGENTS.md](AGENTS.md) — Quy tắc làm việc & khôi phục ngữ cảnh cho AI agents
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Kiến trúc hệ thống, module & API
+- [DESIGN.md](DESIGN.md) — Quy chuẩn Taste Skill, Audit & Art Direction (`P2` -> `P2.1`)
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) — Tiến độ đã hoàn thành & còn lại
+- [NEXT_TASK.md](NEXT_TASK.md) — Việc tiếp theo cần làm & tiêu chí xong
+- [DECISIONS.md](DECISIONS.md) — Các quyết định kỹ thuật & thiết kế đã chốt
+- [CHANGELOG.md](CHANGELOG.md) — Lịch sử thay đổi
+- [docs/MODULE_CONTRACTS.md](docs/MODULE_CONTRACTS.md) — Hợp đồng mở rộng Modular Monolith

@@ -12,3 +12,4 @@ __pycache__/
 *.dump
 backups/
 .DS_Store
+.taste-skill/
