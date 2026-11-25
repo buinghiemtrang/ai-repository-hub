@@ -1,34 +1,25 @@
 # Next Task — Resume Plan
 
 **Active Branch:** `redesign/taste-skill`
-**Current Phase:** Waiting for user's detailed feedback prompt for **P2.1 — Vellum Digital Editorial**.
+**Current Phase:** **`P2.1 — Vellum Digital Editorial`** prototype complete at `/prototypes/2-1`; awaiting user review and approval before Phase 3/4 production rollout.
 
 ## Priority Queue
 
-1. **Await & Review P2.1 Feedback Prompt (User Input)**
-   - Do not modify official production pages (`/`, `/news`, `/studio`, `/sync`, `/modules`, `/repositories/[id]`) until P2.1 is reviewed and approved by the user.
+1. **Review & Approve `P2.1` (`/prototypes/2-1`) (User Decision Gate)**
+   - Compare `/prototypes/2-1` against `/prototypes/2` (`P2`), `/prototypes/1`, and `/prototypes/3`.
+   - Do **not** modify official production pages (`/`, `/news`, `/studio`, `/sync`, `/modules`, `/repositories/[id]`) until the user explicitly approves `P2.1` (or requests targeted adjustments to `P2.1`).
 
-2. **Build Prototype `P2.1 — Vellum Digital Editorial`**
-   - Keep existing `P2` (`/prototypes/2`) untouched for side-by-side comparison.
-   - Add `P2.1` as a separate prototype route (e.g., `/prototypes/2-1` and link from `/prototypes`).
-   - Address all recorded P2 gaps:
-     - Reduce text density across lead, ranked, and archive sections.
-     - Add real images, repository thumbnails, brand/tool logos, and crisp icons (reusing `icons.mjs` / GitHub owner avatars / real OG images; never synthetic duplicate title banners).
-     - Implement and visually verify refined animations & micro-interactions (`motion.md`, `shoot.mjs`, `consistency.mjs`).
-     - Ensure full Vietnamese typography rendering (`Newsreader`, `Hanken Grotesk`, `JetBrains Mono`) and light/dark contrast.
+2. **Phase 3 — Finalize Design System (`DESIGN.md` + Production Tokens + Shared UI)**
+   - After user approval, promote P2.1 tokens (`VELLUM_LIGHT` / `VELLUM_DARK`, `Newsreader` + `Hanken Grotesk` + `JetBrains Mono`, motion curves) into `frontend/app/globals.css` / `layout.tsx` and standardize shared production components (`Button`, `Card`, `Badge`, `AppShell`, `ThemeToggle`, `RepoThumbnail`, `RepoQuickPeek`).
 
-3. **Phase 3 — Finalize Design System (`DESIGN.md` + Tokens + Shared UI)**
-   - Lock tokens (colors, spacing, radii, typography, motion) and standardize shared components (`Button`, `Card`, `Input`, `Badge`, `AppShell`, `ThemeToggle`).
+3. **Phase 4 — Implement Approved Design Across All Production Pages**
+   - Redesign `/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules` consistently across desktop, tablet (`768`/`1024`), and mobile (`390`) without removing any existing feature or changing backend/DB/API behavior.
+   - Confirm with user before keeping or removing `/prototypes/*` routes after rollout.
 
-4. **Phase 4 — Implement Approved Design Across All Production Pages**
-   - Redesign `/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules` consistently on desktop, tablet (`768`/`820`), and mobile (`390`) without removing any existing feature or changing backend/DB/API behavior.
-   - Remove temporary `/prototypes` routes once production rollout is approved (or confirm with user whether to keep/remove).
-
-5. **Phase 5 — Visual & Functional QA**
+4. **Phase 5 — Production Visual & Functional QA**
    - Validate in headless Chrome (`shoot.mjs`, `consistency.mjs`, before/after screenshots, dark/light, loading/empty/error/hover/focus/active states).
    - Run full `npm run typecheck`, `npm run build`, and backend `unittest discover`.
 
-## Definition of Done for Next Milestone (`P2.1`)
-- `P2` (`/prototypes/2`) remains intact and comparable.
-- `P2.1` renders live `/api/repositories` and `/api/news/feed` data with balanced visual/text ratio, real imagery/logos/icons/thumbnails, verified smooth micro-interactions, and clean Vietnamese typography in both light and dark modes.
-- User explicitly approves `P2.1` before Phase 4 production changes begin.
+## Definition of Done for Next Milestone (Phase 3/4 Promotion)
+- User explicitly approves `P2.1 — Vellum Digital Editorial` (and any feedback tweaks are resolved on `/prototypes/2-1`).
+- Production pages match the approved P2.1 design system cleanly across Light/Dark and all 6 viewports with zero regressions.

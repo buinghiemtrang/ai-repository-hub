@@ -26,3 +26,8 @@ Only verified and user-approved decisions are recorded here.
 - **Decision**: User selected **P2 — Vellum Editorial** over P1 (`Obsidian Ledger`) and P3 (`Atelier Canvas`).
 - **Refinement Path**: Upgrade P2 into **`P2.1 — Vellum Digital Editorial`** to solve text density, add real images/logos/icons/thumbnails, and verify animation quality.
 - **Safety Gate**: Preserve `/prototypes/2` untouched for comparison and do not modify official production routes until the user approves `P2.1`.
+
+## D6 — P2.1 Motion & Asset Architecture (2026-11-25, Prototype Implementation)
+- **Motion Library**: Added `motion@14.14.0` (`MotionConfig reducedMotion="user"`, `AnimatePresence`, `layoutId` transitions) inside `frontend/package.json` for editorial choreography and Specimen Folio drawer transitions.
+- **Real Icon Inventory**: Bundled `46` CC0/MIT SVGs locally in `frontend/public/icons/` (`icons.mjs` + `icons-credits.json`) for fast offline-safe rendering across both Docker Linux and local dev without third-party CDN runtime failures.
+- **Honest Catalog Metrics**: Replaced any synthetic/placeholder trending percentages with real database counts (`Bộ sưu tập biên tập`) and Top 5 catalog `stargazers_count` (`Nổi bật theo GitHub Stars`).

@@ -22,15 +22,18 @@
 ### Extensible AI Studio Shell (on `redesign/taste-skill`)
 - `frontend/app/studio/page.tsx` and updated `AppShell.tsx` / `modules/page.tsx` / `sync/page.tsx` defining slots for future AI tools (Video AI, Image & POD, Voiceover, Flows, MCP & Skills, Local Models).
 
-### Frontend Redesign — Phase 1 & Phase 2 (on `redesign/taste-skill`)
+### Frontend Redesign — Phase 1, Phase 2 & P2.1 Prototype (on `redesign/taste-skill`)
 - Integrated `Leonxlnx/taste-skill` (`design-taste-frontend` `tasteskill 2.5.1`) into `~/.agents/skills/design-taste-frontend/`.
 - Audited live UI in headless Chrome (`docs/design/screenshots/`).
-- Built 3 live interactive prototypes (`/prototypes/1`, `/prototypes/2`, `/prototypes/3` + `/prototypes` index) using real API data.
-- **User Decision**: Selected **P2 — Vellum Editorial** as the design foundation.
+- Built 3 live interactive baseline prototypes (`/prototypes/1`, `/prototypes/2`, `/prototypes/3` + `/prototypes` index) using real API data; user selected **P2 — Vellum Editorial**.
+- **Built & Verified `P2.1 — Vellum Digital Editorial`** (`/prototypes/2-1` + `frontend/components/prototypes/vellum/`):
+  - Installed `motion@14.14.0` (React 19 compatible, MIT) and `46` CC0/MIT SVG icons (`frontend/public/icons/` + `icons-credits.json`).
+  - Implemented Featured Spotlight carousel, 4 Editorial Collections with real DB counts, honest Top 5 GitHub Stars strip, Search/Language/Sort/Category filters, Grid ↔ Compact List toggle, **Specimen Folio Quick-Peek** drawer (`←`/`→`/`Esc`), **Vellum News Magazine** view (`speechSynthesis` TTS), and **Vellum Studio Workbench** preview + 8-tool directory.
+  - Verified in headless Chrome across `1920`, `1440`, `1280`, `1024`, `768`, `390` (`0` overflow, `70/70` images loaded, `0` console errors, Light + Dark modes, `prefers-reduced-motion`). Preserved P1/P2/P3 intact.
 
 ## 2. In Progress / Not Yet Started
 
-- **P2.1 — Vellum Digital Editorial Prototype**: Pending user's detailed feedback prompt in the next session to address P2's known gaps (text-heavy density, missing real images/logos/icons/thumbnails, unverified animation quality).
+- **User Review & Approval of `P2.1`**: Awaiting user review of `http://localhost:3000/prototypes/2-1` (side-by-side with `/prototypes/2`) before promoting to production.
 - **Phase 3 — Final Design System Tokens & Shared Components**: Pending P2.1 approval.
 - **Phase 4 — Production Frontend Redesign**: Official UI (`/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules`) has **not** been replaced yet.
-- **Phase 5 — Visual QA**: Pending Phase 4 implementation.
+- **Phase 5 — Production Visual & Full E2E QA**: Pending Phase 4 implementation.

@@ -61,5 +61,47 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
   2. Lacks real visual richness: images, logos, brand/tool icons, and repository thumbnails.
   3. Animation and micro-interaction quality has not yet been refined or verified in browser QA.
   4. Duplicate `@owner/repo` block when a repo lacks a custom OG image (`proto2-1440.png`).
-- **Next Step**: Build **`P2.1 — Vellum Digital Editorial`** as an upgraded prototype while **keeping `P2` (`/prototypes/2`) intact for side-by-side comparison**, and **do not replace the official production UI until the user reviews and approves `P2.1`**.
-- Detailed feedback prompt for `P2.1` will be provided by the user in the next session.
+- **Status**: **`P2.1 — Vellum Digital Editorial`** prototype is now built and visually verified at `/prototypes/2-1` while **keeping `P2` (`/prototypes/2`), `P1`, and `P3` intact for side-by-side comparison**. Official production routes remain untouched pending explicit user review and approval of `P2.1`.
+
+## 5. P2.1 — Vellum Digital Editorial System Spec (Prototype Draft — Pending Approval)
+
+> **Status Distinction**: `P2` is the approved art direction baseline; `P2.1` (`/prototypes/2-1`) is the concrete interactive design system draft awaiting final user approval before Phase 3/4 production rollout.
+
+### 5.1 Brand & Visual Language
+- **Identity**: Bespoke geometric architectural press mark SVG (`VellumHeader.tsx`) paired with editorial wordmark **AI Repo Hub** (`Vellum Digital · P2.1`).
+- **Aesthetic**: Warm paper & carbon ink (*Vellum Digital Editorial*), crisp `1px` rules (`4px`–`6px` radii), tabular numbers, high visual clarity without gradients, glassmorphism glow, or generic card clutter.
+
+### 5.2 Color Tokens (`frontend/components/prototypes/vellum/tokens.ts`)
+- **Light (`VELLUM_LIGHT`)**: Paper canvas `#F7F4ED`, Elevated surface `#FDFBF6`, Sunken surface `#F0ECE1`, Carbon ink `#1B1917`, Muted ink `#6B655D`, Hairline rule `rgba(27, 25, 23, 0.11)`, Strong rule `rgba(27, 25, 23, 0.20)`, Editorial vermilion accent `#C84B24` (`#FFFFFF` on accent), Soft accent `rgba(200, 75, 36, 0.10)`.
+- **Dark (`VELLUM_DARK`)**: Obsidian canvas `#131110`, Elevated surface `#1A1816`, Sunken surface `#221F1D`, Warm ivory ink `#F3EFE7`, Muted ink `#A8A095`, Hairline rule `rgba(243, 239, 231, 0.11)`, Strong rule `rgba(243, 239, 231, 0.22)`, Warm terracotta accent `#EA6B3F` (`#131110` on accent), Soft accent `rgba(234, 107, 63, 0.14)`.
+- **Theme Scoping**: In P2.1 prototype, theme tokens are driven by React state; CSS media queries (`dark:*`) that do not inspect state must use explicit `theme` / `dark` inline styles (verified on `RepoThumbnail` corner stamp).
+
+### 5.3 Typography (Verified `vietnamese` Subset)
+- **Editorial Headings**: `Newsreader` (`--font-newsreader`) for page titles, Spotlight/Cover headlines, and specimen headers.
+- **Interface & Vietnamese Body**: `Hanken Grotesk` (`--font-hanken`) across filters, metadata, cards, and navigation.
+- **Mono & Metrics**: `JetBrains Mono` (`--font-jetbrains`) + `tabular-nums` for `PLATE · #index`, stars, forks, shortcut keys (`/`), and view switchers.
+
+### 5.4 Layout, Grids & Spacing
+- **Shell**: `max-w-7xl` centered container (`px-4 sm:px-6`), sticky `64px` top header with `← So sánh` (`xl+`), wordmark, primary nav (`Thư viện Repo`, `Tạp chí Tin`, `Xưởng AI`, `Công cụ AI` dropdown), Search trigger, Favorites counter, `P1 | P2 | P2.1 | P3` switcher, Dark toggle, and mobile drawer (`lg:hidden`).
+- **Library View**:
+  1. **Featured Spotlight** (`01`–`04` selector, real OG / specimen preview, description, CTA `Xem nhanh hướng dẫn` + `GitHub`).
+  2. **2-column Editorial Split**: `Bộ sưu tập biên tập` (4 curated quick-filters with real DB category counts) + `Nổi bật theo GitHub Stars` (top 5 catalog repos labeled honestly by real GitHub Stars — no invented weekly delta metrics).
+  3. **Command Bar**: `/`-shortcut search, language selector, sort selector, `Lưới` ↔ `Danh sách` view toggle, and category filter bar.
+  4. **Catalog Views**: 3-column specimen card grid (`md:grid-cols-2 lg:grid-cols-3`) + Compact List mode, with pagination (`12` items/page).
+- **News View (`Tạp chí Tin`)**: Masthead + Podcast/TTS voice controls (`speechSynthesis`), Cover Story + Right Dispatch Rail, 2-column magazine cards (`news_items` with real `image_url` or crisp source/topic plate), and weekly/daily digest archive.
+- **Studio View (`Xưởng AI`)**: Interactive 4-tool workbench preview (`Image & POD`, `Video AI`, `Voiceover & Podcast`, `Flows & Automation`) + 8-tool directory (`ComfyUI`, `Midjourney`, `Dify`, `ElevenLabs`, `MCP`, `Claude Code`, `Langfuse`, `Ollama`) backed by real SVGs, marking `Demo UI` / `Sắp tới` transparently.
+
+### 5.5 6-Tier Visual Hierarchy & Real Assets (`RepoThumbnail.tsx`, `VellumIcons.tsx`)
+- **46 Real Brand & Language SVGs**: Installed via `icons.mjs` (CC0/MIT) into `frontend/public/icons/` with license inventory at `frontend/public/icons/icons-credits.json`.
+- **Thumbnail Resolution**:
+  1. When `repo.has_custom_image && repo.image_url` loads cleanly: render real image inside `aspect-[16/10]` frame with `object-contain` (prevents wide wordmark cropping such as `n8n-io/n8n`) + bottom corner stamp showing GitHub `owner_avatar_url` and matched brand SVG.
+  2. Fallback when no custom image (or broken): render **5-variant Vellum Specimen Plate** pairing real GitHub owner avatar (`owner_avatar_url`) + resolved brand SVG (`resolveBrandIcon`) + language SVG badge (`resolveLanguageIcon`) + plate index + clean architectural geometry. Zero duplicate text banner boxes.
+
+### 5.6 Motion System & Signature Interaction (`motion@14.14.0`)
+- **Timing Curve**: `VELLUM_EASE = [0.22, 1, 0.36, 1]` with `MotionConfig reducedMotion="user"`.
+- **Shared-Element Transitions**: `layoutId="vellum-nav-underline"` on top nav tabs and `layoutId="vellum-view-pill"` on Grid ↔ List segmented toggle.
+- **Signature Interaction — Specimen Folio Quick-Peek (`RepoQuickPeek.tsx`)**: Slide-over right folio drawer (`AnimatePresence`) fetching full `/api/repositories/{id}` README guide & metadata in place, with `Esc` to close and `←` / `→` keyboard stepping across catalog items.
+
+### 5.7 Verified Responsive & Visual QA Checklist
+- Headless Chrome CDP verified on `/prototypes/2-1` across `1920`, `1440`, `1280`, `1024`, `768`, `390` viewports: `0` horizontal overflow, `70/70` loaded images (`broken: 0`), `0` console errors, verified Vietnamese webfont stack (`Newsreader`, `Hanken Grotesk`, `JetBrains Mono`), Light + Dark modes, List toggle, Search, Quick-Peek Folio, News, Studio, and `prefers-reduced-motion: reduce`.
+- Screenshots stored under `docs/design/screenshots/p2-1-*.png`.
