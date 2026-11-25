@@ -61,11 +61,11 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
   2. Lacks real visual richness: images, logos, brand/tool icons, and repository thumbnails.
   3. Animation and micro-interaction quality has not yet been refined or verified in browser QA.
   4. Duplicate `@owner/repo` block when a repo lacks a custom OG image (`proto2-1440.png`).
-- **Status**: User reviewed **`P2.1 — Vellum Digital Editorial`** and agreed to continue developing along this direction. **`P2.2 — Vellum Digital Polish`** is now implemented and visually verified at `/prototypes/2-2` while preserving `P1`, `P2`, `P2.1`, and `P3` intact for comparison. Official production pages remain untouched pending explicit user acceptance of `P2.2`.
+- **Status**: User confirmed **`P2.1 / P2.2`** direction (Vellum Digital Editorial). **`P2.2.1 — Stabilization & Release Candidate`** is now implemented and verified at `/prototypes/2-2-1` while **keeping `P1`, `P2`, `P2.1`, and `P2.2` intact for comparison**. Official production pages remain untouched pending final user acceptance of Vellum Design System 1.0.
 
-## 5. P2.1 → P2.2 — Vellum Digital Editorial Design System
+## 5. P2.1 → P2.2 → P2.2.1 — Vellum Digital Editorial Design System
 
-> **Status Distinction**: `P2.1` is the direction agreed by the user to continue developing; `P2.2` (`/prototypes/2-2`) is the UI/UX, category-count, icon, layout, and motion polish candidate awaiting final user acceptance before Phase 3/4 production rollout.
+> **Status Distinction**: `P2.2` (`/prototypes/2-2`) is preserved as the baseline reference; `P2.2.1` (`/prototypes/2-2-1`) is the stabilized Release Candidate with React #310 fix, WCAG 2.2 AA dark contrast tokens (`VELLUM_DARK_RC`), 44px mobile touch targets, safe shared Markdown Folio rendering, and verified News count labels.
 
 ### 5.1 Brand & Visual Language
 - **Identity**: Bespoke geometric architectural press mark SVG (`VellumHeader.tsx`) paired with editorial wordmark **AI Repo Hub** (`Vellum Digital · P2.1`).
@@ -122,3 +122,19 @@ Three interactive prototypes using live `/api/repositories` and `/api/news/feed`
    - Removed internal source file path (`backend/app/...`) from user UI; added inline SVG Workflow Architecture diagram, interactive clickable Stages `01`–`03`, explicit `Prototype UI · Sắp mở` labels, and in-prototype Library deep-linking.
 5. **Motion & Signature Folio Upgrade (`RepoQuickPeek22.tsx`)**:
    - Restores focus to clicked trigger on close, moves focus inside `[role="dialog"]` on open, traps `Tab`/`Shift+Tab`, supports `←` / `→` / `Esc`, adds image scale settle reveal, `Copy URL` feedback, structured README section cards, and eliminates filter/search card stagger jitter.
+
+## 7. P2.2.1 — Stabilization & Release Candidate Upgrades (`/prototypes/2-2-1`)
+
+1. **P0 — React Error #310 Root Cause & Fix (`frontend/components/AppShell.tsx`)**:
+   - **Root Cause**: `AppShell` returned early (`if (pathname.startsWith("/prototypes")) return <>{children}</>;`) before `useState`/`useEffect` hooks. Soft client navigation (`<Link href="/repositories/1">`) from a prototype caused `AppShell` to invoke more hooks on re-render, triggering minified React Error #310.
+   - **Fix**: Moved all `useState` and `useEffect` calls unconditionally above the `/prototypes` early return. Verified across `/repositories/1`, `/repositories/188`, Browser Back/Forward, Reload, Grid/List/Spotlight, Desktop & Mobile.
+2. **P0 — News Category Counts Database Verification**:
+   - Confirmed PostgreSQL live counts (`98` total items across `13` days, `25/11: 16`, `24/11: 23`, zero duplicate `external_id`) match UI category pills `1:1` across date & search filters with `1` initial `/api/news/feed?days_limit=90` request (`0` extra requests per filter).
+3. **P1 — Three-Part News Result Label (`VellumNewsView22.tsx` `rc`)**:
+   - Distinguishes displayed category results (`filteredItems.length`), date+search matches (`categoryStats.allCount`), and full selected-day/archive count (`scopedTotalCount`), e.g. `1 kết quả (Claude) · 16 tin trong ngày 25/11/2026`.
+4. **P1 — Mobile Touch Targets (`44 × 44 CSS px` at `<640px`)**:
+   - Applied responsive `min-h-11` / `size-11 sm:size-8` hitboxes on mobile controls (`VellumHeader22`, `VellumLibraryView22`, `VellumNewsView22`, `RepoQuickPeek22`, `NewsDetailDrawer22`, `VellumStudioView22`) and verified at `320px`, `390px`, `430px`, `768px`, `1024px`, `1920px` with zero horizontal overflow.
+5. **P1 — Shared Safe Markdown Renderer (`GuideRenderer.tsx`)**:
+   - Extended shared `GuideRenderer` (no `dangerouslySetInnerHTML`, strict `http:`/`https:`/`mailto:` allowlist) to support `#/##/###`, unordered & ordered lists, Markdown tables, blockquotes, inline code/bold/italic/links/autolinks, monospace fenced code blocks with Copy button, and `vellum-light`/`vellum-dark` variants reused inside `RepoQuickPeek22`.
+6. **P1 — WCAG 2.2 AA Contrast Tokens (`tokens.ts` `VELLUM_DARK_RC` / `VELLUM_LIGHT_RC`)**:
+   - Upgraded `VELLUM_DARK_RC.muted` to `#B8B0A4` (`7.27:1+` on `#25221F`, `8.05:1` on `#1B1917`), `#EC7650` accent with `#131110` ink (`5.85:1+`), high-contrast placeholder text, and replaced dimmed opacity on `0`-count chips with dashed full-opacity borders.

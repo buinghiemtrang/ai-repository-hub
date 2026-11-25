@@ -12,7 +12,8 @@ All notable changes to AI Repository Hub are documented in this file.
   - Built live comparison hub and baseline prototypes (`P1`, `P2`, `P2.1`, `P3`).
   - Extended `/news/feed` & `/news/items` (`backend/app/news/router.py`, `backend/tests/test_news.py`) backward-compatibly with single-query `section_counts` & `all_count`.
   - Built **`P2.2 — Vellum Digital Polish`** (`/prototypes/2-2`) with live News category counts & fixed category/brand icons (`NewsCategoryIcon`), above-the-fold Repo Library compaction (`y = 562px`), smart News Cover Story selection + pagination + `NewsDetailDrawer22`, upgraded `RepoQuickPeek22` focus trap & structured README view, and inline Studio Workflow Diagram without backend path exposure.
-  - Verified P2.2 in headless Chrome CDP across 6 viewports (`1920`–`390`), Light/Dark modes, and reduced motion; archived screenshots in `docs/design/screenshots/p2-2-*.png`.
+  - Built **`P2.2.1 — Stabilization & Release Candidate`** (`/prototypes/2-2-1`, keeping `/prototypes/2-2` intact): fixed React Error #310 root cause in `frontend/components/AppShell.tsx`, added 3-part News result count labels, `44×44px` mobile touch targets (`320`–`430px`), reused enhanced safe Markdown `GuideRenderer` in Folio, and upgraded `VELLUM_DARK_RC` WCAG 2.2 AA contrast tokens.
+  - Verified P2.2 & P2.2.1 in headless Chrome CDP across `1920`–`320` viewports, Dark/Light modes, `60fps` animation timing, and `prefers-reduced-motion`; archived screenshots in `docs/design/screenshots/`.
 - **Project Memory & Cross-Platform Handover**: Added `ARCHITECTURE.md`, `DESIGN.md`, `PROJECT_STATUS.md`, `NEXT_TASK.md`, `DECISIONS.md`, `CHANGELOG.md`, `docs/design/`, and `docs/prompts/`; updated `AGENTS.md`, `README.md`, `.gitignore`.
 
 ### Changed

@@ -37,10 +37,20 @@ This directory stores visual audit captures, prototype references, and design it
 - `p2-2-news-detail.png` — **P2.2**, AI News Detail Reader drawer (`NewsDetailDrawer22`)
 - `p2-2-studio.png` — **P2.2**, AI Studio Workbench with SVG architecture workflow diagram & interactive stages
 
+### Phase 2.2.1 — Stabilization & Release Candidate (2026-11-25)
+- `p2-2-1-1440.png` — **P2.2.1 RC** (`/prototypes/2-2-1`), Desktop `1440×900`, Light mode (`LCP 688ms` cold / `116ms` warm, `CLS 0`)
+- `p2-2-1-detail.png` — Client navigation Folio → `/repositories/1` (`openclaw/openclaw`) verified after React #310 fix
+- `p2-2-1-folio-md.png` — Folio Quick Preview rendering Markdown headings, lists, links & fenced code blocks safely
+- `p2-2-1-news.png` — AI News filtered result label (`2 kết quả (Claude) · 2 khớp từ khóa · 23 tin trong ngày 24/11/2026`)
+- `p2-2-1-dark.png` — Dark Mode (`VELLUM_DARK_RC` `#B8B0A4` muted text & WCAG 2.2 AA contrast)
+- `p2-2-1-390.png` — Mobile `390×844` with `>= 44×44px` touch targets (`overflow: false`)
+- `p2-2-1-320.png` — Small Mobile `320×568` (`overflow: false`)
+
 ## Active Prototype Code
 - Comparison index: [frontend/app/prototypes/page.tsx](../../frontend/app/prototypes/page.tsx)
 - P1: [frontend/app/prototypes/1/page.tsx](../../frontend/app/prototypes/1/page.tsx)
 - P2: [frontend/app/prototypes/2/page.tsx](../../frontend/app/prototypes/2/page.tsx) (keep intact for comparison)
 - P2.1: [frontend/app/prototypes/2-1/page.tsx](../../frontend/app/prototypes/2-1/page.tsx) & [frontend/components/prototypes/vellum/](../../frontend/components/prototypes/vellum/) (baseline direction approved by user)
-- P2.2: [frontend/app/prototypes/2-2/page.tsx](../../frontend/app/prototypes/2-2/page.tsx) & [frontend/components/prototypes/vellum22/](../../frontend/components/prototypes/vellum22/) (latest polish candidate awaiting user acceptance)
+- P2.2: [frontend/app/prototypes/2-2/page.tsx](../../frontend/app/prototypes/2-2/page.tsx) & [frontend/components/prototypes/vellum22/](../../frontend/components/prototypes/vellum22/) (`rc=false` comparison baseline)
+- P2.2.1 RC: [frontend/app/prototypes/2-2-1/page.tsx](../../frontend/app/prototypes/2-2-1/page.tsx) (`rc=true` Release Candidate awaiting user acceptance)
 - P3: [frontend/app/prototypes/3/page.tsx](../../frontend/app/prototypes/3/page.tsx)

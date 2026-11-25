@@ -35,3 +35,8 @@ Only verified and user-approved decisions are recorded here.
 ## D7 — P2.2 Polish & Backward-Compatible News Section Counts (2026-11-25)
 - **Direction Confirmation**: User approved continuing with `P2.1 — Vellum Digital Editorial` typography, palette, logo, and editorial system into `P2.2 — Vellum Digital Polish` (`/prototypes/2-2`) while preserving `/prototypes/2-1`.
 - **Backward-Compatible Backend Extension**: Added `section_counts` and `all_count` to `/news/feed` and `/news/items` (`backend/app/news/router.py`) using a single `GROUP BY` aggregate query computed before `section`/`offset`/`limit` filtering, avoiding per-category client requests and keeping all prior response fields intact.
+
+## D8 — P2.2.1 Stabilization & Release Candidate Architecture (2026-11-25)
+- **React #310 Root Cause Fix (`AppShell.tsx`)**: Resolved unconditional Rules-of-Hooks invariant by moving `if (pathname.startsWith("/prototypes"))` below all `useState` / `useEffect` calls rather than adding fragile reload workarounds.
+- **Zero-Duplication RC Gating (`rc` prop)**: Implemented `P2.2.1` (`/prototypes/2-2-1`) reusing shared `vellum22` components via `rc={true}` and dedicated `VELLUM_DARK_RC`/`VELLUM_LIGHT_RC` tokens so `P2.2` stays intact for direct visual diffing.
+- **Shared Safe Markdown (`GuideRenderer.tsx`)**: Consolidated README rendering in `GuideRenderer` (supporting headings, lists, tables, safe allowlisted links, and fenced code blocks with Copy button; zero `dangerouslySetInnerHTML`) reused across both `/repositories/[id]` and Folio Quick Preview.

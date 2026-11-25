@@ -32,9 +32,14 @@
   - **Library & News & Studio Polish**: Compacted Library hero/spotlight + Top 5 Stars + inline Collections so first Repo cards sit visible above the fold (`y = 562px` vs `1030px` in P2.1); prioritized non-Repo AI headlines for News Cover Story + added News pagination + `NewsDetailDrawer22`; upgraded `RepoQuickPeek22` focus management (`Tab` trap, focus restore, `Copy URL`, structured README cards); added inline Workflow Diagram + interactive Stage inspector in `VellumStudioView22` without exposing internal backend paths.
   - Verified in headless Chrome across 6 viewports (`0` overflow, `64/64` images loaded, Light + Dark `#131110`, FCP `188ms`, `prefers-reduced-motion`) and `15/15` backend tests. Preserved `P1`, `P2`, `P2.1`, and `P3` intact.
 
+- **Built & Verified `P2.2.1 — Stabilization & Release Candidate`** (`/prototypes/2-2-1`, keeping `/prototypes/2-2` intact for comparison):
+  - **P0 — Fixed React Error #310**: Resolved Rules-of-Hooks violation in `frontend/components/AppShell.tsx` (moved `/prototypes` early return below all hooks). Verified Folio → `/repositories/1` & `/repositories/188` → Back/Forward → Reload → List view transitions with zero console/runtime errors.
+  - **P0 — Verified News Category Counts vs PostgreSQL**: Verified DB (`13` days, `98` unique `news_items`: `25/11 = 16`, `24/11 = 23`, `Repo = 28`, etc.) matches API and UI counts 1:1 with `1` `/api/news/feed?days_limit=90` request (`0` extra requests per filter).
+  - **P1 UX Hardening**: Accurate 3-part News result summary label; `>= 44×44px` mobile touch targets (`320`/`390`/`430px`); safe shared `GuideRenderer` supporting fenced code + copy button + lists + links + tables inside Folio; WCAG 2.2 AA `VELLUM_DARK_RC` contrast tokens; `60fps` animation audit; localhost CWV (`LCP 688ms` cold / `116ms` warm, `CLS 0`, `INP` not separately synthesized by script).
+
 ## 2. In Progress / Not Yet Started
 
-- **User Review & Acceptance of `P2.2`**: Awaiting user verification at `http://localhost:3000/prototypes/2-2` (comparing side-by-side with `/prototypes/2-1`) before promoting to production.
-- **Phase 3 — Final Design System Tokens & Shared Components**: Pending P2.2 acceptance.
+- **User Final Sign-Off on `P2.2.1` Release Candidate**: Awaiting user review at `http://localhost:3000/prototypes/2-2-1` to approve **Vellum Design System 1.0** for Phase 3/4 rollout.
+- **Phase 3 — Final Design System Tokens & Shared Components**: Pending P2.2.1 sign-off.
 - **Phase 4 — Production Frontend Redesign**: Official UI (`/`, `/repositories/[id]`, `/news`, `/studio`, `/sync`, `/modules`) has **not** been replaced yet.
 - **Phase 5 — Production Visual & Full E2E QA**: Pending Phase 4 implementation.
