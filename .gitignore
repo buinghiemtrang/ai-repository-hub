@@ -10,4 +10,5 @@ __pycache__/
 .venv/
 .pytest_cache/
 *.dump
+backups/
 .DS_Store
