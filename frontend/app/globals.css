@@ -1,61 +1,117 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Vellum Design System 1.0 — Authoritative Light & Dark Tokens */
 :root {
   color-scheme: light;
-  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-  --surface-page: #fafaf9;
-  --surface-card: #ffffff;
-  --ink-primary: #0f172a;
-  --ink-secondary: #475569;
-  --accent: #0f766e;
+  --v-bg: #f5f2eb;
+  --v-surface: #fbf9f4;
+  --v-surface-alt: #eae5d9;
+  --v-ink: #171614;
+  --v-muted: #57534b;
+  --v-rule: rgba(23, 22, 20, 0.16);
+  --v-rule-strong: rgba(23, 22, 20, 0.34);
+  --v-accent: #c03a17;
+  --v-accent-soft: rgba(192, 58, 23, 0.09);
+  --v-accent-ink: #ffffff;
+  --v-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Backward-compatible semantic aliases */
+  --surface-page: var(--v-bg);
+  --surface-card: var(--v-surface);
+  --ink-primary: var(--v-ink);
+  --ink-secondary: var(--v-muted);
+  --accent: var(--v-accent);
 }
 
 .dark {
   color-scheme: dark;
-  --surface-page: #090d16;
-  --surface-card: #111827;
-  --ink-primary: #f1f5f9;
-  --ink-secondary: #94a3b8;
-  --accent: #2dd4bf;
+  --v-bg: #131110;
+  --v-surface: #1b1917;
+  --v-surface-alt: #25221f;
+  --v-ink: #f4f0e8;
+  --v-muted: #b8b0a4;
+  --v-rule: rgba(239, 235, 227, 0.18);
+  --v-rule-strong: rgba(239, 235, 227, 0.38);
+  --v-accent: #ec7650;
+  --v-accent-soft: rgba(236, 118, 80, 0.18);
+  --v-accent-ink: #131110;
+
+  --surface-page: var(--v-bg);
+  --surface-card: var(--v-surface);
+  --ink-primary: var(--v-ink);
+  --ink-secondary: var(--v-muted);
+  --accent: var(--v-accent);
 }
 
 @theme inline {
-  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {
-  background-color: var(--surface-page);
-  color: var(--ink-primary);
+  background-color: var(--v-bg);
+  color: var(--v-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.font-telemetry {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
+.dark .vellum-invert-dark {
+  filter: invert(1) brightness(1.1);
+}
+
+/* CSS-driven Specimen Plate palettes (adapts cleanly to Light/Dark without hydration mismatch) */
+.vellum-plate-0 { --vp-bg: #ECE7DC; --vp-pattern: rgba(23,22,20,0.055); --vp-accent: #C03A17; }
+.vellum-plate-1 { --vp-bg: #E3E7E2; --vp-pattern: rgba(23,36,28,0.06); --vp-accent: #1F5E43; }
+.vellum-plate-2 { --vp-bg: #E5E8EE; --vp-pattern: rgba(23,30,46,0.06); --vp-accent: #224B8E; }
+.vellum-plate-3 { --vp-bg: #ECE2DF; --vp-pattern: rgba(46,24,20,0.055); --vp-accent: #9B2C2C; }
+.vellum-plate-4 { --vp-bg: #EAE5D8; --vp-pattern: rgba(44,36,20,0.055); --vp-accent: #8C5E1A; }
+
+.dark .vellum-plate-0 { --vp-bg: #221F1C; --vp-pattern: rgba(239,235,227,0.055); --vp-accent: #E56B45; }
+.dark .vellum-plate-1 { --vp-bg: #1B221E; --vp-pattern: rgba(225,240,232,0.055); --vp-accent: #68B894; }
+.dark .vellum-plate-2 { --vp-bg: #1B1F27; --vp-pattern: rgba(225,233,245,0.055); --vp-accent: #6C9AE2; }
+.dark .vellum-plate-3 { --vp-bg: #241C1B; --vp-pattern: rgba(245,225,222,0.055); --vp-accent: #DF7868; }
+.dark .vellum-plate-4 { --vp-bg: #231F18; --vp-pattern: rgba(245,238,220,0.055); --vp-accent: #D5A04C; }
+
+.vellum-placeholder::placeholder {
+  color: var(--v-muted);
+  opacity: 1;
+}
+
 .pressable {
-  transition: transform 150ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms var(--ease-out);
+  transition: transform 150ms var(--v-ease), background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms var(--v-ease);
 }
 
 .pressable:active:not(:disabled) {
-  transform: scale(0.98);
+  transform: scale(0.985);
 }
 
 .card-lift {
-  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms ease;
+  transition: transform 160ms var(--v-ease), box-shadow 160ms var(--v-ease), border-color 160ms ease;
 }
 
 .card-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 12px 26px -14px rgba(23, 22, 20, 0.18), 0 2px 6px -2px rgba(23, 22, 20, 0.08);
 }
 
 .dark .card-lift:hover {
-  box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(45, 212, 191, 0.14);
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(236, 118, 80, 0.24);
 }
 
 @media (prefers-reduced-motion: reduce) {

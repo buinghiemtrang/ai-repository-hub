@@ -1,10 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { loadFavorites, toggleFavoriteId } from "@/lib/repositories/favorites";
+import { FAVORITES_STORAGE_KEY, loadFavorites, toggleFavoriteId } from "@/lib/repositories/favorites";
 import { cn } from "@/lib/utils";
+
+const EMPTY_FAVS: number[] = [];
+let cachedRaw: string | null | undefined = undefined;
+let cachedList: number[] = EMPTY_FAVS;
+
+function subscribeFavorites(cb: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("aihub_favorites_updated", cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener("aihub_favorites_updated", cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+
+export function getFavoritesSnapshot(): number[] {
+  if (typeof window === "undefined") return EMPTY_FAVS;
+  try {
+    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    if (raw !== cachedRaw) {
+      cachedRaw = raw;
+      cachedList = loadFavorites();
+    }
+    return cachedList;
+  } catch {
+    return EMPTY_FAVS;
+  }
+}
+
+export function useFavorites(): {
+  favorites: number[];
+  toggleFavorite: (id: number) => void;
+} {
+  const favorites = useSyncExternalStore(
+    subscribeFavorites,
+    getFavoritesSnapshot,
+    () => EMPTY_FAVS
+  );
+
+  const toggleFavorite = (id: number) => {
+    toggleFavoriteId(favorites, id);
+    cachedRaw = undefined;
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("aihub_favorites_updated"));
+    }
+  };
+
+  return { favorites, toggleFavorite };
+}
 
 export function FavoriteButton({
   repoId,
@@ -13,31 +61,27 @@ export function FavoriteButton({
   repoId: number;
   showLabel?: boolean;
 }) {
-  const [favorites, setFavorites] = useState<number[]>([]);
-
-  useEffect(() => {
-    setFavorites(loadFavorites());
-  }, []);
-
+  const { favorites, toggleFavorite } = useFavorites();
   const active = favorites.includes(repoId);
 
   return (
-    <Button
+    <button
       type="button"
-      variant="outline"
-      size={showLabel ? "default" : "sm"}
       aria-label={active ? "Bỏ yêu thích" : "Thêm vào yêu thích"}
       aria-pressed={active}
-      onClick={() => setFavorites((prev) => toggleFavoriteId(prev, repoId))}
+      onClick={() => toggleFavorite(repoId)}
+      style={{
+        borderColor: active ? "var(--v-accent)" : "var(--v-rule-strong)",
+        backgroundColor: active ? "var(--v-accent-soft)" : "var(--v-surface)",
+        color: active ? "var(--v-accent)" : "var(--v-ink)",
+      }}
       className={cn(
-        active
-          ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-500/35 dark:bg-rose-500/15 dark:text-rose-300 dark:hover:bg-rose-500/25"
-          : "border-slate-200 bg-white text-slate-600 hover:text-rose-600 dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-300 dark:hover:text-rose-400",
-        !showLabel && "h-8 px-2.5"
+        "pressable inline-flex min-h-11 items-center gap-1.5 rounded-[4px] border px-3 text-xs font-medium sm:min-h-8",
+        !showLabel && "min-w-11 justify-center px-2 sm:min-w-8"
       )}
     >
-      <Heart className={cn("size-4", active && "fill-rose-500 text-rose-500")} />
+      <Heart className={cn("size-3.5", active && "fill-current")} />
       {showLabel && <span>{active ? "Đã yêu thích" : "Yêu thích"}</span>}
-    </Button>
+    </button>
   );
 }

@@ -1,20 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 
-export function ThemeToggle() {
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
+function subscribeTheme(cb: () => void) {
+  if (typeof window === "undefined") return () => {};
+  const observer = new MutationObserver(cb);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("storage", cb);
+  return () => {
+    observer.disconnect();
+    window.removeEventListener("storage", cb);
+  };
+}
 
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+function getIsDarkSnapshot(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.documentElement.classList.contains("dark");
+}
+
+export function ThemeToggle() {
+  const dark = useSyncExternalStore(subscribeTheme, getIsDarkSnapshot, () => false);
 
   function toggle() {
     const next = !dark;
-    setDark(next);
     document.documentElement.classList.toggle("dark", next);
     document.documentElement.style.colorScheme = next ? "dark" : "light";
     try {
@@ -30,13 +39,9 @@ export function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
       title={dark ? "Giao diện sáng" : "Giao diện tối"}
-      className="pressable inline-flex size-8 items-center justify-center rounded-lg border border-slate-200/80 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+      className="pressable inline-flex size-11 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-surface)] text-[var(--v-ink)] transition-colors hover:border-[var(--v-rule-strong)] sm:size-8"
     >
-      {mounted ? (
-        dark ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4" />
-      ) : (
-        <Moon className="size-4 opacity-50" />
-      )}
+      {dark ? <Sun className="size-4 text-[var(--v-accent)]" /> : <Moon className="size-4" />}
     </button>
   );
 }

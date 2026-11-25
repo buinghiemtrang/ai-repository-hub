@@ -109,13 +109,14 @@ export function BrandLogoBadge({
   size = 24,
 }: {
   icon: LocalSvgIcon;
-  dark: boolean;
+  dark?: boolean;
   size?: number;
 }) {
   const [failed, setFailed] = useState(false);
   if (failed) {
     return <Code2 style={{ width: size * 0.7, height: size * 0.7 }} />;
   }
+  const useCssInvert = dark === undefined && Boolean(icon.inkInvertDark);
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -124,11 +125,11 @@ export function BrandLogoBadge({
       width={size}
       height={size}
       onError={() => setFailed(true)}
-      className="object-contain"
+      className={`object-contain ${useCssInvert ? "vellum-invert-dark" : ""}`}
       style={{
         width: size,
         height: size,
-        filter: dark && icon.inkInvertDark ? "invert(1) brightness(1.1)" : undefined,
+        filter: !useCssInvert && dark && icon.inkInvertDark ? "invert(1) brightness(1.1)" : undefined,
       }}
     />
   );
@@ -139,7 +140,7 @@ export function LanguageLogo({
   dark,
 }: {
   language: string | null | undefined;
-  dark: boolean;
+  dark?: boolean;
 }) {
   const icon = resolveLanguageIcon(language);
   const [failed, setFailed] = useState(false);
@@ -152,6 +153,7 @@ export function LanguageLogo({
       </span>
     );
   }
+  const useCssInvert = dark === undefined && Boolean(icon.inkInvertDark);
   return (
     <span className="inline-flex items-center gap-1.5">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -161,9 +163,9 @@ export function LanguageLogo({
         width={13}
         height={13}
         onError={() => setFailed(true)}
-        className="size-3.5 object-contain"
+        className={`size-3.5 object-contain ${useCssInvert ? "vellum-invert-dark" : ""}`}
         style={{
-          filter: dark && icon.inkInvertDark ? "invert(1) brightness(1.1)" : undefined,
+          filter: !useCssInvert && dark && icon.inkInvertDark ? "invert(1) brightness(1.1)" : undefined,
         }}
       />
       <span>{language}</span>

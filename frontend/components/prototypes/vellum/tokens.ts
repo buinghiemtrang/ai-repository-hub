@@ -58,4 +58,17 @@ export const VELLUM_DARK_RC: VellumTheme = {
   accentInk: "#131110",
 };
 
+export const VELLUM_CSS: VellumTheme = {
+  bg: "var(--v-bg)",
+  surface: "var(--v-surface)",
+  surfaceAlt: "var(--v-surface-alt)",
+  ink: "var(--v-ink)",
+  muted: "var(--v-muted)",
+  rule: "var(--v-rule)",
+  ruleStrong: "var(--v-rule-strong)",
+  accent: "var(--v-accent)",
+  accentSoft: "var(--v-accent-soft)",
+  accentInk: "var(--v-accent-ink)",
+};
+
 export const VELLUM_EASE = [0.22, 1, 0.36, 1] as const;
