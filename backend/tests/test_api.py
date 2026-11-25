@@ -24,6 +24,8 @@ class APITest(unittest.TestCase):
             detail_json = detail.json()
             self.assertIn("guide_vi", detail_json)
             self.assertIn("readme_url", detail_json)
+            self.assertIn("image_url", detail_json)
+            self.assertIn("has_custom_image", detail_json)
 
             self.assertEqual(c.get("/repositories", params={"page": 0}).status_code, 422)
             self.assertEqual(

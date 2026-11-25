@@ -15,6 +15,7 @@ import {
   Star,
   X,
 } from "lucide-react";
+import { RepoAvatar, RepoBannerImage } from "@/components/repositories/RepoImage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -209,7 +210,7 @@ export function RepositoryLibrary() {
             Thư viện AI Repository tiếng Việt
           </h1>
           <p className="text-sm leading-relaxed text-slate-600 sm:text-[15px] dark:text-slate-400">
-            Tuyển chọn các dự án AI mã nguồn mở công khai trên GitHub — mô tả tiếng Việt ngắn gọn, số liệu đồng bộ thực tế và hướng dẫn đối chiếu từ README gốc.
+            Tuyển chọn các dự án AI mã nguồn mở công khai trên GitHub — mô tả tiếng Việt ngắn gọn, ảnh xem trước trực tiếp từ GitHub và hướng dẫn đối chiếu từ README gốc.
           </p>
         </div>
 
@@ -431,16 +432,15 @@ export function RepositoryLibrary() {
 
       {/* Loading Skeletons */}
       {!error && loading && (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="p-5">
-              <div className="flex items-center justify-between">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-5 w-14 rounded-full" />
+            <Card key={i} className="overflow-hidden">
+              <Skeleton className="aspect-[2/1] w-full rounded-none" />
+              <div className="p-5">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="mt-3 h-12 w-full" />
+                <Skeleton className="mt-4 h-4 w-1/2" />
               </div>
-              <Skeleton className="mt-3.5 h-6 w-3/4" />
-              <Skeleton className="mt-3 h-14 w-full" />
-              <Skeleton className="mt-5 h-4 w-1/2" />
             </Card>
           ))}
         </div>
@@ -463,9 +463,9 @@ export function RepositoryLibrary() {
         </Card>
       )}
 
-      {/* Repository Grid */}
+      {/* Repository Grid with 2:1 Preview Images */}
       {!error && !loading && data && data.items.length > 0 && (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {data.items.map((repo) => {
             const isFav = favorites.includes(repo.id);
             const { owner, name } = splitFullName(repo.full_name);
@@ -474,88 +474,110 @@ export function RepositoryLibrary() {
             return (
               <Card
                 key={repo.id}
-                className="card-lift group flex flex-col justify-between p-5 hover:border-slate-300/90 dark:hover:border-slate-700"
+                className="card-lift group flex flex-col overflow-hidden hover:border-slate-300/90 dark:hover:border-slate-700"
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2">
+                {/* Clean Top Meta Bar (No Overlap) */}
+                <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-slate-100 dark:border-slate-800/80">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCategory(repo.category);
+                      setPage(1);
+                    }}
+                    className="inline-flex max-w-[60%] items-center truncate rounded-md bg-teal-50/90 px-2 py-0.5 text-[11px] font-semibold text-teal-800 transition-colors hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
+                  >
+                    <span className="truncate">{repo.category}</span>
+                  </button>
+
+                  <div className="flex items-center gap-1">
+                    <span
+                      title="GitHub Stars"
+                      className="tabular-nums inline-flex items-center gap-1 rounded-md bg-amber-50/90 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
+                    >
+                      <Star className="size-3 fill-amber-400 text-amber-500 dark:text-amber-400" />
+                      {formatCompactNumber(repo.stars)}
+                    </span>
                     <button
                       type="button"
-                      onClick={() => {
-                        setCategory(repo.category);
-                        setPage(1);
-                      }}
-                      className="inline-flex max-w-[65%] items-center gap-1.5 truncate rounded-md bg-teal-50/90 px-2 py-0.5 text-[11px] font-medium text-teal-800 hover:bg-teal-100 dark:bg-teal-500/15 dark:text-teal-300 dark:hover:bg-teal-500/25"
+                      aria-label={isFav ? "Bỏ yêu thích" : "Yêu thích"}
+                      aria-pressed={isFav}
+                      onClick={() => handleToggleFavorite(repo.id)}
+                      className="pressable inline-flex size-7 items-center justify-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-500/15 dark:hover:text-rose-400"
                     >
-                      <span className="truncate">{repo.category}</span>
+                      <Heart className={cn("size-3.5", isFav && "fill-rose-500 text-rose-500")} />
                     </button>
-
-                    <div className="flex items-center gap-1.5">
-                      <span
-                        title="GitHub Stars"
-                        className="tabular-nums inline-flex items-center gap-1 rounded-md bg-amber-50/90 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:bg-amber-500/15 dark:text-amber-300"
-                      >
-                        <Star className="size-3 fill-amber-400 text-amber-500 dark:text-amber-400" />
-                        {formatCompactNumber(repo.stars)}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={isFav ? "Bỏ yêu thích" : "Yêu thích"}
-                        aria-pressed={isFav}
-                        onClick={() => handleToggleFavorite(repo.id)}
-                        className="pressable rounded-md p-1 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-500/15 dark:hover:text-rose-400"
-                      >
-                        <Heart className={cn("size-3.5", isFav && "fill-rose-500 text-rose-500")} />
-                      </button>
-                    </div>
                   </div>
-
-                  <Link href={`/repositories/${repo.id}`} className="mt-3 block">
-                    <h2 className="text-[15px] leading-snug break-words">
-                      {owner && (
-                        <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>
-                      )}
-                      <span className="font-semibold text-slate-900 group-hover:text-teal-700 dark:text-slate-100 dark:group-hover:text-teal-300">
-                        {name}
-                      </span>
-                    </h2>
-                  </Link>
-
-                  <p className="mt-2 line-clamp-3 text-[13px] leading-relaxed text-slate-600 dark:text-slate-400">
-                    {repo.description_vi}
-                  </p>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800/80 dark:text-slate-400">
-                  <div className="flex min-w-0 items-center gap-3">
-                    {repo.language && (
-                      <span className="inline-flex items-center gap-1.5 truncate">
-                        <span className={cn("size-2 shrink-0 rounded-full", langColor)} />
-                        <span className="truncate">{repo.language}</span>
-                      </span>
-                    )}
-                    <span className="tabular-nums inline-flex items-center gap-1" title="Forks">
-                      <GitFork className="size-3 text-slate-400 dark:text-slate-500" />
-                      {formatCompactNumber(repo.forks)}
-                    </span>
-                    {repo.archived && <Badge variant="warning">Archived</Badge>}
+                {/* 2:1 Visual Banner */}
+                <Link
+                  href={`/repositories/${repo.id}`}
+                  className="block aspect-[2/1] w-full overflow-hidden border-b border-slate-100 bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950"
+                >
+                  <RepoBannerImage
+                    fullName={repo.full_name}
+                    imageUrl={repo.image_url}
+                    ownerAvatarUrl={repo.owner_avatar_url}
+                    hasCustomImage={repo.has_custom_image}
+                    category={repo.category}
+                    language={repo.language}
+                  />
+                </Link>
+
+                {/* Card Body */}
+                <div className="flex flex-1 flex-col justify-between p-5">
+                  <div>
+                    <Link href={`/repositories/${repo.id}`} className="flex items-center gap-2.5">
+                      <RepoAvatar avatarUrl={repo.owner_avatar_url} owner={owner} />
+                      <h2 className="min-w-0 text-[15px] leading-snug truncate">
+                        {owner && (
+                          <span className="font-normal text-slate-400 dark:text-slate-500">
+                            {owner}/
+                          </span>
+                        )}
+                        <span className="font-semibold text-slate-900 group-hover:text-teal-700 dark:text-slate-100 dark:group-hover:text-teal-300">
+                          {name}
+                        </span>
+                      </h2>
+                    </Link>
+
+                    <p className="mt-2.5 line-clamp-3 text-[13px] leading-relaxed text-slate-600 dark:text-slate-400">
+                      {repo.description_vi}
+                    </p>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-2">
-                    <Link
-                      href={`/repositories/${repo.id}`}
-                      className="font-medium text-slate-700 hover:text-teal-700 dark:text-slate-300 dark:hover:text-teal-300"
-                    >
-                      Chi tiết →
-                    </Link>
-                    <a
-                      href={repo.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`Mở ${repo.full_name} trên GitHub`}
-                      className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-                    >
-                      <ArrowUpRight className="size-3.5" />
-                    </a>
+                  <div className="mt-4 flex items-center justify-between gap-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800/80 dark:text-slate-400">
+                    <div className="flex min-w-0 items-center gap-3">
+                      {repo.language && (
+                        <span className="inline-flex items-center gap-1.5 truncate">
+                          <span className={cn("size-2 shrink-0 rounded-full", langColor)} />
+                          <span className="truncate">{repo.language}</span>
+                        </span>
+                      )}
+                      <span className="tabular-nums inline-flex items-center gap-1" title="Forks">
+                        <GitFork className="size-3 text-slate-400 dark:text-slate-500" />
+                        {formatCompactNumber(repo.forks)}
+                      </span>
+                      {repo.archived && <Badge variant="warning">Archived</Badge>}
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2">
+                      <Link
+                        href={`/repositories/${repo.id}`}
+                        className="font-medium text-slate-700 hover:text-teal-700 dark:text-slate-300 dark:hover:text-teal-300"
+                      >
+                        Chi tiết →
+                      </Link>
+                      <a
+                        href={repo.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Mở ${repo.full_name} trên GitHub`}
+                        className="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                      >
+                        <ArrowUpRight className="size-3.5" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               </Card>

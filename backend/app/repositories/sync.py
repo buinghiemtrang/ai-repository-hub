@@ -14,6 +14,7 @@ from app.repositories.github_client import (
     fetch_repo_and_readme,
 )
 from app.repositories.models import Repository, SyncRun
+from app.repositories.sync_images import enrich_images
 
 
 def run_sync(
@@ -112,6 +113,12 @@ def run_sync(
             run.error_summary = error_summary
             run.details = {"failures": failures[:25]} if failures else None
             db.commit()
+
+    if not rate_limited and os.getenv("GITHUB_TOKEN", "").strip():
+        try:
+            enrich_images(only_missing=True)
+        except Exception:
+            pass
 
     return {
         "run_id": run_id,
