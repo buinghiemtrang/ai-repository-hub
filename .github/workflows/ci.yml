@@ -1,0 +1,61 @@
+name: CI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - run: npm run typecheck
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: aihub
+          POSTGRES_PASSWORD: local_dev_only
+          POSTGRES_DB: aihub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U aihub -d aihub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - run: alembic upgrade head
+      - run: python -m unittest discover -s tests -v
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: docker compose up -d --build
+      - run: |
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8000/health && curl -fsS http://localhost:3000/api/repositories; then exit 0; fi
+            sleep 2
+          done
+          exit 1
+      - if: always()
+        run: docker compose logs && docker compose down -v
