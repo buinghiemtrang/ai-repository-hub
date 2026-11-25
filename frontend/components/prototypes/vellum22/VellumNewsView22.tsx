@@ -296,14 +296,14 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto max-w-7xl min-w-0 space-y-6 px-3 py-6 sm:px-6 lg:py-8">
       {/* Magazine Masthead & Search */}
-      <section style={{ borderColor: theme.rule }} className="space-y-4 border-b pb-5">
+      <section style={{ borderColor: theme.rule }} className="min-w-0 space-y-4 border-b pb-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
+          <div className="min-w-0">
             <div
               style={{ color: theme.accent, fontFamily: "var(--font-jetbrains)" }}
-              className="tabular-nums text-[11px] font-medium uppercase tracking-widest"
+              className="tabular-nums break-words text-[11px] font-medium uppercase tracking-widest"
             >
               {rc
                 ? `Vellum Digital Dispatch · ${rcResultSummary}`
@@ -316,14 +316,14 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <div
               style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-              className={`flex items-center gap-2 rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/30 ${
+              className={`flex min-w-0 flex-1 items-center gap-2 rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/30 sm:flex-initial ${
                 rc ? "h-11 sm:h-9" : "h-9"
               }`}
             >
-              <Search style={{ color: theme.muted }} className="size-3.5" />
+              <Search style={{ color: theme.muted }} className="size-3.5 shrink-0" />
               <input
                 type="search"
                 value={query}
@@ -332,7 +332,7 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
                   setPage(1);
                 }}
                 placeholder="Tìm tin không dấu..."
-                className={`w-44 bg-transparent text-xs outline-none sm:w-56 ${
+                className={`w-full min-w-0 bg-transparent text-xs outline-none sm:w-56 ${
                   rc
                     ? dark
                       ? "placeholder:text-[#B8B0A4]"
@@ -460,9 +460,9 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
       </section>
 
       {/* Main Magazine Grid */}
-      <div className="grid gap-8 lg:grid-cols-12">
+      <div className="grid min-w-0 gap-8 lg:grid-cols-12">
         {/* Main Editorial Column (9 cols) */}
-        <div className="space-y-8 lg:col-span-9">
+        <div className="min-w-0 space-y-8 lg:col-span-9">
           {filteredItems.length === 0 ? (
             <div
               style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
@@ -509,8 +509,8 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
             <>
               {/* Cover Feature + Dispatch Rail */}
               {coverStory && (
-                <section style={{ borderColor: theme.rule }} className="grid gap-6 border-b pb-8 md:grid-cols-12">
-                  <article className="group space-y-3 md:col-span-7">
+                <section style={{ borderColor: theme.rule }} className="grid min-w-0 gap-6 border-b pb-8 md:grid-cols-12">
+                  <article className="group min-w-0 space-y-3 md:col-span-7">
                     <div
                       className="flex flex-wrap items-center gap-2 text-[11px]"
                       style={{ fontFamily: "var(--font-jetbrains)", color: theme.accent }}
@@ -542,7 +542,11 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
                       <button
                         type="button"
                         onClick={() => setActiveArticle(coverStory)}
-                        className="text-left hover:underline"
+                        className={
+                          rc
+                            ? "flex min-h-11 w-full items-center py-1 text-left hover:underline sm:min-h-0 sm:py-0"
+                            : "text-left hover:underline"
+                        }
                       >
                         {coverStory.title}
                       </button>
@@ -666,7 +670,7 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
                       <article
                         key={it.id}
                         style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-                        className="group flex flex-col justify-between overflow-hidden rounded-[6px] border p-4 transition-all duration-150 hover:-translate-y-[2px] hover:shadow-md"
+                        className="group flex min-w-0 flex-col justify-between overflow-hidden rounded-[6px] border p-4 transition-all duration-150 hover:-translate-y-[2px] hover:shadow-md"
                       >
                         <div className="space-y-2.5">
                           {it.images?.[0] && (
@@ -696,7 +700,11 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
                             <button
                               type="button"
                               onClick={() => setActiveArticle(it)}
-                              className="text-left group-hover:underline"
+                              className={
+                                rc
+                                  ? "flex min-h-11 w-full items-center py-1 text-left group-hover:underline sm:min-h-0 sm:py-0"
+                                  : "text-left group-hover:underline"
+                              }
                             >
                               {it.title}
                             </button>
@@ -801,7 +809,7 @@ export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: Ve
         </div>
 
         {/* Right Archive Rail (3 cols) */}
-        <aside style={{ borderColor: theme.rule }} className="space-y-5 lg:col-span-3 lg:border-l lg:pl-6">
+        <aside style={{ borderColor: theme.rule }} className="min-w-0 space-y-5 lg:col-span-3 lg:border-l lg:pl-6">
           <div>
             <div
               style={{ fontFamily: "var(--font-jetbrains)", color: theme.muted }}

@@ -183,10 +183,10 @@ export function VellumStudioView22({
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-4 py-6 sm:px-6 lg:py-8">
+    <div className="mx-auto max-w-7xl min-w-0 space-y-8 px-3 py-6 sm:px-6 lg:py-8">
       {/* Studio Masthead */}
-      <section style={{ borderColor: theme.rule }} className="flex flex-wrap items-end justify-between gap-4 border-b pb-5">
-        <div>
+      <section style={{ borderColor: theme.rule }} className="flex min-w-0 flex-wrap items-end justify-between gap-4 border-b pb-5">
+        <div className="min-w-0">
           <div
             style={{ color: theme.accent, fontFamily: "var(--font-jetbrains)" }}
             className="text-[11px] font-medium uppercase tracking-widest"
@@ -204,20 +204,20 @@ export function VellumStudioView22({
             color: theme.muted,
             fontFamily: "var(--font-jetbrains)",
           }}
-          className="inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-1.5 text-[11px]"
+          className="inline-flex max-w-full items-center gap-1.5 rounded-[4px] border px-3 py-1.5 text-[11px]"
         >
-          <Sparkles style={{ color: theme.accent }} className="size-3.5" />
-          Chế độ minh hoạ quy trình — cần mở khoá API khi triển khai thực tế
+          <Sparkles style={{ color: theme.accent }} className="size-3.5 shrink-0" />
+          <span className="truncate sm:whitespace-normal">Chế độ minh hoạ quy trình — cần mở khoá API khi triển khai thực tế</span>
         </span>
       </section>
 
       {/* Workspace Selector + Interactive Canvas & Diagram Preview */}
       <section
         style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-        className="grid overflow-hidden rounded-[6px] border lg:grid-cols-12"
+        className="grid min-w-0 overflow-hidden rounded-[6px] border lg:grid-cols-12"
       >
         {/* Left Tool Navigation */}
-        <div style={{ borderColor: theme.rule }} className="divide-y border-b lg:col-span-4 lg:border-r lg:border-b-0">
+        <div style={{ borderColor: theme.rule }} className="min-w-0 divide-y border-b lg:col-span-4 lg:border-r lg:border-b-0">
           {WORKSPACES.map((ws) => {
             const Icon = ws.icon;
             const active = ws.key === activeKey;
@@ -258,7 +258,7 @@ export function VellumStudioView22({
         </div>
 
         {/* Right Canvas Preview */}
-        <div className="p-6 lg:col-span-8 lg:p-7">
+        <div className="min-w-0 p-4 sm:p-6 lg:col-span-8 lg:p-7">
           <AnimatePresence mode="wait">
             <motion.div
               key={current.key}

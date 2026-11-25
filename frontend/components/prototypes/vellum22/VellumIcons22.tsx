@@ -47,14 +47,15 @@ export function NewsCategoryIcon({
 }: {
   section: string;
   invertOnAccent?: boolean;
-  dark: boolean;
+  dark?: boolean;
   size?: number;
 }) {
   const brandSvg = NEWS_BRAND_SECTIONS[section];
   const [failed, setFailed] = useState(false);
 
   if (brandSvg && !failed) {
-    const shouldInvert = brandSvg.inkInvertDark ? invertOnAccent || dark : false;
+    const cssInvertOnly = dark === undefined && brandSvg.inkInvertDark && !invertOnAccent;
+    const shouldInvert = brandSvg.inkInvertDark ? invertOnAccent || Boolean(dark) : false;
     const needsLightBacking = invertOnAccent && !brandSvg.inkInvertDark;
     return (
       <span
@@ -71,11 +72,11 @@ export function NewsCategoryIcon({
           width={size}
           height={size}
           onError={() => setFailed(true)}
-          className="shrink-0 object-contain"
+          className={`shrink-0 object-contain ${cssInvertOnly ? "vellum-invert-dark" : ""}`}
           style={{
             width: size,
             height: size,
-            filter: shouldInvert ? "invert(1) brightness(1.1)" : undefined,
+            filter: !cssInvertOnly && shouldInvert ? "invert(1) brightness(1.1)" : undefined,
           }}
         />
       </span>

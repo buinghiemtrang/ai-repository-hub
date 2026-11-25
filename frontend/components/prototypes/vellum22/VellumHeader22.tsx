@@ -96,13 +96,13 @@ export function VellumHeader22({
       }}
       className="sticky top-0 z-30 border-b transition-colors duration-200"
     >
-      <div className="mx-auto flex h-15 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+      <div className="mx-auto flex h-15 max-w-7xl items-center justify-between gap-2 px-3 sm:gap-3 sm:px-6">
         {/* Brand Identity + Press Mark */}
-        <div className="flex items-center gap-2.5 xl:gap-3">
+        <div className="flex min-w-0 items-center gap-2 xl:gap-3">
           <Link
             href="/prototypes"
             style={{ color: theme.muted, borderColor: theme.rule }}
-            className="hidden rounded-[4px] border px-2 py-1 text-[11px] font-medium transition-colors hover:opacity-80 xl:inline-flex"
+            className="hidden shrink-0 rounded-[4px] border px-2 py-1 text-[11px] font-medium transition-colors hover:opacity-80 xl:inline-flex"
             title="Bảng so sánh P1 / P2 / P2.1 / P2.2 / P3"
           >
             ← So sánh
@@ -111,15 +111,15 @@ export function VellumHeader22({
           <button
             type="button"
             onClick={() => onTabChange("repos")}
-            className="group flex shrink-0 items-center gap-2.5 text-left whitespace-nowrap"
+            className="group flex min-w-0 items-center gap-2 text-left sm:gap-2.5"
           >
             <svg
-              width="29"
-              height="29"
+              width="28"
+              height="28"
               viewBox="0 0 32 32"
               fill="none"
               aria-hidden="true"
-              className="shrink-0 transition-transform duration-150 group-hover:scale-105"
+              className="size-7 shrink-0 transition-transform duration-150 group-hover:scale-105"
             >
               <rect
                 x="1"
@@ -135,10 +135,10 @@ export function VellumHeader22({
               <path d="M11 18H21" stroke={theme.accent} strokeWidth="2" strokeLinecap="round" />
               <circle cx="24.5" cy="7.5" r="2" fill={theme.accent} />
             </svg>
-            <div className="leading-tight">
+            <div className="min-w-0 leading-tight">
               <div
                 style={{ fontFamily: "var(--font-newsreader)" }}
-                className="text-xl font-medium tracking-tight"
+                className="truncate text-[17px] font-medium tracking-tight sm:text-xl"
               >
                 AI Repo Hub
               </div>
@@ -256,7 +256,7 @@ export function VellumHeader22({
         </nav>
 
         {/* Right Utility Actions */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           <button
             type="button"
             onClick={onFocusSearch}

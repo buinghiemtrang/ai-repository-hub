@@ -29,7 +29,7 @@ import { formatCompactNumber, formatViDate, type RepoItem } from "@/lib/reposito
 interface RepoQuickPeek22Props {
   repo: RepoItem | null;
   theme: VellumTheme;
-  dark: boolean;
+  dark?: boolean;
   rc?: boolean;
   isFavorite: boolean;
   hasPrev: boolean;
@@ -82,7 +82,7 @@ export function RepoQuickPeek22({
   onToggleFavorite,
 }: RepoQuickPeek22Props) {
   const [detail, setDetail] = useState<RepoItem | null>(null);
-  const [loadingGuide, setLoadingGuide] = useState(false);
+  const [loadedId, setLoadedId] = useState<number | null>(null);
   const [copiedUrl, setCopiedUrl] = useState(false);
 
   const asideRef = useRef<HTMLElement>(null);
@@ -90,12 +90,8 @@ export function RepoQuickPeek22({
   const openerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!repo) {
-      setDetail(null);
-      return;
-    }
+    if (!repo) return;
     let active = true;
-    setLoadingGuide(true);
     fetch(`/api/repositories/${repo.id}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
@@ -103,12 +99,14 @@ export function RepoQuickPeek22({
       })
       .catch(() => {})
       .finally(() => {
-        if (active) setLoadingGuide(false);
+        if (active) setLoadedId(repo.id);
       });
     return () => {
       active = false;
     };
   }, [repo]);
+
+  const loadingGuide = Boolean(repo && loadedId !== repo.id && detail?.id !== repo.id);
 
   // Focus management: focus Close on open, restore exact trigger element on close
   useEffect(() => {
@@ -371,13 +369,16 @@ export function RepoQuickPeek22({
                   </span>
                 </div>
 
-                {loadingGuide && !detail?.guide_vi ? (
+                {loadingGuide && (detail?.id !== current.id || !detail?.guide_vi) ? (
                   <div className="space-y-2">
                     <div style={{ backgroundColor: theme.surfaceAlt }} className="h-4 w-1/3 animate-pulse rounded" />
                     <div style={{ backgroundColor: theme.surfaceAlt }} className="h-16 w-full animate-pulse rounded" />
                   </div>
                 ) : rc && current.guide_vi ? (
-                  <GuideRenderer content={current.guide_vi} variant={dark ? "vellum-dark" : "vellum-light"} />
+                  <GuideRenderer
+                    content={current.guide_vi}
+                    variant={dark === undefined ? "vellum" : dark ? "vellum-dark" : "vellum-light"}
+                  />
                 ) : sections.length > 0 ? (
                   <div className="space-y-2.5">
                     {sections.map((sec, i) => (

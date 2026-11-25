@@ -16,7 +16,7 @@ import {
   Star,
   X,
 } from "lucide-react";
-import { RepoThumbnail22 } from "@/components/prototypes/vellum22/RepoThumbnail22";
+import { RepoThumbnail22, toSizedAvatarUrl } from "@/components/prototypes/vellum22/RepoThumbnail22";
 import {
   BrandLogoBadge,
   CategoryIcon,
@@ -194,19 +194,19 @@ export function VellumLibraryView22({
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 px-4 py-5 sm:px-6 lg:py-6">
+    <div className="mx-auto max-w-7xl min-w-0 space-y-4 px-3 py-5 sm:px-6 lg:py-6">
       {/* Row 1: Compact Featured Spotlight (8 cols) + Top 5 GitHub Stars (4 cols) so Catalog Grid stays above the fold */}
       {!hasFilters && page === 1 && featuredRepo && (
-        <section className="grid gap-4 lg:grid-cols-12">
+        <section className="grid min-w-0 gap-4 lg:grid-cols-12">
           {/* Compact Spotlight Card (~230px tall on desktop) */}
           <div
             style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-            className="grid overflow-hidden rounded-[6px] border sm:grid-cols-12 lg:col-span-8"
+            className="grid min-w-0 overflow-hidden rounded-[6px] border sm:grid-cols-12 lg:col-span-8"
           >
             <button
               type="button"
               onClick={() => onOpenQuickPeek(featuredRepo, featuredCandidates)}
-              className="group relative block text-left sm:col-span-5"
+              className="group relative block min-w-0 text-left sm:col-span-5"
               title="Mở Specimen Folio Quick Preview"
             >
               <RepoThumbnail22
@@ -214,6 +214,7 @@ export function VellumLibraryView22({
                 theme={theme}
                 dark={dark}
                 aspectClass="aspect-[16/10] sm:h-full sm:min-h-[212px]"
+                sizes="(max-width: 640px) 92vw, 420px"
                 priority
               />
               <span
@@ -227,7 +228,7 @@ export function VellumLibraryView22({
 
             <div
               style={{ borderColor: theme.rule }}
-              className="flex flex-col justify-between border-t p-4 sm:col-span-7 sm:border-t-0 sm:border-l sm:p-5"
+              className="flex min-w-0 flex-col justify-between border-t p-4 sm:col-span-7 sm:border-t-0 sm:border-l sm:p-5"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between gap-2">
@@ -339,7 +340,7 @@ export function VellumLibraryView22({
           {/* Right Rail: Top 5 by Real GitHub Stars */}
           <div
             style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-            className="flex flex-col justify-between overflow-hidden rounded-[6px] border lg:col-span-4"
+            className="flex min-w-0 flex-col justify-between overflow-hidden rounded-[6px] border lg:col-span-4"
           >
             <div
               style={{ borderColor: theme.rule }}
@@ -359,7 +360,7 @@ export function VellumLibraryView22({
                   type="button"
                   onClick={() => onOpenQuickPeek(r, topStarredStrip)}
                   style={{ borderColor: theme.rule }}
-                  className="group flex w-full items-center gap-2.5 px-3.5 py-2 text-left transition-colors duration-150 hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
+                  className="group flex w-full min-w-0 items-center gap-2.5 px-3.5 py-2 text-left transition-colors duration-150 hover:bg-black/[0.03] dark:hover:bg-white/[0.03]"
                 >
                   <span
                     style={{ color: theme.accent, fontFamily: "var(--font-newsreader)" }}
@@ -370,8 +371,10 @@ export function VellumLibraryView22({
                   {r.owner_avatar_url && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={r.owner_avatar_url}
+                      src={toSizedAvatarUrl(r.owner_avatar_url, 64)}
                       alt=""
+                      width={20}
+                      height={20}
                       loading="lazy"
                       className="size-5 shrink-0 rounded-[3px] border border-black/10 object-cover"
                     />
@@ -394,7 +397,7 @@ export function VellumLibraryView22({
 
       {/* Row 2: Slim Editorial Collections Strip (4 cols inline — saves vertical height so cards sit above the fold) */}
       {!hasFilters && page === 1 && stats && (
-        <section className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+        <section className="grid min-w-0 grid-cols-2 gap-2.5 lg:grid-cols-4">
           {EDITORIAL_COLLECTIONS.map((col) => {
             const count = stats.categories.find((c) => c.name === col.category)?.count ?? 0;
             return (
@@ -409,7 +412,7 @@ export function VellumLibraryView22({
                   backgroundColor: theme.surface,
                   borderColor: theme.rule,
                 }}
-                className="group flex items-center gap-2.5 rounded-[5px] border px-3 py-2.5 text-left transition-all duration-150 hover:-translate-y-[2px]"
+                className="group flex min-w-0 items-center gap-2.5 rounded-[5px] border px-3 py-2.5 text-left transition-all duration-150 hover:-translate-y-[2px]"
               >
                 <div
                   style={{ backgroundColor: theme.surfaceAlt, borderColor: theme.rule }}
@@ -450,12 +453,12 @@ export function VellumLibraryView22({
       {/* Row 3: Search, Filter & Grid/List Toolbar */}
       <section
         style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-        className="space-y-2.5 rounded-[6px] border p-3"
+        className="min-w-0 space-y-2.5 rounded-[6px] border p-3"
       >
         <div className="flex flex-wrap items-center gap-2">
           <div
             style={{ backgroundColor: theme.bg, borderColor: theme.rule }}
-            className="relative flex min-w-[220px] flex-1 items-center rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/40"
+            className="relative flex w-full min-w-0 items-center rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/40 sm:w-auto sm:flex-1"
           >
             <Search style={{ color: theme.muted }} className="size-4 shrink-0" />
             <input
@@ -718,7 +721,7 @@ export function VellumLibraryView22({
                   <article
                     key={repo.id}
                     style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-                    className="group flex flex-col justify-between overflow-hidden rounded-[6px] border transition-all duration-150 hover:-translate-y-[2px] hover:shadow-md"
+                    className="group flex min-w-0 flex-col justify-between overflow-hidden rounded-[6px] border transition-all duration-150 hover:-translate-y-[2px] hover:shadow-md"
                   >
                     <div>
                       <button
@@ -831,8 +834,10 @@ export function VellumLibraryView22({
                       {repo.owner_avatar_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={repo.owner_avatar_url}
+                          src={toSizedAvatarUrl(repo.owner_avatar_url, 64)}
                           alt=""
+                          width={32}
+                          height={32}
                           loading="lazy"
                           className="size-8 shrink-0 rounded-[4px] border border-black/10 object-cover"
                         />

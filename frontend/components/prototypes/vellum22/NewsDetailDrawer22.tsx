@@ -25,7 +25,7 @@ import {
 interface NewsDetailDrawer22Props {
   item: NewsItem | null;
   theme: VellumTheme;
-  dark: boolean;
+  dark?: boolean;
   rc?: boolean;
   isPlaying: boolean;
   hasPrev: boolean;
@@ -36,6 +36,7 @@ interface NewsDetailDrawer22Props {
   onNext: () => void;
   onSpeak: (item: NewsItem) => void;
   onOpenRepoById?: (repoId: number) => void;
+  onOpenLightbox?: (src: string) => void;
 }
 
 export function NewsDetailDrawer22({
@@ -52,14 +53,12 @@ export function NewsDetailDrawer22({
   onNext,
   onSpeak,
   onOpenRepoById,
+  onOpenLightbox,
 }: NewsDetailDrawer22Props) {
-  const [imgFailed, setImgFailed] = useState(false);
+  const [failedItemId, setFailedItemId] = useState<string | null>(null);
+  const imgFailed = Boolean(item && failedItemId === item.id);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const lastFocusedRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setImgFailed(false);
-  }, [item?.id]);
 
   // Manage focus & restoration when drawer opens / closes
   useEffect(() => {
@@ -194,17 +193,60 @@ export function NewsDetailDrawer22({
                   initial={{ opacity: 0, scale: 0.985 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.28, ease: VELLUM_EASE }}
-                  style={{ borderColor: theme.rule, backgroundColor: dark ? "#141312" : "#ffffff" }}
-                  className="overflow-hidden rounded-[5px] border"
+                  style={{ borderColor: theme.rule }}
+                  className={`overflow-hidden rounded-[5px] border ${
+                    dark === undefined ? "bg-white dark:bg-[#141312]" : dark ? "bg-[#141312]" : "bg-white"
+                  }`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={item.images[0]}
-                    alt={item.title}
-                    onError={() => setImgFailed(true)}
-                    className="max-h-72 w-full object-contain"
-                  />
+                  {onOpenLightbox ? (
+                    <button
+                      type="button"
+                      onClick={() => onOpenLightbox(item.images[0])}
+                      className="block w-full cursor-zoom-in"
+                      title="Phóng to ảnh"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.images[0]}
+                        alt={item.title}
+                        onError={() => setFailedItemId(item.id)}
+                        className="max-h-72 w-full object-contain"
+                      />
+                    </button>
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={item.images[0]}
+                      alt={item.title}
+                      onError={() => setFailedItemId(item.id)}
+                      className="max-h-72 w-full object-contain"
+                    />
+                  )}
                 </motion.div>
+              )}
+
+              {item.video && (item.video.url || item.video.embed) && (
+                <div
+                  style={{ borderColor: theme.rule }}
+                  className="overflow-hidden rounded-[5px] border bg-black"
+                >
+                  {item.video.url ? (
+                    <video
+                      src={item.video.url}
+                      poster={item.video.poster}
+                      controls
+                      preload="metadata"
+                      className="max-h-72 w-full"
+                    />
+                  ) : item.video.embed ? (
+                    <iframe
+                      src={item.video.embed}
+                      title={item.title}
+                      className="aspect-video w-full"
+                      allowFullScreen
+                    />
+                  ) : null}
+                </div>
               )}
 
               <div className="space-y-2.5">

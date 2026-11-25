@@ -1,9 +1,43 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { BrandLogoBadge, resolveBrandIcon } from "@/components/prototypes/vellum22/VellumIcons22";
 import type { VellumTheme } from "@/components/prototypes/vellum/tokens";
 import type { RepoItem } from "@/lib/repositories/types";
+
+const OPTIMIZABLE_GITHUB_HOSTS = new Set([
+  "repository-images.githubusercontent.com",
+  "avatars.githubusercontent.com",
+  "raw.githubusercontent.com",
+  "opengraph.githubassets.com",
+  "user-images.githubusercontent.com",
+  "camo.githubusercontent.com",
+]);
+
+export function isOptimizableImageHost(rawUrl: string | null | undefined): boolean {
+  if (!rawUrl) return false;
+  try {
+    const parsed = new URL(rawUrl);
+    return parsed.protocol === "https:" && OPTIMIZABLE_GITHUB_HOSTS.has(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
+export function toSizedAvatarUrl(rawUrl: string | null | undefined, size = 96): string {
+  if (!rawUrl) return "";
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.hostname === "avatars.githubusercontent.com") {
+      parsed.searchParams.set("s", String(size));
+      return parsed.toString();
+    }
+    return rawUrl;
+  } catch {
+    return rawUrl;
+  }
+}
 
 function hashString(input: string): number {
   let h = 2166136261;
@@ -42,12 +76,14 @@ export function RepoThumbnail22({
   dark,
   aspectClass = "aspect-[16/10]",
   priority = false,
+  sizes = "(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 400px",
 }: {
   repo: RepoItem;
   theme: VellumTheme;
-  dark: boolean;
+  dark?: boolean;
   aspectClass?: string;
   priority?: boolean;
+  sizes?: string;
 }) {
   const [imgFailed, setImgFailed] = useState(false);
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -55,39 +91,66 @@ export function RepoThumbnail22({
 
   const brandIcon = resolveBrandIcon(repo.full_name, repo.category, repo.topics);
   const hash = hashString(repo.full_name);
-  const plateSet = dark ? PLATE_PALETTES_DARK : PLATE_PALETTES_LIGHT;
-  const plate = plateSet[hash % plateSet.length];
+  const plateIndex = hash % PLATE_PALETTES_LIGHT.length;
+  const cssDriven = dark === undefined;
+  const plate = cssDriven
+    ? { bg: "var(--vp-bg)", pattern: "var(--vp-pattern)", accent: "var(--vp-accent)" }
+    : (dark ? PLATE_PALETTES_DARK : PLATE_PALETTES_LIGHT)[plateIndex];
   const patternKind = hash % 3;
 
-  // Priority 1: Custom GitHub OG / README preview with object-contain so wide logos never clip
+  const avatarSrc = toSizedAvatarUrl(repo.owner_avatar_url, 96);
+
+  // Priority 1: Custom GitHub OG / README preview optimized via Next.js AVIF/WebP when hosted on allowlisted GitHub domains
   if (repo.has_custom_image && repo.image_url && !imgFailed) {
+    const canOptimize = isOptimizableImageHost(repo.image_url);
     return (
       <div
-        style={{ backgroundColor: dark ? "#141312" : "#ffffff", borderColor: theme.rule }}
-        className={`relative flex w-full items-center justify-center overflow-hidden border-b ${aspectClass}`}
+        style={{ borderColor: theme.rule }}
+        className={`relative flex w-full items-center justify-center overflow-hidden border-b ${
+          dark === undefined ? "bg-white dark:bg-[#141312]" : dark ? "bg-[#141312]" : "bg-white"
+        } ${aspectClass}`}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={repo.image_url}
-          alt={`Preview ${repo.full_name}`}
-          loading={priority ? "eager" : "lazy"}
-          decoding="async"
-          onError={() => setImgFailed(true)}
-          className="size-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
-        />
-        {/* Single crisp owner + brand stamp (avoids repeating text metadata) */}
+        {canOptimize ? (
+          <Image
+            src={repo.image_url}
+            alt={`Preview ${repo.full_name}`}
+            fill
+            sizes={sizes}
+            priority={priority}
+            quality={75}
+            onError={() => setImgFailed(true)}
+            className="object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={repo.image_url}
+            alt={`Preview ${repo.full_name}`}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            onError={() => setImgFailed(true)}
+            className="size-full object-contain transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+          />
+        )}
+
+        {/* Single crisp owner + brand stamp */}
         <div
-          style={{
-            backgroundColor: dark ? "rgba(23, 22, 20, 0.92)" : "rgba(255, 255, 255, 0.92)",
-            borderColor: theme.ruleStrong,
-          }}
-          className="pointer-events-none absolute right-2.5 bottom-2.5 flex items-center gap-1.5 rounded-[4px] border px-1.5 py-1 shadow-xs backdrop-blur-xs"
+          style={{ borderColor: theme.ruleStrong }}
+          className={`pointer-events-none absolute right-2.5 bottom-2.5 flex items-center gap-1.5 rounded-[4px] border px-1.5 py-1 shadow-xs backdrop-blur-xs ${
+            dark === undefined
+              ? "bg-white/92 dark:bg-[#171614]/92"
+              : dark
+                ? "bg-[#171614]/92"
+                : "bg-white/92"
+          }`}
         >
-          {repo.owner_avatar_url && !avatarFailed && (
+          {avatarSrc && !avatarFailed && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={repo.owner_avatar_url}
+              src={avatarSrc}
               alt=""
+              width={16}
+              height={16}
               loading="lazy"
               onError={() => setAvatarFailed(true)}
               className="size-4 rounded-[3px] object-cover"
@@ -99,7 +162,7 @@ export function RepoThumbnail22({
     );
   }
 
-  // Priority 2: Refined Vellum Specimen Plate (deduplicated: language & category live in card footer/header)
+  // Priority 2: Refined Vellum Specimen Plate with lightweight 96px owner avatar + brand SVG
   const bgStyle: React.CSSProperties =
     patternKind === 0
       ? {
@@ -121,30 +184,34 @@ export function RepoThumbnail22({
   return (
     <div
       style={{ ...bgStyle, borderColor: theme.rule }}
-      className={`relative flex w-full flex-col justify-between overflow-hidden border-b p-3.5 ${aspectClass}`}
+      className={`relative flex w-full flex-col justify-between overflow-hidden border-b p-3.5 ${aspectClass} ${
+        cssDriven ? `vellum-plate-${plateIndex}` : ""
+      }`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span
           style={{ color: plate.accent, fontFamily: "var(--font-jetbrains)" }}
-          className="text-[10px] font-medium uppercase tracking-widest"
+          className="shrink-0 text-[10px] font-medium uppercase tracking-widest"
         >
           PLATE · #{String(repo.id).padStart(3, "0")}
         </span>
         <span
           style={{ color: theme.muted, fontFamily: "var(--font-jetbrains)" }}
-          className="text-[10px]"
+          className="truncate text-[10px]"
         >
           @{owner || "github"}
         </span>
       </div>
 
-      {/* Center visual pair: real owner avatar + brand SVG (scales smoothly on hover) */}
+      {/* Center visual pair: lightweight 96px owner avatar + brand SVG */}
       <div className="my-auto flex items-center justify-center gap-3 py-1 transition-transform duration-500 ease-out group-hover:scale-[1.03]">
-        {repo.owner_avatar_url && !avatarFailed ? (
+        {avatarSrc && !avatarFailed ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={repo.owner_avatar_url}
+            src={avatarSrc}
             alt={owner}
+            width={48}
+            height={48}
             loading={priority ? "eager" : "lazy"}
             decoding="async"
             onError={() => setAvatarFailed(true)}
