@@ -2,13 +2,57 @@
 
 :root {
   color-scheme: light;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --surface-page: #fafaf9;
+  --surface-card: #ffffff;
+  --ink-primary: #0f172a;
+  --ink-secondary: #475569;
+  --accent: #0f766e;
+}
+
+@theme inline {
+  --font-sans: var(--font-be-vietnam), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 body {
-  background-color: #f8fafc;
-  color: #0f172a;
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--surface-page);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.pressable {
+  transition: transform 150ms var(--ease-out), background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms var(--ease-out);
+}
+
+.pressable:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.card-lift {
+  transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressable,
+  .card-lift {
+    transition: none;
+  }
+  .card-lift:hover,
+  .pressable:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 button,
