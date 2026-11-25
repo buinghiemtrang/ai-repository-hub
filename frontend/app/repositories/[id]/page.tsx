@@ -24,6 +24,12 @@ import { type RepoItem, formatCompactNumber, formatViDate } from "@/lib/reposito
 
 export const dynamic = "force-dynamic";
 
+function splitName(fullName: string): { owner: string; name: string } {
+  const idx = fullName.indexOf("/");
+  if (idx === -1) return { owner: "", name: fullName };
+  return { owner: fullName.slice(0, idx), name: fullName.slice(idx + 1) };
+}
+
 export default async function DetailPage({
   params,
 }: {
@@ -40,13 +46,14 @@ export default async function DetailPage({
 
   const repo: RepoItem = await res.json();
   const safeSources = (repo.source_urls || []).filter((u) => u.startsWith("https://"));
+  const { owner, name } = splitName(repo.full_name);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:py-10">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+          className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"
         >
           <ArrowLeft className="size-4" />
           Quay lại Thư viện
@@ -54,187 +61,215 @@ export default async function DetailPage({
         <FavoriteButton repoId={repo.id} showLabel />
       </div>
 
-      <Card className="overflow-hidden">
-        <CardHeader className="border-b border-slate-100 bg-gradient-to-br from-white to-slate-50/80 p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="accent">{repo.category}</Badge>
-            {repo.language && <Badge variant="outline">{repo.language}</Badge>}
-            {repo.license && (
-              <Badge variant="secondary">
-                <Scale className="size-3" />
-                {repo.license}
-              </Badge>
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+        {/* Main Editorial Column */}
+        <div className="space-y-6">
+          <Card className="p-6 sm:p-8">
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="accent">{repo.category}</Badge>
+              {repo.language && <Badge variant="outline">{repo.language}</Badge>}
+              {repo.license && (
+                <Badge variant="secondary">
+                  <Scale className="size-3" />
+                  {repo.license}
+                </Badge>
+              )}
+              {repo.archived && (
+                <Badge variant="warning">
+                  <AlertTriangle className="size-3" />
+                  Đã lưu trữ (Archived)
+                </Badge>
+              )}
+            </div>
+
+            <h1 className="mt-4 text-2xl font-bold tracking-tight break-words sm:text-3xl">
+              {owner && <span className="font-normal text-slate-400">{owner}/</span>}
+              <span className="text-slate-900">{name}</span>
+            </h1>
+
+            <p className="mt-3 text-base leading-relaxed text-slate-700">{repo.description_vi}</p>
+
+            {repo.description_upstream && (
+              <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600">
+                <span className="font-semibold text-slate-800">Mô tả gốc trên GitHub: </span>
+                {repo.description_upstream}
+              </div>
             )}
-            {repo.archived && (
-              <Badge variant="warning">
-                <AlertTriangle className="size-3" />
-                Đã lưu trữ (Archived)
-              </Badge>
-            )}
-          </div>
+          </Card>
 
-          <h1 className="mt-3 text-2xl font-bold tracking-tight break-words text-slate-900 sm:text-3xl">
-            {repo.full_name}
-          </h1>
-
-          <p className="mt-2 text-base leading-7 text-slate-700">{repo.description_vi}</p>
-
-          {repo.description_upstream && (
-            <p className="mt-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs leading-5 text-slate-600">
-              <span className="font-semibold text-slate-800">Mô tả upstream (GitHub): </span>
-              {repo.description_upstream}
-            </p>
-          )}
-
-          {repo.topics && repo.topics.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {repo.topics.map((topic) => (
-                <span
-                  key={topic}
-                  className="rounded-md border border-slate-200 bg-white px-2.5 py-0.5 text-xs text-slate-600"
-                >
-                  #{topic}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-5 flex flex-wrap gap-2.5">
-            <Button asChild variant="primary">
-              <a href={repo.url} target="_blank" rel="noreferrer">
-                Mở trên GitHub
-                <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href={repo.readme_url} target="_blank" rel="noreferrer">
-                <BookOpen className="size-4" />
-                Đọc README gốc
-                <ArrowUpRight className="size-3.5" />
-              </a>
-            </Button>
-            {repo.homepage && (
-              <Button asChild variant="outline">
-                <a href={repo.homepage} target="_blank" rel="noreferrer">
-                  <Globe className="size-4" />
-                  Website dự án
-                  <ArrowUpRight className="size-3.5" />
-                </a>
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-6 p-6">
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Star className="size-3.5 text-amber-500" />
-                Stars
-              </div>
-              <div className="mt-1 text-lg font-bold text-slate-900">
-                {formatCompactNumber(repo.stars)}
-              </div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <GitFork className="size-3.5" />
-                Forks
-              </div>
-              <div className="mt-1 text-lg font-bold text-slate-900">
-                {formatCompactNumber(repo.forks)}
-              </div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <Eye className="size-3.5" />
-                Watchers
-              </div>
-              <div className="mt-1 text-lg font-bold text-slate-900">
-                {formatCompactNumber(repo.watchers)}
-              </div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <FileCode2 className="size-3.5" />
-                Nhánh chính
-              </div>
-              <div className="mt-1 text-sm font-semibold text-slate-900">
-                {repo.default_branch || "Chưa xác minh"}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500">
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="size-3.5" />
-              Cập nhật upstream: <strong className="text-slate-700">{formatViDate(repo.updated_at)}</strong>
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Calendar className="size-3.5" />
-              Đồng bộ metadata: <strong className="text-slate-700">{formatViDate(repo.synced_at)}</strong>
-            </span>
-          </div>
-
-          <Separator />
-
-          <section className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-bold text-slate-900">
+          <Card className="p-6 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
+              <h2 className="text-lg font-bold tracking-tight text-slate-900">
                 Hướng dẫn cài đặt &amp; sử dụng (đối chiếu tài liệu gốc)
               </h2>
               <Badge variant="outline">Chỉ tham khảo · Không tự chạy lệnh</Badge>
             </div>
+            <Separator className="mb-5" />
             {repo.guide_vi ? (
               <GuideRenderer content={repo.guide_vi} />
             ) : (
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
                 Hướng dẫn chi tiết đang chờ đồng bộ từ README upstream. Bạn có thể mở trực tiếp{" "}
-                <a href={repo.readme_url} target="_blank" rel="noreferrer" className="font-medium text-teal-700 underline">
+                <a
+                  href={repo.readme_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-teal-700 underline"
+                >
                   README gốc trên GitHub
                 </a>{" "}
                 để kiểm tra yêu cầu hệ thống trước khi cài đặt.
               </div>
             )}
-          </section>
+          </Card>
+        </div>
 
-          <Separator />
-
-          <section className="space-y-2.5">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-slate-900">
-              <Link2 className="size-4 text-slate-500" />
-              Nguồn dữ liệu &amp; Provenance
-            </h2>
-            <p className="text-xs text-slate-500">
-              GitHub ID ổn định: {repo.github_id ?? "Chưa đồng bộ"} · Phát hiện lúc: {formatViDate(repo.discovered_at)}
-            </p>
-            {safeSources.length > 0 ? (
-              <ul className="space-y-1.5 text-sm">
-                {safeSources.map((src) => (
-                  <li key={src}>
-                    <a
-                      href={src}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 break-all text-teal-700 hover:underline"
-                    >
-                      {src}
-                      <ArrowUpRight className="size-3.5 shrink-0" />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-slate-500">
-                Seed khởi tạo; liên kết GitHub chuẩn:{" "}
-                <a href={repo.url} target="_blank" rel="noreferrer" className="text-teal-700 underline">
-                  {repo.url}
+        {/* Sticky Sidebar */}
+        <aside className="space-y-4 lg:sticky lg:top-20">
+          <Card className="p-5 space-y-3">
+            <Button asChild variant="primary" className="w-full justify-between">
+              <a href={repo.url} target="_blank" rel="noreferrer">
+                <span>Mở trên GitHub</span>
+                <ArrowUpRight className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="w-full justify-between">
+              <a href={repo.readme_url} target="_blank" rel="noreferrer">
+                <span className="inline-flex items-center gap-2">
+                  <BookOpen className="size-4 text-slate-500" />
+                  Đọc README gốc
+                </span>
+                <ArrowUpRight className="size-3.5 text-slate-400" />
+              </a>
+            </Button>
+            {repo.homepage && (
+              <Button asChild variant="outline" className="w-full justify-between">
+                <a href={repo.homepage} target="_blank" rel="noreferrer">
+                  <span className="inline-flex items-center gap-2">
+                    <Globe className="size-4 text-slate-500" />
+                    Website dự án
+                  </span>
+                  <ArrowUpRight className="size-3.5 text-slate-400" />
                 </a>
-              </p>
+              </Button>
             )}
-          </section>
-        </CardContent>
-      </Card>
+          </Card>
+
+          <Card className="p-5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Số liệu GitHub
+            </h3>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-slate-50 p-3">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                  <Star className="size-3.5 fill-amber-400 text-amber-500" />
+                  Stars
+                </div>
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                  {formatCompactNumber(repo.stars)}
+                </div>
+              </div>
+              <div className="rounded-xl bg-slate-50 p-3">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                  <GitFork className="size-3.5 text-slate-400" />
+                  Forks
+                </div>
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                  {formatCompactNumber(repo.forks)}
+                </div>
+              </div>
+              <div className="rounded-xl bg-slate-50 p-3">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                  <Eye className="size-3.5 text-slate-400" />
+                  Watchers
+                </div>
+                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900">
+                  {formatCompactNumber(repo.watchers)}
+                </div>
+              </div>
+              <div className="rounded-xl bg-slate-50 p-3">
+                <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                  <FileCode2 className="size-3.5 text-slate-400" />
+                  Nhánh chính
+                </div>
+                <div className="mt-1 truncate font-mono text-xs font-semibold text-slate-800">
+                  {repo.default_branch || "—"}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="size-3.5" />
+                  Upstream
+                </span>
+                <span className="tabular-nums font-medium text-slate-700">
+                  {formatViDate(repo.updated_at)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5">
+                  <Calendar className="size-3.5" />
+                  Đồng bộ
+                </span>
+                <span className="tabular-nums font-medium text-slate-700">
+                  {formatViDate(repo.synced_at)}
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          {repo.topics && repo.topics.length > 0 && (
+            <Card className="p-5">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Chủ đề (Topics)
+              </h3>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {repo.topics.map((topic) => (
+                  <span
+                    key={topic}
+                    className="rounded-md border border-slate-200/80 bg-slate-50 px-2 py-0.5 text-xs text-slate-600"
+                  >
+                    #{topic}
+                  </span>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          <Card className="p-5">
+            <CardHeader className="p-0 pb-2">
+              <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <Link2 className="size-3.5" />
+                Provenance
+              </h3>
+            </CardHeader>
+            <CardContent className="p-0 space-y-2 text-xs text-slate-500">
+              <p className="tabular-nums">GitHub ID: {repo.github_id ?? "Chưa đồng bộ"}</p>
+              {safeSources.length > 0 ? (
+                <ul className="space-y-1">
+                  {safeSources.map((src) => (
+                    <li key={src}>
+                      <a
+                        href={src}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-start gap-1 break-all text-teal-700 hover:underline"
+                      >
+                        <span>{src}</span>
+                        <ArrowUpRight className="mt-0.5 size-3 shrink-0" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nguồn mặc định: {repo.url}</p>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+      </div>
     </div>
   );
 }
