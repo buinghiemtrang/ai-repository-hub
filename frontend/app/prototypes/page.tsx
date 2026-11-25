@@ -3,30 +3,46 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const DIRECTIONS = [
   {
+    id: "2-1",
+    name: "Phương án P2.1 · Vellum Digital Editorial",
+    subtitle: "Nâng cấp từ P2 — Giàu hình ảnh, Thumbnail & Logo SVG, Motion System + Specimen Folio",
+    href: "/prototypes/2-1",
+    typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
+    palette: "Vellum #F5F2EB (Light) / Warm Charcoal #131110 (Dark) · Accent: Vermilion #C03A17",
+    layout: "Press Masthead + Featured Spotlight + Editorial Collections + Visual Grid / Compact List + Quick-Peek Folio",
+    bestFor: "Bản ứng viên chính thức mới: cân bằng editorial, khám phá trực quan bằng thumbnail/logo và motion mượt.",
+    bg: "#f5f2eb",
+    ink: "#171614",
+    accent: "#c03a17",
+    recommended: true,
+  },
+  {
+    id: "2",
+    name: "Phương án 2 · Vellum Editorial (Gốc)",
+    subtitle: "Curated Technology Magazine (bản đầu để đối chiếu)",
+    href: "/prototypes/2",
+    typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
+    palette: "Warm Newsprint #F4F1EA (Light) / Espresso #141210 (Dark) · Accent: Vermilion #B93815",
+    layout: "Editorial Masthead + Asymmetric 7/5 Spotlight + Ranked Index",
+    bestFor: "Giữ nguyên để so sánh trực tiếp trước/sau với P2.1.",
+    bg: "#f4f1ea",
+    ink: "#181715",
+    accent: "#b93815",
+    recommended: false,
+  },
+  {
     id: "1",
     name: "Phương án 1 · Obsidian Ledger",
     subtitle: "Precision Engineering Workspace (cảm hứng Linear / Vercel)",
     href: "/prototypes/1",
     typography: "Geist + Geist Mono",
     palette: "Carbon #0C0C0D (Dark) / Cool Sheet #FAFAFA (Light) · Accent: Cobalt #3B82F6",
-    layout: "Slim Icon Rail (56px) + Command Topbar + Split-pane Ledger & Live Inspector",
-    bestFor: "Tra cứu hàng trăm repo tốc độ cao, phím tắt, thao tác bàn phím & inspector liền mạch.",
+    layout: "Slim Icon Rail (52px) + Command Topbar + Split-pane Ledger & Live Inspector",
+    bestFor: "Tra cứu hàng trăm repo tốc độ cao, phím tắt, thao tác bàn phím.",
     bg: "#0c0c0d",
     ink: "#ededec",
     accent: "#3b82f6",
-  },
-  {
-    id: "2",
-    name: "Phương án 2 · Vellum Editorial",
-    subtitle: "Curated Technology Magazine (cảm hứng The Verge / Are.na)",
-    href: "/prototypes/2",
-    typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
-    palette: "Warm Newsprint #F4F1EA (Light) / Espresso #141210 (Dark) · Accent: Vermilion #C2410C",
-    layout: "Editorial Masthead (không sidebar trái) + Asymmetric 7/5 Spotlight + Ranked Index",
-    bestFor: "Trải nghiệm đọc tạp chí, làm nổi bật tin tức AI & tuyển chọn repo có chiều sâu biên tập.",
-    bg: "#f4f1ea",
-    ink: "#181715",
-    accent: "#c2410c",
+    recommended: false,
   },
   {
     id: "3",
@@ -35,28 +51,29 @@ const DIRECTIONS = [
     href: "/prototypes/3",
     typography: "Bricolage Grotesque + IBM Plex Sans + IBM Plex Mono",
     palette: "Cool Stone #EEEFF1 (Light) / Graphite #18191B (Dark) · Accent: Safety Orange #E8481C",
-    layout: "44px Workspace Ribbon + Contextual Filter Rail (220px) + Architectural 1px Bento Grid",
-    bestFor: "Cân bằng giữa tra cứu Repo, đọc Tin tức và mở rộng tự nhiên các công cụ AI Studio (Video/Ảnh/Flows).",
+    layout: "44px Workspace Ribbon + Contextual Filter Rail (228px) + Architectural 1px Bento Grid",
+    bestFor: "Cấu trúc module kỹ thuật 1px sắc cạnh.",
     bg: "#eeeff1",
     ink: "#111317",
     accent: "#e8481c",
+    recommended: false,
   },
 ];
 
 export default function PrototypesIndexPage() {
   return (
     <div className="min-h-screen bg-[#f5f4f0] px-6 py-12 text-[#181715]">
-      <div className="mx-auto max-w-6xl space-y-10">
+      <div className="mx-auto max-w-7xl space-y-10">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-6">
           <div className="space-y-2">
             <div className="text-xs font-medium uppercase tracking-widest text-black/50">
-              Phase 2 · Art Direction Comparison
+              Phase 2 → P2.1 · Art Direction Comparison
             </div>
             <h1 className="text-3xl font-medium tracking-tight">
-              AI Repo Hub — 3 Hướng Thiết Kế Độc Lập
+              AI Repo Hub — So sánh P2.1 &amp; các Phương án P1 / P2 / P3
             </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-black/65">
-              Cả 3 bản prototype dưới đây đều dùng dữ liệu repository và tin tức thật từ PostgreSQL, cho phép bạn chuyển Dark/Light, thử tìm kiếm, lọc và chuyển tab giữa Repo, Tin tức và AI Studio.
+            <p className="max-w-3xl text-sm leading-relaxed text-black/65">
+              Bản <strong>P2.1 (Vellum Digital Editorial)</strong> nâng cấp từ P2 với hệ thống repository thumbnail, 46 logo SVG thật, bộ sưu tập biên tập, chuyển đổi Grid/List, Motion System và Quick-Peek Folio. Các bản P1, P2, P3 vẫn được giữ nguyên để đối chiếu.
             </p>
           </div>
           <Link
@@ -64,15 +81,17 @@ export default function PrototypesIndexPage() {
             className="inline-flex items-center gap-2 rounded-md border border-black/15 bg-white px-3.5 py-2 text-xs font-medium text-black hover:bg-black/5"
           >
             <ArrowLeft className="size-3.5" />
-            Quay về bản hiện tại
+            Quay về bản chính thức
           </Link>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {DIRECTIONS.map((d) => (
             <div
               key={d.id}
-              className="flex flex-col justify-between rounded-lg border border-black/12 bg-white p-6"
+              className={`flex flex-col justify-between rounded-lg border bg-white p-5 ${
+                d.recommended ? "border-[#c03a17] ring-2 ring-[#c03a17]/20" : "border-black/12"
+              }`}
             >
               <div className="space-y-4">
                 <div
@@ -81,22 +100,29 @@ export default function PrototypesIndexPage() {
                 >
                   <span className="text-sm font-medium">{d.name}</span>
                   <span
-                    className="size-4 rounded-sm"
+                    className="size-4 shrink-0 rounded-sm"
                     style={{ backgroundColor: d.accent }}
                     title={`Accent ${d.accent}`}
                   />
                 </div>
                 <div>
-                  <h2 className="text-lg font-medium">{d.name}</h2>
-                  <p className="mt-0.5 text-xs text-black/60">{d.subtitle}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-base font-medium">{d.name}</h2>
+                    {d.recommended && (
+                      <span className="shrink-0 rounded bg-[#c03a17] px-2 py-0.5 text-[10px] font-medium text-white">
+                        Mới
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-black/60">{d.subtitle}</p>
                 </div>
-                <dl className="space-y-2.5 border-t border-black/10 pt-4 text-xs">
+                <dl className="space-y-2 border-t border-black/10 pt-3 text-xs">
                   <div>
-                    <dt className="font-medium text-black/50">Bố cục & Điều hướng</dt>
+                    <dt className="font-medium text-black/50">Bố cục &amp; Điều hướng</dt>
                     <dd className="mt-0.5 text-black/85">{d.layout}</dd>
                   </div>
                   <div>
-                    <dt className="font-medium text-black/50">Typography (Full Tiếng Việt)</dt>
+                    <dt className="font-medium text-black/50">Typography (Full TV)</dt>
                     <dd className="mt-0.5 font-mono text-[11px] text-black/85">{d.typography}</dd>
                   </div>
                   <div>
@@ -104,7 +130,7 @@ export default function PrototypesIndexPage() {
                     <dd className="mt-0.5 text-black/85">{d.palette}</dd>
                   </div>
                   <div>
-                    <dt className="font-medium text-black/50">Điểm mạnh</dt>
+                    <dt className="font-medium text-black/50">Ghi chú</dt>
                     <dd className="mt-0.5 text-black/85">{d.bestFor}</dd>
                   </div>
                 </dl>
@@ -112,9 +138,13 @@ export default function PrototypesIndexPage() {
 
               <Link
                 href={d.href}
-                className="mt-6 inline-flex items-center justify-between rounded border border-black bg-[#181715] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-black/85"
+                className="mt-5 inline-flex items-center justify-between rounded border px-4 py-2.5 text-xs font-medium text-white transition-colors hover:opacity-90"
+                style={{
+                  backgroundColor: d.recommended ? "#c03a17" : "#181715",
+                  borderColor: d.recommended ? "#c03a17" : "#181715",
+                }}
               >
-                <span>Mở Prototype {d.id} trực tiếp</span>
+                <span>Mở {d.id === "2-1" ? "P2.1" : `P${d.id}`} trực tiếp</span>
                 <ArrowRight className="size-3.5" />
               </Link>
             </div>
