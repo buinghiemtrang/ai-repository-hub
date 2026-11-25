@@ -69,6 +69,21 @@ Agent().run()
                         "updated_at": "2026-01-01T00:00:00Z",
                     },
                 )
+            if str(request.url).endswith("/repos/org/old-name"):
+                return httpx.Response(301, headers={"Location": "https://api.github.com/repositories/100"})
+            if str(request.url).endswith("/repositories/100"):
+                return httpx.Response(
+                    200,
+                    json={
+                        "id": 100,
+                        "full_name": "org/retry",
+                        "private": False,
+                        "stargazers_count": 42,
+                        "forks_count": 5,
+                        "subscribers_count": 2,
+                        "updated_at": "2026-01-01T00:00:00Z",
+                    },
+                )
             if str(request.url).endswith("/repos/org/retry/readme"):
                 return httpx.Response(200, text="# Retry Repo\n\nWorks cleanly.")
             return httpx.Response(429, headers={"X-RateLimit-Remaining": "0"}, json={"message": "rate limit"})
@@ -78,6 +93,9 @@ Agent().run()
             res = fetch_repo_and_readme(client, "org/retry", include_readme=True)
             self.assertEqual(res.metadata["id"], 100)
             self.assertIn("Works cleanly", res.readme_text or "")
+
+            redirected = fetch_repo_and_readme(client, "org/old-name", include_readme=False)
+            self.assertEqual(redirected.metadata["full_name"], "org/retry")
 
             with self.assertRaises(RateLimitError):
                 fetch_repo_and_readme(client, "org/limited", include_readme=False)
