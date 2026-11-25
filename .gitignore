@@ -3,6 +3,8 @@
 !.env.example
 node_modules/
 .next/
+next-env.d.ts
+*.tsbuildinfo
 __pycache__/
 *.pyc
 .venv/
