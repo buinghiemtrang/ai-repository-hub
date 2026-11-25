@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { FavoriteButton } from "@/components/repositories/FavoriteButton";
 import { GuideRenderer } from "@/components/repositories/GuideRenderer";
+import { RepoAvatar, RepoBannerImage } from "@/components/repositories/RepoImage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -64,41 +65,59 @@ export default async function DetailPage({
       <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
         {/* Main Editorial Column */}
         <div className="space-y-6">
-          <Card className="p-6 sm:p-8">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="accent">{repo.category}</Badge>
-              {repo.language && <Badge variant="outline">{repo.language}</Badge>}
-              {repo.license && (
-                <Badge variant="secondary">
-                  <Scale className="size-3" />
-                  {repo.license}
-                </Badge>
-              )}
-              {repo.archived && (
-                <Badge variant="warning">
-                  <AlertTriangle className="size-3" />
-                  Đã lưu trữ (Archived)
-                </Badge>
-              )}
+          <Card className="overflow-hidden">
+            <div className="aspect-[2/1] w-full overflow-hidden border-b border-slate-100 bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950">
+              <RepoBannerImage
+                fullName={repo.full_name}
+                imageUrl={repo.image_url}
+                ownerAvatarUrl={repo.owner_avatar_url}
+                hasCustomImage={repo.has_custom_image}
+                category={repo.category}
+                language={repo.language}
+              />
             </div>
 
-            <h1 className="mt-4 text-2xl font-bold tracking-tight break-words sm:text-3xl">
-              {owner && <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>}
-              <span className="text-slate-900 dark:text-slate-50">{name}</span>
-            </h1>
-
-            <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-300">
-              {repo.description_vi}
-            </p>
-
-            {repo.description_upstream && (
-              <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
-                <span className="font-semibold text-slate-800 dark:text-slate-200">
-                  Mô tả gốc trên GitHub:{" "}
-                </span>
-                {repo.description_upstream}
+            <div className="p-6 sm:p-8">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="accent">{repo.category}</Badge>
+                {repo.language && <Badge variant="outline">{repo.language}</Badge>}
+                {repo.license && (
+                  <Badge variant="secondary">
+                    <Scale className="size-3" />
+                    {repo.license}
+                  </Badge>
+                )}
+                {repo.archived && (
+                  <Badge variant="warning">
+                    <AlertTriangle className="size-3" />
+                    Đã lưu trữ (Archived)
+                  </Badge>
+                )}
               </div>
-            )}
+
+              <div className="mt-4 flex items-center gap-3">
+                <RepoAvatar avatarUrl={repo.owner_avatar_url} owner={owner} />
+                <h1 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">
+                  {owner && (
+                    <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>
+                  )}
+                  <span className="text-slate-900 dark:text-slate-50">{name}</span>
+                </h1>
+              </div>
+
+              <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+                {repo.description_vi}
+              </p>
+
+              {repo.description_upstream && (
+                <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                    Mô tả gốc trên GitHub:{" "}
+                  </span>
+                  {repo.description_upstream}
+                </div>
+              )}
+            </div>
           </Card>
 
           <Card className="p-6 sm:p-8">

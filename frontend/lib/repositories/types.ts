@@ -10,6 +10,9 @@ export type RepoItem = {
   language: string | null;
   default_branch: string | null;
   archived: boolean;
+  image_url: string;
+  owner_avatar_url: string | null;
+  has_custom_image: boolean;
   stars: number | null;
   forks: number | null;
   watchers: number | null;

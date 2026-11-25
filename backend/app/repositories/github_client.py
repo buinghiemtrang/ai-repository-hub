@@ -123,6 +123,11 @@ def apply_github_metadata(
     repo.language = (metadata.get("language") or "")[:100] or None
     repo.default_branch = (metadata.get("default_branch") or "")[:100] or None
     repo.archived = bool(metadata.get("archived", False))
+    owner_avatar = _safe_homepage((metadata.get("owner") or {}).get("avatar_url"))
+    if owner_avatar:
+        repo.owner_avatar_url = owner_avatar
+    if not repo.image_url:
+        repo.image_url = f"https://opengraph.githubassets.com/1/{repo.full_name}"[:500]
     updated_raw = metadata.get("updated_at")
     if updated_raw:
         repo.updated_at = datetime.fromisoformat(updated_raw.replace("Z", "+00:00"))
