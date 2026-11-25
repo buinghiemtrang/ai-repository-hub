@@ -12,7 +12,7 @@ Mỗi module là một feature slice độc lập:
   - `service.py` / `sync.py` — business logic, external client, background jobs
   - `tests/test_<module_name>.py` — unit & integration tests riêng
 - **Database**:
-  - Dùng chung PostgreSQL database nhưng bảng phải có tiền tố hoặc tên rõ ràng theo module (`repositories`, `sync_runs`, tương lai: `ai_skills`, `mcp_servers`, `ai_models`, `workflows`, `knowledge_notes`).
+  - Dùng chung PostgreSQL database nhưng bảng phải có tiền tố hoặc tên rõ ràng theo module (`repositories`, `sync_runs`, `news_days`, `news_items`, `news_sync_runs`, tương lai: `ai_skills`, `mcp_servers`, `ai_models`, `workflows`, `knowledge_notes`).
   - Mọi thay đổi schema phải đi qua Alembic migration nối tiếp trên cùng chuỗi revision.
   - Không query trực tiếp vào bảng nội bộ của module khác nếu có thể giao tiếp qua Python service interface của module đó.
 - **Frontend**:

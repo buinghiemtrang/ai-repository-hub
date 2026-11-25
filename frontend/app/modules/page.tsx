@@ -11,40 +11,44 @@ const PLANNED_MODULES = [
       "Danh mục repo AI mã nguồn mở, tìm kiếm tiếng Việt không dấu, lọc danh mục/ngôn ngữ/yêu thích, đồng bộ GitHub API và hướng dẫn đối chiếu README.",
   },
   {
-    name: "AI Skills",
-    status: "Chờ phê duyệt phạm vi (M7)",
-    active: false,
-    scope: "Quản lý đặc tả skill (SKILL.md), phân loại theo agent runtime và liên kết repo nguồn.",
+    name: "News & Repo Feed",
+    status: "Đang hoạt động (Module 2)",
+    active: true,
+    scope:
+      "Bản tin AI & mục Repo độc lập theo ngày/tuần, thu thập RSS công khai, lọc đa chiều và trình phát Podcast/TTS tiếng Việt.",
   },
   {
-    name: "MCP Registry",
-    status: "Chờ phê duyệt phạm vi (M7)",
+    name: "Video & Voiceover Studio",
+    status: "Chờ phê duyệt phạm vi (Studio)",
     active: false,
-    scope: "Danh mục Model Context Protocol servers, transport (stdio/HTTP), biến môi trường yêu cầu (không lưu secret).",
+    scope:
+      "Tạo video giải thích, hoạt hình cắt giấy, voiceover ngắn và chỉnh timeline theo hướng sangtao.ai.",
   },
   {
-    name: "Models",
-    status: "Chờ phê duyệt phạm vi (M7)",
+    name: "Image & POD Design Studio",
+    status: "Chờ phê duyệt phạm vi (Studio)",
     active: false,
-    scope: "Theo dõi mô hình mở/local (GGUF/Ollama/vLLM), thông số ngữ cảnh, giấy phép và yêu cầu phần cứng.",
+    scope: "Tạo ảnh sản phẩm hàng loạt, tách nền PNG và quản lý Brand Kit.",
   },
   {
-    name: "Tools & Workflows",
+    name: "AI Skills & MCP Registry",
     status: "Chờ phê duyệt phạm vi (M7)",
     active: false,
-    scope: "Liên kết công cụ CLI, workflow tự động hóa và mẫu tích hợp có kiểm chứng.",
+    scope:
+      "Quản lý đặc tả skill (SKILL.md), MCP servers (stdio/HTTP), biến môi trường yêu cầu (không lưu secret).",
   },
   {
-    name: "Knowledge Base",
+    name: "Models & Workflows",
     status: "Chờ phê duyệt phạm vi (M7)",
     active: false,
-    scope: "Ghi chú kỹ thuật cá nhân và tài liệu đối chiếu gắn với từng repository/module.",
+    scope:
+      "Theo dõi mô hình mở/local (GGUF/Ollama/vLLM), kết hợp pipeline tự động hóa Flows & lịch xuất bản.",
   },
 ];
 
 export default function ModulesPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10 space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:py-10">
       <div className="space-y-2">
         <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-400">
           <Boxes className="size-3.5" />
@@ -54,7 +58,7 @@ export default function ModulesPage() {
           Kiến trúc mở rộng theo Module AI
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-          Hệ thống áp dụng kiến trúc Modular Monolith: mỗi module sở hữu riêng API router, service, model SQLAlchemy, Alembic migration và UI route. Các module tương lai chỉ triển khai khi có phê duyệt phạm vi rõ ràng.
+          Hệ thống áp dụng kiến trúc Modular Monolith: mỗi module sở hữu riêng API router, service, model SQLAlchemy, Alembic migration và UI route. Các công cụ AI Studio tương lai chỉ triển khai khi có phê duyệt phạm vi rõ ràng.
         </p>
       </div>
 

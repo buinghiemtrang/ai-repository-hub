@@ -24,6 +24,8 @@ services:
       SYNC_SCHEDULER_ENABLED: ${SYNC_SCHEDULER_ENABLED:-true}
       SYNC_INTERVAL_HOURS: ${SYNC_INTERVAL_HOURS:-24}
       SYNC_MIN_AGE_HOURS: ${SYNC_MIN_AGE_HOURS:-12}
+      NEWS_SYNC_ENABLED: ${NEWS_SYNC_ENABLED:-true}
+      NEWS_SYNC_INTERVAL_HOURS: ${NEWS_SYNC_INTERVAL_HOURS:-6}
     depends_on:
       db:
         condition: service_healthy
