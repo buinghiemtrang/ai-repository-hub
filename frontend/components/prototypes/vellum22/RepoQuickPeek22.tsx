@@ -16,6 +16,7 @@ import {
   Star,
   X,
 } from "lucide-react";
+import { GuideRenderer } from "@/components/repositories/GuideRenderer";
 import { RepoThumbnail22 } from "@/components/prototypes/vellum22/RepoThumbnail22";
 import {
   BrandLogoBadge,
@@ -29,6 +30,7 @@ interface RepoQuickPeek22Props {
   repo: RepoItem | null;
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   isFavorite: boolean;
   hasPrev: boolean;
   hasNext: boolean;
@@ -69,6 +71,7 @@ export function RepoQuickPeek22({
   repo,
   theme,
   dark,
+  rc = false,
   isFavorite,
   hasPrev,
   hasNext,
@@ -230,7 +233,9 @@ export function RepoQuickPeek22({
                   disabled={!hasPrev}
                   onClick={onPrev}
                   style={{ borderColor: theme.rule }}
-                  className="flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-30"
+                  className={`flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-35 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Repo trước (←)"
                   aria-label="Repo trước"
                 >
@@ -241,7 +246,9 @@ export function RepoQuickPeek22({
                   disabled={!hasNext}
                   onClick={onNext}
                   style={{ borderColor: theme.rule }}
-                  className="flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-30"
+                  className={`flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-35 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Repo sau (→)"
                   aria-label="Repo sau"
                 >
@@ -252,7 +259,9 @@ export function RepoQuickPeek22({
                   type="button"
                   onClick={onClose}
                   style={{ borderColor: theme.rule }}
-                  className="ml-1 flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80"
+                  className={`ml-1 flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Đóng (Esc)"
                   aria-label="Đóng Folio"
                 >
@@ -291,7 +300,9 @@ export function RepoQuickPeek22({
                       backgroundColor: isFavorite ? theme.accentSoft : "transparent",
                       color: isFavorite ? theme.accent : theme.muted,
                     }}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-[4px] border px-2.5 py-1.5 text-xs font-medium transition-transform active:scale-[0.96]"
+                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-[4px] border px-2.5 py-1.5 text-xs font-medium transition-transform active:scale-[0.96] ${
+                      rc ? "min-h-11 sm:min-h-0" : ""
+                    }`}
                   >
                     <Heart className={`size-3.5 ${isFavorite ? "fill-current" : ""}`} />
                     {isFavorite ? "Đã lưu" : "Lưu"}
@@ -365,6 +376,8 @@ export function RepoQuickPeek22({
                     <div style={{ backgroundColor: theme.surfaceAlt }} className="h-4 w-1/3 animate-pulse rounded" />
                     <div style={{ backgroundColor: theme.surfaceAlt }} className="h-16 w-full animate-pulse rounded" />
                   </div>
+                ) : rc && current.guide_vi ? (
+                  <GuideRenderer content={current.guide_vi} variant={dark ? "vellum-dark" : "vellum-light"} />
                 ) : sections.length > 0 ? (
                   <div className="space-y-2.5">
                     {sections.map((sec, i) => (
@@ -404,7 +417,9 @@ export function RepoQuickPeek22({
                 <Link
                   href={`/repositories/${current.id}`}
                   style={{ borderColor: theme.ruleStrong }}
-                  className="inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium transition-colors hover:opacity-80"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium transition-colors hover:opacity-80 ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                 >
                   Chi tiết đầy đủ
                 </Link>
@@ -412,7 +427,9 @@ export function RepoQuickPeek22({
                   type="button"
                   onClick={copyRepoUrl}
                   style={{ borderColor: theme.rule, color: theme.muted }}
-                  className="inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 py-2 text-xs font-medium transition-colors hover:opacity-90"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 py-2 text-xs font-medium transition-colors hover:opacity-90 ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                   title="Sao chép liên kết GitHub"
                 >
                   {copiedUrl ? (
@@ -441,7 +458,9 @@ export function RepoQuickPeek22({
                   target="_blank"
                   rel="noreferrer"
                   style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                  className="inline-flex items-center gap-1.5 rounded-[4px] px-4 py-2 text-xs font-medium transition-transform hover:-translate-y-[1px] active:scale-[0.985]"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] px-4 py-2 text-xs font-medium transition-transform hover:-translate-y-[1px] active:scale-[0.985] ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                 >
                   Mở trên GitHub
                   <ArrowUpRight className="size-3.5" />

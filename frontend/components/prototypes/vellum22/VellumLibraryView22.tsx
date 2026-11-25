@@ -35,6 +35,7 @@ import {
 interface VellumLibraryView22Props {
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   stats: CatalogStats | null;
   favorites: number[];
   onlyFavorites: boolean;
@@ -85,6 +86,7 @@ const EDITORIAL_COLLECTIONS = [
 export function VellumLibraryView22({
   theme,
   dark,
+  rc = false,
   stats,
   favorites,
   onlyFavorites,
@@ -238,7 +240,7 @@ export function VellumLibraryView22({
                   </span>
 
                   {featuredCandidates.length > 1 && (
-                    <div className="flex items-center gap-1">
+                    <div className="flex flex-wrap items-center gap-1">
                       {featuredCandidates.map((cand, idx) => (
                         <button
                           key={cand.id}
@@ -249,7 +251,9 @@ export function VellumLibraryView22({
                             color: idx === featuredIndex ? theme.accentInk : theme.muted,
                             fontFamily: "var(--font-jetbrains)",
                           }}
-                          className="rounded-[3px] px-1.5 py-0.5 text-[10px] font-medium transition-colors duration-150"
+                          className={`rounded-[3px] text-[10px] font-medium transition-colors duration-150 ${
+                            rc ? "min-h-11 min-w-11 px-2 sm:min-h-0 sm:min-w-0 sm:px-1.5 sm:py-0.5" : "px-1.5 py-0.5"
+                          }`}
                         >
                           0{idx + 1}
                         </button>
@@ -309,7 +313,9 @@ export function VellumLibraryView22({
                   type="button"
                   onClick={() => onOpenQuickPeek(featuredRepo, featuredCandidates)}
                   style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                  className="inline-flex items-center gap-1.5 rounded-[4px] px-3.5 py-1.5 text-xs font-medium transition-transform duration-150 hover:-translate-y-[1px] active:scale-[0.985]"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] px-3.5 py-1.5 text-xs font-medium transition-transform duration-150 hover:-translate-y-[1px] active:scale-[0.985] ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                 >
                   <Eye className="size-3.5" />
                   Xem nhanh Folio
@@ -319,7 +325,9 @@ export function VellumLibraryView22({
                   target="_blank"
                   rel="noreferrer"
                   style={{ borderColor: theme.ruleStrong, color: theme.ink }}
-                  className="inline-flex items-center gap-1 rounded-[4px] border px-3 py-1.5 text-xs font-medium transition-all duration-150 hover:-translate-y-[1px] hover:opacity-85 active:scale-[0.985]"
+                  className={`inline-flex items-center gap-1 rounded-[4px] border px-3 py-1.5 text-xs font-medium transition-all duration-150 hover:-translate-y-[1px] hover:opacity-85 active:scale-[0.985] ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                 >
                   GitHub
                   <ArrowUpRight className="size-3.5" />
@@ -447,7 +455,7 @@ export function VellumLibraryView22({
         <div className="flex flex-wrap items-center gap-2">
           <div
             style={{ backgroundColor: theme.bg, borderColor: theme.rule }}
-            className="relative flex min-w-[220px] flex-1 items-center rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/30"
+            className="relative flex min-w-[220px] flex-1 items-center rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/40"
           >
             <Search style={{ color: theme.muted }} className="size-4 shrink-0" />
             <input
@@ -459,7 +467,11 @@ export function VellumLibraryView22({
                 setPage(1);
               }}
               placeholder="Tìm tên repo, mô tả tiếng Việt hoặc tiếng Anh (nhấn /)..."
-              className="h-9 w-full bg-transparent px-2.5 text-sm outline-none"
+              className={`w-full bg-transparent px-2.5 text-sm outline-none ${
+                rc
+                  ? `h-11 sm:h-9 ${dark ? "placeholder:text-[#B8B0A4]" : "placeholder:text-[#57534B]"}`
+                  : "h-9"
+              }`}
             />
             {q && (
               <button
@@ -469,6 +481,7 @@ export function VellumLibraryView22({
                   setPage(1);
                 }}
                 style={{ color: theme.muted }}
+                className={rc ? "flex size-11 -mr-2.5 items-center justify-center sm:size-6 sm:mr-0" : ""}
                 aria-label="Xoá từ khoá"
               >
                 <X className="size-3.5" />
@@ -484,7 +497,7 @@ export function VellumLibraryView22({
               setPage(1);
             }}
             style={{ backgroundColor: theme.bg, borderColor: theme.rule }}
-            className="h-9 rounded-[4px] border px-2.5 text-xs outline-none"
+            className={`rounded-[4px] border px-2.5 text-xs outline-none ${rc ? "h-11 sm:h-9" : "h-9"}`}
           >
             <option value="">Mọi ngôn ngữ</option>
             {stats?.languages.map((l) => (
@@ -502,7 +515,7 @@ export function VellumLibraryView22({
               setPage(1);
             }}
             style={{ backgroundColor: theme.bg, borderColor: theme.rule }}
-            className="h-9 rounded-[4px] border px-2.5 text-xs outline-none"
+            className={`rounded-[4px] border px-2.5 text-xs outline-none ${rc ? "h-11 sm:h-9" : "h-9"}`}
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -529,7 +542,9 @@ export function VellumLibraryView22({
                   type="button"
                   onClick={() => setViewMode(m.id)}
                   style={{ color: active ? theme.accentInk : theme.muted }}
-                  className="relative z-10 inline-flex h-7 items-center gap-1 px-2.5 text-xs font-medium"
+                  className={`relative z-10 inline-flex items-center gap-1 px-2.5 text-xs font-medium ${
+                    rc ? "h-10 sm:h-7" : "h-7"
+                  }`}
                   title={`Chế độ ${m.label}`}
                 >
                   {active && (
@@ -552,7 +567,9 @@ export function VellumLibraryView22({
         {stats && (
           <div
             style={{ borderColor: theme.rule }}
-            className="flex items-center gap-1.5 overflow-x-auto border-t pt-2 pb-0.5 [scrollbar-width:none]"
+            className={`flex items-center overflow-x-auto border-t pt-2 pb-0.5 [scrollbar-width:none] ${
+              rc ? "gap-2 sm:gap-1.5" : "gap-1.5"
+            }`}
           >
             <button
               type="button"
@@ -565,9 +582,11 @@ export function VellumLibraryView22({
                 color: category === "" ? theme.bg : theme.ink,
                 borderColor: theme.rule,
               }}
-              className="shrink-0 rounded-[4px] border px-2.5 py-1 text-xs font-medium transition-colors duration-150"
+              className={`shrink-0 rounded-[4px] border px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${
+                rc ? "min-h-11 sm:min-h-0" : ""
+              }`}
             >
-              Tất cả <span className="tabular-nums opacity-75">{stats.total}</span>
+              Tất cả <span className="tabular-nums opacity-80">{stats.total}</span>
             </button>
             {stats.categories.map((cat) => {
               const active = category === cat.name;
@@ -584,11 +603,13 @@ export function VellumLibraryView22({
                     color: active ? theme.accentInk : theme.ink,
                     borderColor: active ? theme.accent : theme.rule,
                   }}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-[4px] border px-2.5 py-1 text-xs font-medium transition-colors duration-150"
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-[4px] border px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${
+                    rc ? "min-h-11 sm:min-h-0" : ""
+                  }`}
                 >
                   <CategoryIcon category={cat.name} className="size-3" />
                   <span>{cat.name}</span>
-                  <span className="tabular-nums opacity-75">{cat.count}</span>
+                  <span className="tabular-nums opacity-80">{cat.count}</span>
                 </button>
               );
             })}
@@ -720,7 +741,9 @@ export function VellumLibraryView22({
                             onClick={() => onToggleFavorite(repo.id)}
                             aria-label={isFav ? "Bỏ yêu thích" : "Yêu thích"}
                             style={{ color: isFav ? theme.accent : theme.muted }}
-                            className="shrink-0 p-0.5 transition-transform duration-150 active:scale-90"
+                            className={`shrink-0 transition-transform duration-150 active:scale-90 ${
+                              rc ? "flex min-h-11 min-w-11 -m-3 items-center justify-center sm:min-h-0 sm:min-w-0 sm:m-0 sm:p-0.5" : "p-0.5"
+                            }`}
                           >
                             <Heart className={`size-3.5 ${isFav ? "fill-current" : ""}`} />
                           </button>
@@ -757,12 +780,14 @@ export function VellumLibraryView22({
                         </span>
                         <LanguageLogo language={repo.language} dark={dark} />
                       </div>
-                      <div className="flex items-center gap-2.5">
+                      <div className="flex items-center gap-2 sm:gap-2.5">
                         <button
                           type="button"
                           onClick={() => onOpenQuickPeek(repo, items)}
                           style={{ color: theme.ink }}
-                          className="font-sans font-medium hover:underline"
+                          className={`font-sans font-medium hover:underline ${
+                            rc ? "inline-flex min-h-11 items-center px-2 sm:min-h-0 sm:px-0" : ""
+                          }`}
                         >
                           Folio
                         </button>
@@ -771,7 +796,9 @@ export function VellumLibraryView22({
                           target="_blank"
                           rel="noreferrer"
                           aria-label={`GitHub ${repo.full_name}`}
-                          className="hover:opacity-70"
+                          className={`hover:opacity-70 ${
+                            rc ? "inline-flex min-h-11 min-w-11 items-center justify-center sm:min-h-0 sm:min-w-0" : ""
+                          }`}
                         >
                           <ArrowUpRight className="size-3.5" />
                         </a>
@@ -851,6 +878,7 @@ export function VellumLibraryView22({
                         type="button"
                         onClick={() => onToggleFavorite(repo.id)}
                         style={{ color: isFav ? theme.accent : theme.muted }}
+                        className={rc ? "inline-flex min-h-11 min-w-11 items-center justify-center sm:min-h-0 sm:min-w-0" : ""}
                         aria-label="Yêu thích"
                       >
                         <Heart className={`size-3.5 ${isFav ? "fill-current" : ""}`} />
@@ -859,7 +887,9 @@ export function VellumLibraryView22({
                         type="button"
                         onClick={() => onOpenQuickPeek(repo, items)}
                         style={{ borderColor: theme.rule, color: theme.ink }}
-                        className="rounded-[4px] border px-2.5 py-1 font-sans text-xs font-medium transition-colors hover:opacity-80"
+                        className={`rounded-[4px] border px-2.5 py-1 font-sans text-xs font-medium transition-colors hover:opacity-80 ${
+                          rc ? "min-h-11 sm:min-h-0" : ""
+                        }`}
                       >
                         Folio
                       </button>
@@ -880,7 +910,9 @@ export function VellumLibraryView22({
             disabled={page <= 1 || loading}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-            className="inline-flex h-8 items-center gap-1 rounded-[4px] border px-3 text-xs font-medium transition-colors hover:opacity-85 disabled:opacity-40"
+            className={`inline-flex items-center gap-1 rounded-[4px] border px-3 text-xs font-medium transition-colors hover:opacity-85 disabled:opacity-40 ${
+              rc ? "min-h-11 px-4 sm:min-h-0 sm:h-8 sm:px-3" : "h-8"
+            }`}
           >
             <ChevronLeft className="size-3.5" />
             Trước
@@ -893,7 +925,9 @@ export function VellumLibraryView22({
             disabled={loading || page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
             style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-            className="inline-flex h-8 items-center gap-1 rounded-[4px] border px-3 text-xs font-medium transition-colors hover:opacity-85 disabled:opacity-40"
+            className={`inline-flex items-center gap-1 rounded-[4px] border px-3 text-xs font-medium transition-colors hover:opacity-85 disabled:opacity-40 ${
+              rc ? "min-h-11 px-4 sm:min-h-0 sm:h-8 sm:px-3" : "h-8"
+            }`}
           >
             Sau
             <ChevronRight className="size-3.5" />

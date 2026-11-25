@@ -32,6 +32,7 @@ import {
 interface VellumNewsView22Props {
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   onOpenRepoById?: (repoId: number) => void;
 }
 
@@ -78,7 +79,7 @@ function getItemSections(it: NewsItem): string[] {
   return [it.section || "Ứng dụng thực tế"];
 }
 
-export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView22Props) {
+export function VellumNewsView22({ theme, dark, rc = false, onOpenRepoById }: VellumNewsView22Props) {
   const [feed, setFeed] = useState<NewsFeedPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [section, setSection] = useState("");
@@ -137,6 +138,15 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
     if (!feed?.days.length || selectedDate === "all") return null;
     return feed.days.find((d) => d.date === selectedDate) || feed.days[0];
   }, [feed, selectedDate]);
+
+  // 0. Total unique items within the active date scope (before search query & category)
+  const scopedTotalCount = useMemo(() => {
+    const rawPool =
+      selectedDate === "all" ? (feed?.days || []).flatMap((d) => d.items) : activeDay?.items || [];
+    const seen = new Set<string>();
+    for (const it of rawPool) seen.add(it.id);
+    return seen.size;
+  }, [feed, activeDay, selectedDate]);
 
   // 1. Base pool filtered ONLY by active date scope and search query `q` (ignores active `section` & pagination).
   const baseScopedItems = useMemo(() => {
@@ -238,6 +248,39 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
     return [...base, ...extras];
   }, [feed?.sections, categoryStats.extraSections, theme.accent]);
 
+  const activeSectionShort = useMemo(() => {
+    if (!section) return "";
+    return sectionList.find((s) => s.name === section)?.short || section;
+  }, [section, sectionList]);
+
+  const rcResultSummary = useMemo(() => {
+    const dateScopeText =
+      selectedDate === "all"
+        ? `trong lưu trữ (${feed?.days.length || 0} ngày)`
+        : `trong ngày ${formatNewsDate(activeDay?.date || "")}`;
+    const hasQuery = Boolean(query.trim());
+    if (!section && !hasQuery) {
+      return `${scopedTotalCount} tin ${dateScopeText}`;
+    }
+    if (section && !hasQuery) {
+      return `${filteredItems.length} kết quả (${activeSectionShort}) · ${scopedTotalCount} tin ${dateScopeText}`;
+    }
+    if (!section && hasQuery) {
+      return `${categoryStats.allCount} kết quả tìm kiếm · ${scopedTotalCount} tin ${dateScopeText}`;
+    }
+    return `${filteredItems.length} kết quả (${activeSectionShort}) · ${categoryStats.allCount} khớp từ khóa · ${scopedTotalCount} tin ${dateScopeText}`;
+  }, [
+    selectedDate,
+    feed?.days.length,
+    activeDay?.date,
+    query,
+    section,
+    activeSectionShort,
+    scopedTotalCount,
+    filteredItems.length,
+    categoryStats.allCount,
+  ]);
+
   const articleIndex = activeArticle ? filteredItems.findIndex((x) => x.id === activeArticle.id) : -1;
 
   if (loading) {
@@ -262,7 +305,11 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
               style={{ color: theme.accent, fontFamily: "var(--font-jetbrains)" }}
               className="tabular-nums text-[11px] font-medium uppercase tracking-widest"
             >
-              Vellum Digital Dispatch · {selectedDate === "all" ? "Toàn bộ lưu trữ" : formatNewsDate(activeDay?.date || "")} · {categoryStats.allCount} bài viết khớp bộ lọc
+              {rc
+                ? `Vellum Digital Dispatch · ${rcResultSummary}`
+                : `Vellum Digital Dispatch · ${
+                    selectedDate === "all" ? "Toàn bộ lưu trữ" : formatNewsDate(activeDay?.date || "")
+                  } · ${categoryStats.allCount} bài viết khớp bộ lọc`}
             </div>
             <h1 style={{ fontFamily: "var(--font-newsreader)" }} className="mt-1 text-3xl font-medium sm:text-4xl">
               Tạp chí Tin tức AI &amp; Repo
@@ -272,7 +319,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
           <div className="flex flex-wrap items-center gap-2">
             <div
               style={{ backgroundColor: theme.surface, borderColor: theme.rule }}
-              className="flex h-9 items-center gap-2 rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/30"
+              className={`flex items-center gap-2 rounded-[4px] border px-3 transition-all duration-150 focus-within:ring-2 focus-within:ring-[#c84b24]/30 ${
+                rc ? "h-11 sm:h-9" : "h-9"
+              }`}
             >
               <Search style={{ color: theme.muted }} className="size-3.5" />
               <input
@@ -283,7 +332,13 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                   setPage(1);
                 }}
                 placeholder="Tìm tin không dấu..."
-                className="w-44 bg-transparent text-xs outline-none sm:w-56"
+                className={`w-44 bg-transparent text-xs outline-none sm:w-56 ${
+                  rc
+                    ? dark
+                      ? "placeholder:text-[#B8B0A4]"
+                      : "placeholder:text-[#57534B]"
+                    : ""
+                }`}
               />
               {query && (
                 <button
@@ -292,6 +347,11 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                     setQuery("");
                     setPage(1);
                   }}
+                  className={
+                    rc
+                      ? "flex size-11 -mr-2.5 items-center justify-center sm:size-6 sm:mr-0"
+                      : ""
+                  }
                   aria-label="Xoá tìm kiếm"
                 >
                   <X className="size-3.5" />
@@ -304,7 +364,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                 type="button"
                 onClick={stopSpeech}
                 style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                className="inline-flex h-9 items-center gap-1.5 rounded-[4px] px-3.5 text-xs font-medium transition-transform active:scale-[0.985]"
+                className={`inline-flex items-center gap-1.5 rounded-[4px] px-3.5 text-xs font-medium transition-transform active:scale-[0.985] ${
+                  rc ? "h-11 sm:h-9" : "h-9"
+                }`}
               >
                 <Square className="size-3 fill-current" />
                 Dừng đọc
@@ -315,7 +377,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                   type="button"
                   onClick={() => speakItem(coverStory)}
                   style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-[4px] px-3.5 text-xs font-medium transition-transform hover:-translate-y-[1px] active:scale-[0.985]"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] px-3.5 text-xs font-medium transition-transform hover:-translate-y-[1px] active:scale-[0.985] ${
+                    rc ? "h-11 sm:h-9" : "h-9"
+                  }`}
                 >
                   <Headphones className="size-3.5" />
                   Nghe tiêu điểm
@@ -327,7 +391,7 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
 
         {/* Category Strip with Real Live Counts & Accurate Icons */}
         {feed && (
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-1.5">
             <button
               type="button"
               onClick={() => {
@@ -339,12 +403,14 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                 color: section === "" ? theme.bg : theme.ink,
                 borderColor: section === "" ? theme.ink : theme.rule,
               }}
-              className="inline-flex items-center gap-2 rounded-[4px] border px-3 py-1.5 text-xs font-medium transition-colors duration-150"
+              className={`inline-flex items-center gap-2 rounded-[4px] border px-3 text-xs font-medium transition-colors duration-150 ${
+                rc ? "min-h-11 py-2 sm:min-h-0 sm:py-1.5" : "py-1.5"
+              }`}
             >
               <span>Tất cả chuyên mục</span>
               <span
                 style={{ fontFamily: "var(--font-jetbrains)" }}
-                className="tabular-nums text-[11px] opacity-75"
+                className="tabular-nums text-[11px] opacity-80"
               >
                 {categoryStats.allCount}
               </span>
@@ -364,11 +430,14 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                   }}
                   style={{
                     backgroundColor: active ? theme.accent : theme.surface,
-                    color: active ? theme.accentInk : theme.ink,
+                    color: active ? theme.accentInk : empty && rc ? theme.muted : theme.ink,
                     borderColor: active ? theme.accent : theme.rule,
-                    opacity: empty && !active ? 0.58 : 1,
+                    borderStyle: empty && !active && rc ? "dashed" : "solid",
+                    opacity: empty && !active && !rc ? 0.58 : 1,
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 py-1.5 text-xs font-medium transition-all duration-150 hover:opacity-100"
+                  className={`inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 text-xs font-medium transition-all duration-150 hover:opacity-100 ${
+                    rc ? "min-h-11 py-2 sm:min-h-0 sm:py-1.5" : "py-1.5"
+                  }`}
                 >
                   <NewsCategoryIcon
                     section={s.name}
@@ -379,7 +448,7 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                   <span>{s.short || s.name}</span>
                   <span
                     style={{ fontFamily: "var(--font-jetbrains)" }}
-                    className="tabular-nums text-[11px] opacity-70"
+                    className={`tabular-nums text-[11px] ${rc ? "opacity-85" : "opacity-70"}`}
                   >
                     {cnt}
                   </span>
@@ -482,12 +551,14 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                       {coverStory.summary}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-3 pt-1 text-xs">
+                    <div className="flex flex-wrap items-center gap-2 pt-1 text-xs sm:gap-3">
                       <button
                         type="button"
                         onClick={() => setActiveArticle(coverStory)}
                         style={{ backgroundColor: theme.surfaceAlt, color: theme.ink, borderColor: theme.ruleStrong }}
-                        className="rounded-[4px] border px-2.5 py-1 font-medium transition-colors hover:opacity-85"
+                        className={`rounded-[4px] border px-3 py-1.5 font-medium transition-colors hover:opacity-85 ${
+                          rc ? "min-h-11 sm:min-h-0 sm:px-2.5 sm:py-1" : ""
+                        }`}
                       >
                         Đọc chi tiết
                       </button>
@@ -495,7 +566,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                         type="button"
                         onClick={() => speakItem(coverStory)}
                         style={{ borderColor: theme.rule }}
-                        className="inline-flex items-center gap-1.5 rounded-[4px] border px-2.5 py-1 font-medium"
+                        className={`inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-1.5 font-medium ${
+                          rc ? "min-h-11 sm:min-h-0 sm:px-2.5 sm:py-1" : ""
+                        }`}
                       >
                         {playingId === coverStory.id ? <Pause className="size-3" /> : <Play className="size-3" />}
                         Nghe
@@ -505,7 +578,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                           type="button"
                           onClick={() => onOpenRepoById(coverStory.repository_id!)}
                           style={{ color: theme.accent }}
-                          className="inline-flex items-center gap-1 font-medium hover:underline"
+                          className={`inline-flex items-center gap-1 font-medium hover:underline ${
+                            rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                          }`}
                         >
                           <FolderGit2 className="size-3.5" />
                           Mở Repo Folio
@@ -517,7 +592,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                           target="_blank"
                           rel="noreferrer"
                           style={{ color: theme.muted }}
-                          className="inline-flex items-center gap-1 hover:underline"
+                          className={`inline-flex items-center gap-1 hover:underline ${
+                            rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                          }`}
                         >
                           {urlHost(coverStory.url)} <ArrowUpRight className="size-3" />
                         </a>
@@ -630,12 +707,14 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                         </div>
 
                         <div style={{ borderColor: theme.rule }} className="mt-4 flex items-center justify-between border-t pt-2.5 text-xs">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 sm:gap-3">
                             <button
                               type="button"
                               onClick={() => speakItem(it)}
                               style={{ color: playingId === it.id ? theme.accent : theme.ink }}
-                              className="inline-flex items-center gap-1 font-medium"
+                              className={`inline-flex items-center gap-1 font-medium ${
+                                rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                              }`}
                             >
                               {playingId === it.id ? <Pause className="size-3" /> : <Play className="size-3" />}
                               Nghe
@@ -644,18 +723,22 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                               type="button"
                               onClick={() => setActiveArticle(it)}
                               style={{ color: theme.muted }}
-                              className="font-medium hover:underline"
+                              className={`font-medium hover:underline ${
+                                rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                              }`}
                             >
                               Đọc tin
                             </button>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-2 sm:gap-3">
                             {it.repository_id && onOpenRepoById && (
                               <button
                                 type="button"
                                 onClick={() => onOpenRepoById(it.repository_id!)}
                                 style={{ color: theme.accent }}
-                                className="font-medium hover:underline"
+                                className={`font-medium hover:underline ${
+                                  rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                                }`}
                               >
                                 Repo Folio
                               </button>
@@ -666,7 +749,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                                 target="_blank"
                                 rel="noreferrer"
                                 style={{ color: theme.muted }}
-                                className="inline-flex items-center gap-0.5 hover:underline"
+                                className={`inline-flex items-center gap-0.5 hover:underline ${
+                                  rc ? "min-h-11 px-1.5 sm:min-h-0 sm:px-0" : ""
+                                }`}
                               >
                                 Nguồn <ArrowUpRight className="size-3" />
                               </a>
@@ -687,7 +772,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                     disabled={safePage <= 1}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-                    className="inline-flex h-8 items-center gap-1 rounded-[4px] border px-3 text-xs font-medium disabled:opacity-40"
+                    className={`inline-flex items-center gap-1 rounded-[4px] border px-3 text-xs font-medium disabled:opacity-40 ${
+                      rc ? "min-h-11 px-4 sm:min-h-0 sm:h-8 sm:px-3" : "h-8"
+                    }`}
                   >
                     <ChevronLeft className="size-3.5" />
                     Trước
@@ -700,7 +787,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                     disabled={safePage >= totalPages}
                     onClick={() => setPage((p) => p + 1)}
                     style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-                    className="inline-flex h-8 items-center gap-1 rounded-[4px] border px-3 text-xs font-medium disabled:opacity-40"
+                    className={`inline-flex items-center gap-1 rounded-[4px] border px-3 text-xs font-medium disabled:opacity-40 ${
+                      rc ? "min-h-11 px-4 sm:min-h-0 sm:h-8 sm:px-3" : "h-8"
+                    }`}
                   >
                     Sau
                     <ChevronRight className="size-3.5" />
@@ -733,7 +822,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                   color: selectedDate === "all" ? theme.bg : theme.ink,
                   borderColor: theme.rule,
                 }}
-                className="flex w-full items-center justify-between rounded-[4px] border px-3 py-2 text-xs font-medium transition-colors"
+                className={`flex w-full items-center justify-between rounded-[4px] border px-3 py-2 text-xs font-medium transition-colors ${
+                  rc ? "min-h-11 sm:min-h-0" : ""
+                }`}
               >
                 <span>Tất cả ngày ({feed?.days.length || 0})</span>
                 <span className="tabular-nums font-mono text-[11px] opacity-80">
@@ -754,7 +845,9 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
                       backgroundColor: active ? theme.accentSoft : theme.surface,
                       borderColor: active ? theme.accent : theme.rule,
                     }}
-                    className="w-full rounded-[4px] border px-3 py-2 text-left text-xs transition-colors"
+                    className={`w-full rounded-[4px] border px-3 py-2 text-left text-xs transition-colors ${
+                      rc ? "min-h-11 sm:min-h-0" : ""
+                    }`}
                   >
                     <div className="flex items-baseline justify-between">
                       <span className="font-medium">
@@ -806,6 +899,7 @@ export function VellumNewsView22({ theme, dark, onOpenRepoById }: VellumNewsView
         item={activeArticle}
         theme={theme}
         dark={dark}
+        rc={rc}
         isPlaying={activeArticle ? playingId === activeArticle.id : false}
         hasPrev={articleIndex > 0}
         hasNext={articleIndex >= 0 && articleIndex < filteredItems.length - 1}

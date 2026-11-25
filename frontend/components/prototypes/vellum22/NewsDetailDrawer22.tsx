@@ -26,6 +26,7 @@ interface NewsDetailDrawer22Props {
   item: NewsItem | null;
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   isPlaying: boolean;
   hasPrev: boolean;
   hasNext: boolean;
@@ -41,6 +42,7 @@ export function NewsDetailDrawer22({
   item,
   theme,
   dark,
+  rc = false,
   isPlaying,
   hasPrev,
   hasNext,
@@ -148,7 +150,9 @@ export function NewsDetailDrawer22({
                   disabled={!hasPrev}
                   onClick={onPrev}
                   style={{ borderColor: theme.rule }}
-                  className="flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-30"
+                  className={`flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-35 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Tin trước (←)"
                   aria-label="Tin trước"
                 >
@@ -159,7 +163,9 @@ export function NewsDetailDrawer22({
                   disabled={!hasNext}
                   onClick={onNext}
                   style={{ borderColor: theme.rule }}
-                  className="flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-30"
+                  className={`flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 disabled:opacity-35 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Tin sau (→)"
                   aria-label="Tin sau"
                 >
@@ -170,7 +176,9 @@ export function NewsDetailDrawer22({
                   type="button"
                   onClick={onClose}
                   style={{ borderColor: theme.rule }}
-                  className="ml-1 flex size-8 items-center justify-center rounded-[4px] border transition-colors hover:opacity-80"
+                  className={`ml-1 flex items-center justify-center rounded-[4px] border transition-colors hover:opacity-80 ${
+                    rc ? "size-11 sm:size-8 focus-visible:outline-2 focus-visible:outline-offset-2" : "size-8"
+                  }`}
                   title="Đóng (Esc)"
                   aria-label="Đóng chi tiết tin tức"
                 >
@@ -299,7 +307,9 @@ export function NewsDetailDrawer22({
                   backgroundColor: isPlaying ? theme.accentSoft : theme.surface,
                   color: isPlaying ? theme.accent : theme.ink,
                 }}
-                className="inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium transition-transform active:scale-[0.98]"
+                className={`inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium transition-transform active:scale-[0.98] ${
+                  rc ? "min-h-11 sm:min-h-0" : ""
+                }`}
               >
                 {isPlaying ? <Pause className="size-3.5" /> : <Play className="size-3.5" />}
                 {isPlaying ? "Dừng nghe" : "Nghe bản tin"}
@@ -311,7 +321,9 @@ export function NewsDetailDrawer22({
                     type="button"
                     onClick={() => onOpenRepoById(item.repository_id!)}
                     style={{ borderColor: theme.ruleStrong, color: theme.ink }}
-                    className="inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium hover:opacity-85"
+                    className={`inline-flex items-center gap-1.5 rounded-[4px] border px-3 py-2 text-xs font-medium hover:opacity-85 ${
+                      rc ? "min-h-11 sm:min-h-0" : ""
+                    }`}
                   >
                     <FolderGit2 className="size-3.5" />
                     Mở Repo Folio
@@ -323,7 +335,9 @@ export function NewsDetailDrawer22({
                     target="_blank"
                     rel="noreferrer"
                     style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                    className="inline-flex items-center gap-1.5 rounded-[4px] px-4 py-2 text-xs font-medium transition-transform active:scale-[0.98]"
+                    className={`inline-flex items-center gap-1.5 rounded-[4px] px-4 py-2 text-xs font-medium transition-transform active:scale-[0.98] ${
+                      rc ? "min-h-11 sm:min-h-0" : ""
+                    }`}
                   >
                     Mở bài gốc
                     <ArrowUpRight className="size-3.5" />

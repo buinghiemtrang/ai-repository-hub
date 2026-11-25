@@ -3,18 +3,32 @@ import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const DIRECTIONS = [
   {
+    id: "2-2-1",
+    name: "Phương án P2.2.1 · Release Candidate",
+    subtitle: "Sửa React #310 triệt để, nhãn kết quả tin tức rõ ràng, Touch Targets 44px mobile, Markdown Folio an toàn & Dark Contrast AA",
+    href: "/prototypes/2-2-1",
+    typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
+    palette: "Warm Paper #F5F2EB / Obsidian #131110 · Dark Muted #B8B0A4 (AA Verified)",
+    layout: "Giữ nguyên bố cục Vellum P2.2 đã chốt — tinh chỉnh độ ổn định & UX",
+    bestFor: "Ứng viên Release Candidate sẵn sàng nghiệm thu Vellum Design System 1.0.",
+    bg: "#f5f2eb",
+    ink: "#171614",
+    accent: "#c03a17",
+    recommended: true,
+  },
+  {
     id: "2-2",
     name: "Phương án P2.2 · Vellum Digital Polish",
-    subtitle: "Tinh chỉnh UI/UX, News Category Counts + Icon đúng, Library gọn trên 1 màn hình, News Reader Drawer & Studio Diagram",
+    subtitle: "Giữ nguyên bản P2.2 để đối chiếu trực tiếp Before / After với P2.2.1",
     href: "/prototypes/2-2",
     typography: "Newsreader Serif + Hanken Grotesk + JetBrains Mono",
     palette: "Warm Paper #F7F4ED (Light) / Obsidian #131110 (Dark) · Accent: Vermilion #C84B24",
     layout: "Compact Spotlight + Top 5 Stars + Inline Collections + Grid/List + Folio & Article Drawers",
-    bestFor: "Ứng viên hoàn thiện mới nhất chờ bạn kiểm tra và nghiệm thu.",
+    bestFor: "Mốc trước sửa lỗi để đối chiếu trực tiếp với bản P2.2.1 RC.",
     bg: "#f7f4ed",
     ink: "#1b1917",
     accent: "#c84b24",
-    recommended: true,
+    recommended: false,
   },
   {
     id: "2-1",
@@ -158,7 +172,9 @@ export default function PrototypesIndexPage() {
                   borderColor: d.recommended ? "#c03a17" : "#181715",
                 }}
               >
-                <span>Mở {d.id === "2-2" ? "P2.2" : d.id === "2-1" ? "P2.1" : `P${d.id}`} trực tiếp</span>
+                <span>
+                  Mở {d.id === "2-2-1" ? "P2.2.1 RC" : d.id === "2-2" ? "P2.2" : d.id === "2-1" ? "P2.1" : `P${d.id}`} trực tiếp
+                </span>
                 <ArrowRight className="size-3.5" />
               </Link>
             </div>

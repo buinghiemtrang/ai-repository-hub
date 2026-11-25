@@ -18,6 +18,7 @@ import { VELLUM_EASE, type VellumTheme } from "@/components/prototypes/vellum/to
 interface VellumStudioView22Props {
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   initialTool?: string;
   onExploreRepos?: (opts: { q?: string; category?: string }) => void;
 }
@@ -164,6 +165,7 @@ const ECOSYSTEM_TOOLS = [
 export function VellumStudioView22({
   theme,
   dark,
+  rc = false,
   initialTool,
   onExploreRepos,
 }: VellumStudioView22Props) {
@@ -352,7 +354,9 @@ export function VellumStudioView22({
                           backgroundColor: selected ? theme.surfaceAlt : theme.bg,
                           borderColor: selected ? theme.accent : theme.rule,
                         }}
-                        className="rounded-[5px] border p-3 text-left transition-all duration-150 hover:opacity-95"
+                        className={`rounded-[5px] border p-3 text-left transition-all duration-150 hover:opacity-95 ${
+                          rc ? "min-h-11" : ""
+                        }`}
                       >
                         <div style={{ color: theme.accent, fontFamily: "var(--font-jetbrains)" }} className="text-[10px]">
                           BƯỚC 0{idx + 1}
@@ -380,7 +384,9 @@ export function VellumStudioView22({
                     type="button"
                     onClick={() => onExploreRepos(current.explore)}
                     style={{ backgroundColor: theme.accent, color: theme.accentInk }}
-                    className="inline-flex items-center gap-1.5 rounded-[4px] px-3.5 py-2 text-xs font-medium transition-transform duration-150 hover:-translate-y-[1px] active:scale-[0.985]"
+                    className={`inline-flex items-center gap-1.5 rounded-[4px] px-3.5 py-2 text-xs font-medium transition-transform duration-150 hover:-translate-y-[1px] active:scale-[0.985] ${
+                      rc ? "min-h-11 sm:min-h-0" : ""
+                    }`}
                   >
                     <span>{current.exploreLabel}</span>
                     <ArrowRight className="size-3.5" />

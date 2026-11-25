@@ -27,6 +27,7 @@ export type VellumTab22 = "repos" | "news" | "studio";
 interface VellumHeader22Props {
   theme: VellumTheme;
   dark: boolean;
+  rc?: boolean;
   tab: VellumTab22;
   favoritesCount: number;
   onlyFavorites: boolean;
@@ -48,6 +49,7 @@ const STUDIO_PREVIEW_TOOLS = [
 export function VellumHeader22({
   theme,
   dark,
+  rc = false,
   tab,
   favoritesCount,
   onlyFavorites,
@@ -144,7 +146,7 @@ export function VellumHeader22({
                 style={{ color: theme.muted, fontFamily: "var(--font-jetbrains)" }}
                 className="hidden text-[9.5px] tracking-wider uppercase sm:block"
               >
-                Vellum Digital · P2.2
+                {rc ? "Vellum Digital · P2.2.1 RC" : "Vellum Digital · P2.2"}
               </div>
             </div>
           </button>
@@ -283,7 +285,9 @@ export function VellumHeader22({
               backgroundColor: onlyFavorites ? theme.accentSoft : theme.surface,
               color: onlyFavorites ? theme.accent : theme.ink,
             }}
-            className="inline-flex h-8 items-center gap-1.5 rounded-[4px] border px-2.5 text-xs font-medium transition-all duration-150 hover:-translate-y-[1px] active:scale-[0.985]"
+            className={`inline-flex items-center justify-center gap-1.5 rounded-[4px] border px-2.5 text-xs font-medium transition-all duration-150 hover:-translate-y-[1px] active:scale-[0.985] ${
+              rc ? "h-11 min-w-11 sm:h-8 sm:min-w-8" : "h-8"
+            }`}
             title="Lọc các repository đã lưu"
             aria-label="Lọc repository đã lưu"
           >
@@ -291,21 +295,28 @@ export function VellumHeader22({
             <span className="tabular-nums hidden sm:inline">{favoritesCount}</span>
           </button>
 
-          {/* Version Switcher keeping P2.1 intact for side-by-side comparison */}
+          {/* Version Switcher keeping P2.1 & P2.2 intact for side-by-side comparison */}
           <div
             style={{ borderColor: theme.rule }}
             className="hidden items-center gap-0.5 rounded-[4px] border p-0.5 sm:flex"
           >
             {(
-              [
-                { id: "1", label: "P1" },
-                { id: "2", label: "P2" },
-                { id: "2-1", label: "P2.1" },
-                { id: "2-2", label: "P2.2" },
-                { id: "3", label: "P3" },
-              ] as const
+              rc
+                ? ([
+                    { id: "2", label: "P2" },
+                    { id: "2-1", label: "P2.1" },
+                    { id: "2-2", label: "P2.2" },
+                    { id: "2-2-1", label: "RC" },
+                  ] as const)
+                : ([
+                    { id: "1", label: "P1" },
+                    { id: "2", label: "P2" },
+                    { id: "2-1", label: "P2.1" },
+                    { id: "2-2", label: "P2.2" },
+                    { id: "3", label: "P3" },
+                  ] as const)
             ).map((p) => {
-              const active = p.id === "2-2";
+              const active = rc ? p.id === "2-2-1" : p.id === "2-2";
               return (
                 <Link
                   key={p.id}
@@ -327,7 +338,9 @@ export function VellumHeader22({
             type="button"
             onClick={onToggleDark}
             style={{ borderColor: theme.rule, backgroundColor: theme.surface, color: theme.ink }}
-            className="flex size-8 items-center justify-center rounded-[4px] border transition-transform duration-150 hover:-translate-y-[1px] active:scale-95"
+            className={`flex items-center justify-center rounded-[4px] border transition-transform duration-150 hover:-translate-y-[1px] active:scale-95 ${
+              rc ? "size-11 sm:size-8" : "size-8"
+            }`}
             aria-label={dark ? "Chuyển sang Light mode" : "Chuyển sang Dark mode"}
             title={dark ? "Light mode" : "Dark mode"}
           >
@@ -338,7 +351,9 @@ export function VellumHeader22({
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
             style={{ borderColor: theme.rule, backgroundColor: theme.surface }}
-            className="flex size-8 items-center justify-center rounded-[4px] border lg:hidden"
+            className={`flex items-center justify-center rounded-[4px] border lg:hidden ${
+              rc ? "size-11 sm:size-8" : "size-8"
+            }`}
             aria-label="Mở menu điều hướng"
           >
             {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
@@ -373,7 +388,9 @@ export function VellumHeader22({
                       backgroundColor: active ? theme.accentSoft : "transparent",
                       color: active ? theme.accent : theme.ink,
                     }}
-                    className="flex items-center gap-2 rounded-[4px] px-3 py-2 text-left text-sm font-medium"
+                    className={`flex items-center gap-2 rounded-[4px] px-3 py-2 text-left text-sm font-medium ${
+                      rc ? "min-h-11" : ""
+                    }`}
                   >
                     <Icon className="size-4" />
                     <span>{item.label}</span>
@@ -381,24 +398,29 @@ export function VellumHeader22({
                 );
               })}
               <div style={{ borderColor: theme.rule }} className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t pt-2 text-xs">
-                <Link href="/prototypes" style={{ color: theme.muted }}>
+                <Link href="/prototypes" style={{ color: theme.muted }} className={rc ? "inline-flex min-h-11 items-center" : ""}>
                   ← Bảng so sánh tổng
                 </Link>
                 <div className="flex items-center gap-1 sm:hidden">
-                  {(["2", "2-1", "2-2"] as const).map((id) => (
-                    <Link
-                      key={id}
-                      href={`/prototypes/${id}`}
-                      style={{
-                        backgroundColor: id === "2-2" ? theme.accent : theme.bg,
-                        color: id === "2-2" ? theme.accentInk : theme.muted,
-                        fontFamily: "var(--font-jetbrains)",
-                      }}
-                      className="rounded px-1.5 py-0.5 text-[10px] font-medium"
-                    >
-                      P{id.replace("-", ".")}
-                    </Link>
-                  ))}
+                  {(["2", "2-1", "2-2", "2-2-1"] as const).map((id) => {
+                    const active = rc ? id === "2-2-1" : id === "2-2";
+                    return (
+                      <Link
+                        key={id}
+                        href={`/prototypes/${id}`}
+                        style={{
+                          backgroundColor: active ? theme.accent : theme.bg,
+                          color: active ? theme.accentInk : theme.muted,
+                          fontFamily: "var(--font-jetbrains)",
+                        }}
+                        className={`inline-flex items-center rounded px-2 py-1 text-[10px] font-medium ${
+                          rc ? "min-h-11 min-w-10 justify-center" : ""
+                        }`}
+                      >
+                        {id === "2-2-1" ? "RC" : `P${id.replace("-", ".")}`}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>

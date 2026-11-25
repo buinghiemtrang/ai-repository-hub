@@ -37,4 +37,25 @@ export const VELLUM_DARK: VellumTheme = {
   accentInk: "#131110",
 };
 
+/** P2.2.1 Release Candidate tokens: preserves Vellum identity with WCAG 2.2 AA verified dark & placeholder contrast */
+export const VELLUM_LIGHT_RC: VellumTheme = {
+  ...VELLUM_LIGHT,
+  muted: "#57534B",
+  rule: "rgba(23, 22, 20, 0.16)",
+  ruleStrong: "rgba(23, 22, 20, 0.34)",
+};
+
+export const VELLUM_DARK_RC: VellumTheme = {
+  bg: "#131110",
+  surface: "#1B1917",
+  surfaceAlt: "#25221F",
+  ink: "#F4F0E8",
+  muted: "#B8B0A4",
+  rule: "rgba(239, 235, 227, 0.18)",
+  ruleStrong: "rgba(239, 235, 227, 0.38)",
+  accent: "#EC7650",
+  accentSoft: "rgba(236, 118, 80, 0.18)",
+  accentInk: "#131110",
+};
+
 export const VELLUM_EASE = [0.22, 1, 0.36, 1] as const;
