@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   Pause,
   Play,
@@ -32,6 +32,8 @@ interface NewsAudioPlayerProps {
   onStateChange: (next: PlayerState) => void;
 }
 
+const emptySubscribe = () => () => {};
+
 function splitSpeechChunks(text: string): string[] {
   const sentences = (text || "").split(/(?<=[.!?…])\s+/);
   const out: string[] = [];
@@ -56,16 +58,9 @@ function pickVietnameseVoice(gender: "female" | "male"): SpeechSynthesisVoice | 
     const vi = voices.filter((v) => /^vi/i.test(v.lang));
     if (!vi.length) return null;
     if (gender === "male") {
-      return (
-        vi.find((v) => /nam|male|minh|an\b/i.test(v.name)) ||
-        vi[vi.length - 1] ||
-        vi[0]
-      );
+      return vi.find((v) => /nam|male|minh|an\b/i.test(v.name)) || vi[vi.length - 1] || vi[0];
     }
-    return (
-      vi.find((v) => /hoai|my|nu|female|linh|mai|natural|neural/i.test(v.name)) ||
-      vi[0]
-    );
+    return vi.find((v) => /hoai|my|nu|female|linh|mai|natural|neural/i.test(v.name)) || vi[0];
   } catch {
     return null;
   }
@@ -81,39 +76,24 @@ export function NewsAudioPlayer({
   onStateChange,
 }: NewsAudioPlayerProps) {
   const [chunkProgress, setChunkProgress] = useState(0);
-  const [ttsSupported, setTtsSupported] = useState(true);
+  const ttsSupported = useSyncExternalStore(
+    emptySubscribe,
+    () => typeof window !== "undefined" && "speechSynthesis" in window,
+    () => true
+  );
+
   const tokenRef = useRef(0);
   const playerRef = useRef(player);
   const voiceRef = useRef(voice);
   const rateRef = useRef(rate);
 
-  playerRef.current = player;
-  voiceRef.current = voice;
-  rateRef.current = rate;
+  useEffect(() => {
+    playerRef.current = player;
+    voiceRef.current = voice;
+    rateRef.current = rate;
+  }, [player, voice, rate]);
 
   const currentItem = player.index >= 0 ? player.queue[player.index] : null;
-
-  useEffect(() => {
-    const ok = typeof window !== "undefined" && "speechSynthesis" in window;
-    setTtsSupported(ok);
-    if (ok) {
-      try {
-        window.speechSynthesis.getVoices();
-      } catch {
-        // ignore
-      }
-    }
-    return () => {
-      tokenRef.current++;
-      if (ok) {
-        try {
-          window.speechSynthesis.cancel();
-        } catch {
-          // ignore
-        }
-      }
-    };
-  }, []);
 
   const stopSpeech = useCallback(() => {
     tokenRef.current++;
@@ -125,6 +105,18 @@ export function NewsAudioPlayer({
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!ttsSupported) return;
+    try {
+      window.speechSynthesis.getVoices();
+    } catch {
+      // ignore
+    }
+    return () => {
+      stopSpeech();
+    };
+  }, [ttsSupported, stopSpeech]);
 
   const speakText = useCallback(
     (text: string, onDone: () => void) => {
@@ -166,51 +158,53 @@ export function NewsAudioPlayer({
     [stopSpeech]
   );
 
-  // Trigger speech whenever active item or playing state changes
   const activeId = currentItem?.id ?? null;
   const isPlaying = player.playing;
   const activeIndex = player.index;
+  const activePhase = player.phase;
+  const activeSummary = currentItem?.summary;
+  const activeSpeechText = currentItem?.speech_text;
+  const activeTitle = currentItem?.title;
 
   useEffect(() => {
-    if (!currentItem || !isPlaying) {
-      return;
-    }
-    setChunkProgress(0);
-    const runItem = () => {
-      const text = currentItem.speech_text || `${currentItem.title}. ${currentItem.summary}`;
-      speakText(text, () => {
-        const cur = playerRef.current;
-        if (cur.mode === "queue" && cur.index < cur.queue.length - 1) {
-          const nextIdx = cur.index + 1;
-          onStateChange({
-            ...cur,
-            index: nextIdx,
-            phase: "next",
-            playing: true,
-          });
-        } else {
-          onStateChange({
-            ...cur,
-            playing: false,
-            phase: "end",
-          });
-        }
-      });
-    };
+    if (!activeId || !isPlaying) return;
+    const text = activeSpeechText || `${activeTitle || ""}. ${activeSummary || ""}`;
+    const timer = setTimeout(() => {
+      const runItem = () => {
+        speakText(text, () => {
+          const cur = playerRef.current;
+          if (cur.mode === "queue" && cur.index < cur.queue.length - 1) {
+            onStateChange({
+              ...cur,
+              index: cur.index + 1,
+              phase: "next",
+              playing: true,
+            });
+          } else {
+            onStateChange({
+              ...cur,
+              playing: false,
+              phase: "end",
+            });
+          }
+        });
+      };
 
-    if (player.phase === "next") {
-      speakText("Tin tiếp theo.", () => {
-        const cur = playerRef.current;
-        if (cur.playing && cur.index === activeIndex) {
-          onStateChange({ ...cur, phase: "item" });
-          runItem();
-        }
-      });
-    } else {
-      runItem();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, activeIndex, isPlaying, voice, rate]);
+      if (activePhase === "next") {
+        speakText("Tin tiếp theo.", () => {
+          const cur = playerRef.current;
+          if (cur.playing && cur.index === activeIndex) {
+            onStateChange({ ...cur, phase: "item" });
+            runItem();
+          }
+        });
+      } else {
+        runItem();
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [activeId, activeIndex, activePhase, activeSpeechText, activeSummary, activeTitle, isPlaying, voice, rate, speakText, onStateChange]);
 
   const togglePause = useCallback(() => {
     const cur = playerRef.current;
@@ -247,7 +241,6 @@ export function NewsAudioPlayer({
     [onStateChange, stopSpeech]
   );
 
-  // Keyboard shortcuts: Space (play/pause), ArrowLeft/ArrowRight (prev/next item)
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (!playerRef.current.queue.length) return;
@@ -279,45 +272,48 @@ export function NewsAudioPlayer({
     <div
       role="region"
       aria-label="Trình phát Podcast tin tức AI"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-700/80 bg-slate-900/95 text-white shadow-2xl backdrop-blur-md"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--v-rule-strong)] bg-[var(--v-surface)]/95 text-[var(--v-ink)] shadow-2xl backdrop-blur-md"
     >
-      {/* Overall Episode / Item Progress */}
-      <div className="h-1 w-full bg-slate-800">
+      <div className="h-1 w-full bg-[var(--v-surface-alt)]">
         <div
-          className="h-full bg-gradient-to-r from-orange-500 to-amber-400 transition-[width] duration-300"
+          className="h-full bg-[var(--v-accent)] transition-[width] duration-300"
           style={{ width: `${Math.min(100, Math.max(2, episodePercent))}%` }}
         />
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2.5 px-3 py-2.5 sm:px-6">
         <button
           type="button"
           onClick={() => onJumpToItem(currentItem)}
-          className="min-w-0 flex-1 text-left hover:opacity-90"
+          className="min-w-0 flex-1 text-left transition-opacity hover:opacity-85"
           title="Cuộn tới bài đang đọc"
         >
-          <div className="flex items-center gap-2 text-[11px] font-medium text-amber-300">
+          <div className="font-telemetry flex flex-wrap items-center gap-2 text-[11px] font-medium text-[var(--v-accent)]">
             <Volume2 className="size-3.5 shrink-0" />
             <span>
               {isQueue ? `${player.label} · ${player.index + 1}/${player.queue.length}` : "Đọc bài đơn"}
             </span>
-            <span className="text-slate-400">· {formatNewsDate(currentItem.date)}</span>
+            <span className="text-[var(--v-muted)]">· {formatNewsDate(currentItem.date)}</span>
             {!ttsSupported && (
-              <span className="text-rose-300">· Trình duyệt không hỗ trợ SpeechSynthesis</span>
+              <span className="text-rose-600 dark:text-rose-400">
+                · Trình duyệt không hỗ trợ SpeechSynthesis
+              </span>
             )}
           </div>
-          <div className="truncate text-sm font-semibold text-white">{currentItem.title}</div>
-          <div className="truncate text-xs text-slate-400">
+          <div className="font-editorial truncate text-sm font-medium text-[var(--v-ink)]">
+            {currentItem.title}
+          </div>
+          <div className="truncate text-xs text-[var(--v-muted)]">
             {currentItem.section} · {currentItem.source_label || currentItem.source}
           </div>
         </button>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             disabled={player.index <= 0}
             onClick={() => stepItem(-1)}
-            className="flex size-9 items-center justify-center rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-35"
+            className="flex size-11 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] text-[var(--v-ink)] hover:border-[var(--v-rule-strong)] disabled:opacity-35 sm:size-9"
             title="Bài trước (←)"
             aria-label="Bài trước"
           >
@@ -329,7 +325,7 @@ export function NewsAudioPlayer({
               stopSpeech();
               onStateChange({ ...player, playing: true, phase: "item" });
             }}
-            className="flex size-9 items-center justify-center rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700"
+            className="flex size-11 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] text-[var(--v-ink)] hover:border-[var(--v-rule-strong)] sm:size-9"
             title="Đọc lại từ đầu bài"
             aria-label="Đọc lại từ đầu"
           >
@@ -338,7 +334,7 @@ export function NewsAudioPlayer({
           <button
             type="button"
             onClick={togglePause}
-            className="flex size-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-md hover:bg-orange-400"
+            className="flex size-11 items-center justify-center rounded-[4px] bg-[var(--v-accent)] text-[var(--v-accent-ink)] shadow-sm transition-opacity hover:opacity-90 sm:size-10"
             title={player.playing ? "Tạm dừng (Space)" : "Tiếp tục (Space)"}
             aria-label={player.playing ? "Tạm dừng" : "Tiếp tục"}
           >
@@ -348,7 +344,7 @@ export function NewsAudioPlayer({
             type="button"
             disabled={player.index >= player.queue.length - 1}
             onClick={() => stepItem(1)}
-            className="flex size-9 items-center justify-center rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-35"
+            className="flex size-11 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] text-[var(--v-ink)] hover:border-[var(--v-rule-strong)] disabled:opacity-35 sm:size-9"
             title="Qua bài kế (→)"
             aria-label="Bài sau"
           >
@@ -358,7 +354,7 @@ export function NewsAudioPlayer({
             type="button"
             disabled={player.index >= player.queue.length - 1}
             onClick={() => stepItem(1)}
-            className="hidden size-9 items-center justify-center rounded-full bg-slate-800 text-slate-200 hover:bg-slate-700 disabled:opacity-35 sm:flex"
+            className="hidden size-9 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] text-[var(--v-ink)] hover:border-[var(--v-rule-strong)] disabled:opacity-35 sm:flex"
             title="Chuyển nhanh bài tiếp"
             aria-label="Chuyển nhanh"
           >
@@ -369,17 +365,17 @@ export function NewsAudioPlayer({
             value={voice}
             onChange={(e) => onVoiceChange(e.target.value === "male" ? "male" : "female")}
             aria-label="Giọng đọc"
-            className="hidden rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 sm:block"
+            className="hidden h-9 rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-2 text-xs text-[var(--v-ink)] sm:block"
           >
-            <option value="female">🎙 Nữ</option>
-            <option value="male">🎙 Nam</option>
+            <option value="female">Giọng Nữ</option>
+            <option value="male">Giọng Nam</option>
           </select>
 
           <select
             value={String(rate)}
             onChange={(e) => onRateChange(parseFloat(e.target.value) || 1)}
             aria-label="Tốc độ đọc"
-            className="rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100"
+            className="font-telemetry h-11 rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-2 text-xs text-[var(--v-ink)] sm:h-9"
           >
             <option value="0.75">0.75×</option>
             <option value="1">1×</option>
@@ -392,7 +388,7 @@ export function NewsAudioPlayer({
           <button
             type="button"
             onClick={stopAll}
-            className="flex size-9 items-center justify-center rounded-full bg-slate-800 text-slate-300 hover:bg-rose-600 hover:text-white"
+            className="flex size-11 items-center justify-center rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] text-[var(--v-muted)] hover:border-rose-500 hover:bg-rose-600 hover:text-white sm:size-9"
             title="Dừng phát"
             aria-label="Dừng phát"
           >

@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Clock, Newspaper, RefreshCw, ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { type SyncStatusResponse, formatViDate } from "@/lib/repositories/types";
 
 interface NewsSyncRun {
@@ -29,10 +25,14 @@ interface NewsSyncStatusResponse {
   recent_runs: NewsSyncRun[];
 }
 
-function statusVariant(status: string): "accent" | "secondary" | "warning" {
-  if (status === "completed") return "accent";
-  if (status === "running") return "secondary";
-  return "warning";
+function statusPillClasses(status: string): string {
+  if (status === "completed") {
+    return "border-[var(--v-accent)]/35 bg-[var(--v-accent-soft)] text-[var(--v-accent)]";
+  }
+  if (status === "running") {
+    return "border-[var(--v-rule-strong)] bg-[var(--v-surface-alt)] text-[var(--v-ink)]";
+  }
+  return "border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300";
 }
 
 export default function SyncStatusPage() {
@@ -40,23 +40,24 @@ export default function SyncStatusPage() {
   const [newsStatus, setNewsStatus] = useState<NewsSyncStatusResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [tick, setTick] = useState(0);
+  const [refreshNonce, setRefreshNonce] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
-    setLoading(true);
-    setError("");
     Promise.all([
-      fetch("/api/repositories/sync/status", { signal: controller.signal }).then((r) =>
-        r.ok ? r.json() : Promise.reject()
-      ),
+      fetch("/api/repositories/sync/status", { signal: controller.signal }).then((r) => {
+        if (!r.ok) throw new Error("Failed");
+        return r.json() as Promise<SyncStatusResponse>;
+      }),
       fetch("/api/news/sync/status", { signal: controller.signal })
-        .then((r) => (r.ok ? r.json() : null))
+        .then((r) => (r.ok ? (r.json() as Promise<NewsSyncStatusResponse>) : null))
         .catch(() => null),
     ])
       .then(([repoData, newsData]) => {
+        if (controller.signal.aborted) return;
         setStatus(repoData);
         setNewsStatus(newsData);
+        setError("");
       })
       .catch(() => {
         if (!controller.signal.aborted) {
@@ -67,129 +68,207 @@ export default function SyncStatusPage() {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [tick]);
+  }, [refreshNonce]);
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setError("");
+    setRefreshNonce((n) => n + 1);
+  };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:py-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-teal-700 dark:text-teal-400">
-            <span className="size-1.5 rounded-full bg-teal-600 dark:bg-teal-400" />
-            Metadata & News Schedulers
+    <div className="mx-auto max-w-7xl min-w-0 space-y-6 px-3 py-6 sm:px-6 lg:py-8">
+      {/* Masthead */}
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[var(--v-rule)] pb-5">
+        <div className="min-w-0 space-y-1.5">
+          <div className="font-telemetry flex items-center gap-2 text-[11px] font-medium uppercase tracking-widest text-[var(--v-accent)]">
+            <span className="size-1.5 rounded-full bg-[var(--v-accent)]" />
+            Metadata &amp; News Schedulers
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-slate-50">
+          <h1 className="font-editorial text-3xl font-medium tracking-tight text-[var(--v-ink)] sm:text-4xl">
             Trạng thái đồng bộ dữ liệu
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-[var(--v-muted)]">
             Theo dõi lịch đồng bộ metadata GitHub API và trình thu thập Tin tức AI độc lập.
           </p>
         </div>
-        <Button type="button" variant="outline" size="sm" onClick={() => setTick((x) => x + 1)}>
-          <RefreshCw className="size-3.5" />
+
+        <button
+          type="button"
+          onClick={handleRefresh}
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-[4px] border border-[var(--v-rule-strong)] bg-[var(--v-surface)] px-3.5 py-2 text-xs font-medium text-[var(--v-ink)] transition-colors hover:opacity-85 sm:min-h-0 sm:h-9"
+        >
+          <RefreshCw className={`size-3.5 ${loading ? "animate-spin" : ""}`} />
           Làm mới
-        </Button>
+        </button>
       </div>
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200">
+        <div className="rounded-[5px] border border-[var(--v-accent)]/40 bg-[var(--v-accent-soft)] p-4 text-sm text-[var(--v-ink)]">
           {error}
         </div>
       )}
 
       {loading && (
-        <Card className="space-y-3 p-6">
-          <Skeleton className="h-6 w-56" />
-          <Skeleton className="h-24 w-full" />
-        </Card>
+        <div className="space-y-3 rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-6">
+          <div className="h-6 w-56 animate-pulse rounded bg-[var(--v-surface-alt)]" />
+          <div className="h-24 w-full animate-pulse rounded bg-[var(--v-surface-alt)]" />
+        </div>
       )}
 
       {!loading && status && (
         <>
+          {/* Metrics Strip */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <div className="rounded-[5px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-4">
+              <div className="font-telemetry text-[10px] uppercase tracking-wider text-[var(--v-muted)]">
                 Lịch tự động (Repo)
               </div>
-              <div className="mt-1.5 flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-100">
-                <Clock className="size-4 text-teal-700 dark:text-teal-400" />
+              <div className="mt-1.5 flex items-center gap-2 text-sm font-medium text-[var(--v-ink)]">
+                <Clock className="size-4 text-[var(--v-accent)]" />
                 {status.scheduler.enabled ? `Bật (mỗi ${status.scheduler.interval_hours}h)` : "Đang tắt"}
               </div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            </div>
+            <div className="rounded-[5px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-4">
+              <div className="font-telemetry text-[10px] uppercase tracking-wider text-[var(--v-muted)]">
                 Giới hạn mỗi đợt
               </div>
-              <div className="tabular-nums mt-1.5 font-semibold text-slate-900 dark:text-slate-100">
+              <div className="font-telemetry tabular-nums mt-1.5 text-sm font-medium text-[var(--v-ink)]">
                 {status.scheduler.batch_limit} repo
               </div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            </div>
+            <div className="rounded-[5px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-4">
+              <div className="font-telemetry text-[10px] uppercase tracking-wider text-[var(--v-muted)]">
                 Tuổi tối thiểu
               </div>
-              <div className="tabular-nums mt-1.5 font-semibold text-slate-900 dark:text-slate-100">
+              <div className="font-telemetry tabular-nums mt-1.5 text-sm font-medium text-[var(--v-ink)]">
                 {status.scheduler.min_age_hours} giờ
               </div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            </div>
+            <div className="rounded-[5px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-4">
+              <div className="font-telemetry text-[10px] uppercase tracking-wider text-[var(--v-muted)]">
                 GitHub Token
               </div>
-              <div className="mt-1.5 flex items-center gap-1.5 font-semibold text-slate-900 dark:text-slate-100">
-                <ShieldCheck className="size-4 text-teal-700 dark:text-teal-400" />
+              <div className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-[var(--v-ink)]">
+                <ShieldCheck className="size-4 text-[var(--v-accent)]" />
                 {status.scheduler.has_github_token ? "Đã cấu hình" : "Chưa cấu hình (60 req/h)"}
               </div>
-            </Card>
+            </div>
           </div>
 
-          <Card className="overflow-hidden">
-            <CardHeader className="border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+          {/* Repository Sync Ledger Table */}
+          <div className="overflow-hidden rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)]">
+            <div className="border-b border-[var(--v-rule)] px-5 py-3.5">
+              <h2 className="font-editorial text-lg font-medium text-[var(--v-ink)]">
                 10 lần đồng bộ Repository gần nhất
               </h2>
-            </CardHeader>
-            <CardContent className="p-0">
-              {status.recent_runs.length === 0 ? (
-                <p className="p-6 text-sm text-slate-500 dark:text-slate-400">
-                  Chưa có bản ghi đồng bộ nào. Chạy CLI{" "}
-                  <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs dark:bg-slate-800 dark:text-slate-200">
-                    docker compose exec backend python -m app.repositories.sync
-                  </code>{" "}
-                  hoặc đợi lịch tự động chạy.
+            </div>
+            {status.recent_runs.length === 0 ? (
+              <p className="p-6 text-sm text-[var(--v-muted)]">
+                Chưa có bản ghi đồng bộ nào. Đợi lịch tự động chạy hoặc chạy đồng bộ quản trị trên backend.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[640px] text-left text-sm">
+                  <thead className="font-telemetry border-b border-[var(--v-rule)] bg-[var(--v-surface-alt)] text-[11px] uppercase tracking-wider text-[var(--v-muted)]">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">ID</th>
+                      <th className="px-5 py-3 font-medium">Nguồn kích hoạt</th>
+                      <th className="px-5 py-3 font-medium">Trạng thái</th>
+                      <th className="px-5 py-3 font-medium">Kết quả</th>
+                      <th className="px-5 py-3 font-medium">Bắt đầu</th>
+                      <th className="px-5 py-3 font-medium">Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--v-rule)]">
+                    {status.recent_runs.map((run) => (
+                      <tr key={run.id} className="hover:bg-[var(--v-bg)]/60">
+                        <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-muted)]">
+                          #{run.id}
+                        </td>
+                        <td className="px-5 py-3 font-medium text-[var(--v-ink)]">{run.trigger}</td>
+                        <td className="px-5 py-3">
+                          <span
+                            className={`font-telemetry inline-block rounded-[3px] border px-2 py-0.5 text-[11px] font-medium ${statusPillClasses(run.status)}`}
+                          >
+                            {run.status}
+                          </span>
+                        </td>
+                        <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-ink)]">
+                          {run.synced_count}/{run.total_repos} thành công
+                          {run.failed_count > 0 ? ` · ${run.failed_count} lỗi` : ""}
+                        </td>
+                        <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-muted)]">
+                          {formatViDate(run.started_at)}
+                        </td>
+                        <td className="px-5 py-3 text-xs text-[var(--v-muted)]">
+                          {run.error_summary || "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* News RSS Sync Ledger Table */}
+          {newsStatus && (
+            <div className="overflow-hidden rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)]">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--v-rule)] px-5 py-3.5">
+                <div className="flex items-center gap-2">
+                  <Newspaper className="size-4 text-[var(--v-accent)]" />
+                  <h2 className="font-editorial text-lg font-medium text-[var(--v-ink)]">
+                    Lần đồng bộ Tin tức AI gần nhất (RSS + Repo nội bộ)
+                  </h2>
+                </div>
+                <span className="font-telemetry text-[11px] text-[var(--v-muted)]">
+                  {newsStatus.scheduler.enabled
+                    ? `Tự động mỗi ${newsStatus.scheduler.interval_hours}h`
+                    : "Scheduler đang tắt"}
+                </span>
+              </div>
+
+              {newsStatus.recent_runs.length === 0 ? (
+                <p className="p-6 text-sm text-[var(--v-muted)]">
+                  Chưa có bản ghi đồng bộ Tin tức nào.
                 </p>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm">
-                    <thead className="border-b border-slate-200 bg-slate-50/80 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+                  <table className="w-full min-w-[640px] text-left text-sm">
+                    <thead className="font-telemetry border-b border-[var(--v-rule)] bg-[var(--v-surface-alt)] text-[11px] uppercase tracking-wider text-[var(--v-muted)]">
                       <tr>
                         <th className="px-5 py-3 font-medium">ID</th>
                         <th className="px-5 py-3 font-medium">Nguồn kích hoạt</th>
                         <th className="px-5 py-3 font-medium">Trạng thái</th>
-                        <th className="px-5 py-3 font-medium">Kết quả</th>
+                        <th className="px-5 py-3 font-medium">Bài thu thập</th>
                         <th className="px-5 py-3 font-medium">Bắt đầu</th>
                         <th className="px-5 py-3 font-medium">Ghi chú</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                      {status.recent_runs.map((run) => (
-                        <tr key={run.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
-                          <td className="tabular-nums px-5 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
+                    <tbody className="divide-y divide-[var(--v-rule)]">
+                      {newsStatus.recent_runs.map((run) => (
+                        <tr key={run.id} className="hover:bg-[var(--v-bg)]/60">
+                          <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-muted)]">
                             #{run.id}
                           </td>
-                          <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-200">
+                          <td className="px-5 py-3 font-medium text-[var(--v-ink)]">
                             {run.trigger}
                           </td>
                           <td className="px-5 py-3">
-                            <Badge variant={statusVariant(run.status)}>{run.status}</Badge>
+                            <span
+                              className={`font-telemetry inline-block rounded-[3px] border px-2 py-0.5 text-[11px] font-medium ${statusPillClasses(run.status)}`}
+                            >
+                              {run.status}
+                            </span>
                           </td>
-                          <td className="tabular-nums px-5 py-3 text-slate-700 dark:text-slate-300">
-                            {run.synced_count}/{run.total_repos} thành công
-                            {run.failed_count > 0 ? ` · ${run.failed_count} lỗi` : ""}
+                          <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-ink)]">
+                            {run.fetched_count} quét · +{run.inserted_count} mới ({run.repo_items_count} tin Repo)
                           </td>
-                          <td className="tabular-nums px-5 py-3 text-xs text-slate-500 dark:text-slate-400">
+                          <td className="font-telemetry tabular-nums px-5 py-3 text-xs text-[var(--v-muted)]">
                             {formatViDate(run.started_at)}
                           </td>
-                          <td className="px-5 py-3 text-xs text-slate-600 dark:text-slate-400">
+                          <td className="px-5 py-3 text-xs text-[var(--v-muted)]">
                             {run.error_summary || "—"}
                           </td>
                         </tr>
@@ -198,84 +277,17 @@ export default function SyncStatusPage() {
                   </table>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {newsStatus && (
-            <Card className="overflow-hidden">
-              <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-2">
-                  <Newspaper className="size-4 text-teal-700 dark:text-teal-400" />
-                  <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                    Đồng bộ Tin tức AI & mục Repo (RSS công khai)
-                  </h2>
-                </div>
-                <Badge variant={newsStatus.scheduler.enabled ? "accent" : "secondary"}>
-                  {newsStatus.scheduler.enabled
-                    ? `Mỗi ${newsStatus.scheduler.interval_hours}h`
-                    : "Đang tắt"}
-                </Badge>
-              </CardHeader>
-              <CardContent className="p-0">
-                {newsStatus.recent_runs.length === 0 ? (
-                  <p className="p-6 text-sm text-slate-500 dark:text-slate-400">
-                    Chưa có lượt đồng bộ RSS nào. Chạy CLI{" "}
-                    <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs dark:bg-slate-800 dark:text-slate-200">
-                      docker compose exec backend python -m app.news.sync
-                    </code>{" "}
-                    để lấy tin mới ngay.
-                  </p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="border-b border-slate-200 bg-slate-50/80 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
-                        <tr>
-                          <th className="px-5 py-3 font-medium">ID</th>
-                          <th className="px-5 py-3 font-medium">Nguồn kích hoạt</th>
-                          <th className="px-5 py-3 font-medium">Trạng thái</th>
-                          <th className="px-5 py-3 font-medium">Kết quả</th>
-                          <th className="px-5 py-3 font-medium">Bắt đầu</th>
-                          <th className="px-5 py-3 font-medium">Ghi chú</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
-                        {newsStatus.recent_runs.map((run) => (
-                          <tr key={run.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
-                            <td className="tabular-nums px-5 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">
-                              #{run.id}
-                            </td>
-                            <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-200">
-                              {run.trigger}
-                            </td>
-                            <td className="px-5 py-3">
-                              <Badge variant={statusVariant(run.status)}>{run.status}</Badge>
-                            </td>
-                            <td className="tabular-nums px-5 py-3 text-slate-700 dark:text-slate-300">
-                              +{run.inserted_count} tin mới ({run.fetched_count} đọc) · +{run.repo_items_count} repo
-                            </td>
-                            <td className="tabular-nums px-5 py-3 text-xs text-slate-500 dark:text-slate-400">
-                              {formatViDate(run.started_at)}
-                            </td>
-                            <td className="px-5 py-3 text-xs text-slate-600 dark:text-slate-400">
-                              {run.error_summary || "—"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            </div>
           )}
 
-          <Card className="bg-slate-50/75 p-5 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-400">
-            <strong className="text-slate-800 dark:text-slate-200">Bảo mật vận hành:</strong> Các endpoint kích hoạt đồng bộ thủ công (
-            <code className="font-mono">POST /repositories/sync/trigger</code>,{" "}
-            <code className="font-mono">POST /news/sync/trigger</code>) được bảo vệ bởi header{" "}
-            <code className="font-mono">X-Admin-Key</code> và chỉ bật khi{" "}
-            <code className="font-mono">ADMIN_API_KEY</code> được cấu hình trên backend. Không bao giờ gửi token lên trình duyệt.
-          </Card>
+          {/* Security Notice */}
+          <div className="rounded-[5px] border border-[var(--v-rule)] bg-[var(--v-surface-alt)] p-5 text-xs leading-relaxed text-[var(--v-muted)]">
+            <strong className="text-[var(--v-ink)]">Bảo mật vận hành:</strong> Các endpoint kích hoạt đồng bộ thủ công (
+            <code className="font-telemetry text-[var(--v-ink)]">POST /repositories/sync/trigger</code>,{" "}
+            <code className="font-telemetry text-[var(--v-ink)]">POST /news/sync/trigger</code>) được bảo vệ bởi header{" "}
+            <code className="font-telemetry text-[var(--v-ink)]">X-Admin-Key</code> và chỉ bật khi{" "}
+            <code className="font-telemetry text-[var(--v-ink)]">ADMIN_API_KEY</code> được cấu hình trên backend. Không bao giờ gửi token lên trình duyệt.
+          </div>
         </>
       )}
     </div>

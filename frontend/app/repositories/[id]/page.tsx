@@ -17,10 +17,7 @@ import {
 import { FavoriteButton } from "@/components/repositories/FavoriteButton";
 import { GuideRenderer } from "@/components/repositories/GuideRenderer";
 import { RepoAvatar, RepoBannerImage } from "@/components/repositories/RepoImage";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/skeleton";
+import { CategoryIcon, LanguageLogo } from "@/components/prototypes/vellum22/VellumIcons22";
 import { type RepoItem, formatCompactNumber, formatViDate } from "@/lib/repositories/types";
 
 export const dynamic = "force-dynamic";
@@ -50,23 +47,24 @@ export default async function DetailPage({
   const { owner, name } = splitName(repo.full_name);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-10">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+    <div className="mx-auto max-w-7xl px-3 py-6 sm:px-6 lg:py-8">
+      {/* Top Action Bar */}
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/"
-          className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+          className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-surface)] px-3.5 py-2 text-xs font-medium text-[var(--v-ink)] transition-colors hover:border-[var(--v-rule-strong)] sm:min-h-0"
         >
-          <ArrowLeft className="size-4" />
+          <ArrowLeft className="size-3.5" />
           Quay lại Thư viện
         </Link>
         <FavoriteButton repoId={repo.id} showLabel />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
-        {/* Main Editorial Column */}
-        <div className="space-y-6">
-          <Card className="overflow-hidden">
-            <div className="aspect-[2/1] w-full overflow-hidden border-b border-slate-100 bg-slate-50 dark:border-slate-800/80 dark:bg-slate-950">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+        {/* Main Editorial Folio Column */}
+        <div className="min-w-0 space-y-6">
+          <article className="overflow-hidden rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)]">
+            <div className="aspect-[2/1] w-full overflow-hidden border-b border-[var(--v-rule)] bg-[var(--v-surface-alt)]">
               <RepoBannerImage
                 fullName={repo.full_name}
                 imageUrl={repo.image_url}
@@ -77,157 +75,178 @@ export default async function DetailPage({
               />
             </div>
 
-            <div className="p-6 sm:p-8">
+            <div className="p-5 sm:p-8">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="accent">{repo.category}</Badge>
-                {repo.language && <Badge variant="outline">{repo.language}</Badge>}
+                <span className="inline-flex items-center gap-1.5 rounded-[3px] border border-[var(--v-accent)]/30 bg-[var(--v-accent-soft)] px-2.5 py-1 text-[11px] font-medium text-[var(--v-accent)]">
+                  <CategoryIcon category={repo.category} className="size-3.5" />
+                  {repo.category}
+                </span>
+
+                {repo.language && (
+                  <span className="font-telemetry inline-flex items-center gap-1.5 rounded-[3px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-2.5 py-1 text-[11px] text-[var(--v-ink)]">
+                    <LanguageLogo language={repo.language} />
+                  </span>
+                )}
+
                 {repo.license && (
-                  <Badge variant="secondary">
+                  <span className="font-telemetry inline-flex items-center gap-1.5 rounded-[3px] border border-[var(--v-rule)] bg-[var(--v-surface-alt)] px-2.5 py-1 text-[11px] text-[var(--v-muted)]">
                     <Scale className="size-3" />
                     {repo.license}
-                  </Badge>
+                  </span>
                 )}
+
                 {repo.archived && (
-                  <Badge variant="warning">
+                  <span className="font-telemetry inline-flex items-center gap-1.5 rounded-[3px] border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-[11px] text-amber-700 dark:text-amber-300">
                     <AlertTriangle className="size-3" />
                     Đã lưu trữ (Archived)
-                  </Badge>
+                  </span>
                 )}
               </div>
 
               <div className="mt-4 flex items-center gap-3">
                 <RepoAvatar avatarUrl={repo.owner_avatar_url} owner={owner} />
-                <h1 className="text-2xl font-bold tracking-tight break-words sm:text-3xl">
-                  {owner && (
-                    <span className="font-normal text-slate-400 dark:text-slate-500">{owner}/</span>
-                  )}
-                  <span className="text-slate-900 dark:text-slate-50">{name}</span>
+                <h1 className="font-editorial min-w-0 break-words text-2xl font-medium tracking-tight text-[var(--v-ink)] sm:text-4xl">
+                  {owner && <span className="font-normal text-[var(--v-muted)]">{owner}/</span>}
+                  <span>{name}</span>
                 </h1>
               </div>
 
-              <p className="mt-3 text-base leading-relaxed text-slate-700 dark:text-slate-300">
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--v-ink)] sm:text-base">
                 {repo.description_vi}
               </p>
 
               {repo.description_upstream && (
-                <div className="mt-4 rounded-xl border border-slate-200/80 bg-slate-50/75 px-4 py-3 text-xs leading-relaxed text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
-                    Mô tả gốc trên GitHub:{" "}
-                  </span>
+                <div className="mt-4 rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-4 py-3 text-xs leading-relaxed text-[var(--v-muted)]">
+                  <span className="font-medium text-[var(--v-ink)]">Mô tả gốc trên GitHub: </span>
                   {repo.description_upstream}
                 </div>
               )}
             </div>
-          </Card>
+          </article>
 
-          <Card className="p-6 sm:p-8">
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
-              <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          {/* Vietnamese Installation & Reference Guide */}
+          <section className="rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-5 sm:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--v-rule)] pb-4">
+              <h2 className="font-editorial text-xl font-medium tracking-tight text-[var(--v-ink)] sm:text-2xl">
                 Hướng dẫn cài đặt &amp; sử dụng (đối chiếu tài liệu gốc)
               </h2>
-              <Badge variant="outline">Chỉ tham khảo · Không tự chạy lệnh</Badge>
+              <span className="font-telemetry rounded-[3px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-2.5 py-1 text-[10px] uppercase tracking-wider text-[var(--v-muted)]">
+                Chỉ tham khảo · Không tự chạy lệnh
+              </span>
             </div>
-            <Separator className="mb-5" />
-            {repo.guide_vi ? (
-              <GuideRenderer content={repo.guide_vi} />
-            ) : (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
-                Hướng dẫn chi tiết đang chờ đồng bộ từ README upstream. Bạn có thể mở trực tiếp{" "}
-                <a
-                  href={repo.readme_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-teal-700 underline dark:text-teal-400"
-                >
-                  README gốc trên GitHub
-                </a>{" "}
-                để kiểm tra yêu cầu hệ thống trước khi cài đặt.
-              </div>
-            )}
-          </Card>
+
+            <div className="pt-5">
+              {repo.guide_vi ? (
+                <GuideRenderer content={repo.guide_vi} variant="vellum" />
+              ) : (
+                <div className="rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] p-4 text-sm text-[var(--v-muted)]">
+                  Hướng dẫn chi tiết đang chờ đồng bộ từ README upstream. Bạn có thể mở trực tiếp{" "}
+                  <a
+                    href={repo.readme_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-[var(--v-accent)] underline underline-offset-2"
+                  >
+                    README gốc trên GitHub
+                  </a>{" "}
+                  để kiểm tra yêu cầu hệ thống trước khi cài đặt.
+                </div>
+              )}
+            </div>
+          </section>
         </div>
 
-        {/* Sticky Sidebar */}
-        <aside className="space-y-4 lg:sticky lg:top-20">
-          <Card className="p-5 space-y-3">
-            <Button asChild variant="primary" className="w-full justify-between">
-              <a href={repo.url} target="_blank" rel="noreferrer">
-                <span>Mở trên GitHub</span>
-                <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline" className="w-full justify-between">
-              <a href={repo.readme_url} target="_blank" rel="noreferrer">
-                <span className="inline-flex items-center gap-2">
-                  <BookOpen className="size-4 text-slate-500 dark:text-slate-400" />
-                  Đọc README gốc
-                </span>
-                <ArrowUpRight className="size-3.5 text-slate-400" />
-              </a>
-            </Button>
+        {/* Sticky Technical Ledger Rail */}
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-20">
+          <div className="space-y-2.5 rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-5">
+            <a
+              href={repo.url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-11 w-full items-center justify-between rounded-[4px] bg-[var(--v-accent)] px-4 py-2.5 text-xs font-medium text-[var(--v-accent-ink)] transition-opacity hover:opacity-90 sm:min-h-0"
+            >
+              <span>Mở trên GitHub</span>
+              <ArrowUpRight className="size-4" />
+            </a>
+            <a
+              href={repo.readme_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-11 w-full items-center justify-between rounded-[4px] border border-[var(--v-rule-strong)] bg-[var(--v-bg)] px-4 py-2 text-xs font-medium text-[var(--v-ink)] transition-colors hover:opacity-85 sm:min-h-0"
+            >
+              <span className="inline-flex items-center gap-2">
+                <BookOpen className="size-3.5 text-[var(--v-muted)]" />
+                Đọc README gốc
+              </span>
+              <ArrowUpRight className="size-3.5 text-[var(--v-muted)]" />
+            </a>
             {repo.homepage && (
-              <Button asChild variant="outline" className="w-full justify-between">
-                <a href={repo.homepage} target="_blank" rel="noreferrer">
-                  <span className="inline-flex items-center gap-2">
-                    <Globe className="size-4 text-slate-500 dark:text-slate-400" />
-                    Website dự án
-                  </span>
-                  <ArrowUpRight className="size-3.5 text-slate-400" />
-                </a>
-              </Button>
+              <a
+                href={repo.homepage}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-11 w-full items-center justify-between rounded-[4px] border border-[var(--v-rule-strong)] bg-[var(--v-bg)] px-4 py-2 text-xs font-medium text-[var(--v-ink)] transition-colors hover:opacity-85 sm:min-h-0"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <Globe className="size-3.5 text-[var(--v-muted)]" />
+                  Website dự án
+                </span>
+                <ArrowUpRight className="size-3.5 text-[var(--v-muted)]" />
+              </a>
             )}
-          </Card>
+          </div>
 
-          <Card className="p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          {/* GitHub Metrics */}
+          <div className="rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-5">
+            <h3 className="font-telemetry text-[11px] uppercase tracking-wider text-[var(--v-muted)]">
               Số liệu GitHub
             </h3>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="mt-3 grid grid-cols-2 gap-2.5">
+              <div className="rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] p-3">
+                <div className="flex items-center gap-1 text-[11px] text-[var(--v-muted)]">
                   <Star className="size-3.5 fill-amber-400 text-amber-500" />
                   Stars
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
+                <div className="font-telemetry tabular-nums mt-1 text-base font-medium text-[var(--v-ink)]">
                   {formatCompactNumber(repo.stars)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
-                  <GitFork className="size-3.5 text-slate-400" />
+              <div className="rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] p-3">
+                <div className="flex items-center gap-1 text-[11px] text-[var(--v-muted)]">
+                  <GitFork className="size-3.5 text-[var(--v-muted)]" />
                   Forks
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
+                <div className="font-telemetry tabular-nums mt-1 text-base font-medium text-[var(--v-ink)]">
                   {formatCompactNumber(repo.forks)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
-                  <Eye className="size-3.5 text-slate-400" />
+              <div className="rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] p-3">
+                <div className="flex items-center gap-1 text-[11px] text-[var(--v-muted)]">
+                  <Eye className="size-3.5 text-[var(--v-muted)]" />
                   Watchers
                 </div>
-                <div className="tabular-nums mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">
+                <div className="font-telemetry tabular-nums mt-1 text-base font-medium text-[var(--v-ink)]">
                   {formatCompactNumber(repo.watchers)}
                 </div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-3 dark:bg-slate-950/70">
-                <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400">
-                  <FileCode2 className="size-3.5 text-slate-400" />
+              <div className="rounded-[4px] border border-[var(--v-rule)] bg-[var(--v-bg)] p-3">
+                <div className="flex items-center gap-1 text-[11px] text-[var(--v-muted)]">
+                  <FileCode2 className="size-3.5 text-[var(--v-muted)]" />
                   Nhánh chính
                 </div>
-                <div className="mt-1 truncate font-mono text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <div className="font-telemetry mt-1 truncate text-xs font-medium text-[var(--v-ink)]">
                   {repo.default_branch || "—"}
                 </div>
               </div>
             </div>
 
-            <div className="mt-4 space-y-2 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+            <div className="mt-4 space-y-2 border-t border-[var(--v-rule)] pt-3 text-xs text-[var(--v-muted)]">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5">
                   <Calendar className="size-3.5" />
                   Upstream
                 </span>
-                <span className="tabular-nums font-medium text-slate-700 dark:text-slate-300">
+                <span className="font-telemetry tabular-nums font-medium text-[var(--v-ink)]">
                   {formatViDate(repo.updated_at)}
                 </span>
               </div>
@@ -236,40 +255,41 @@ export default async function DetailPage({
                   <Calendar className="size-3.5" />
                   Đồng bộ
                 </span>
-                <span className="tabular-nums font-medium text-slate-700 dark:text-slate-300">
+                <span className="font-telemetry tabular-nums font-medium text-[var(--v-ink)]">
                   {formatViDate(repo.synced_at)}
                 </span>
               </div>
             </div>
-          </Card>
+          </div>
 
           {repo.topics && repo.topics.length > 0 && (
-            <Card className="p-5">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            <div className="rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-5">
+              <h3 className="font-telemetry text-[11px] uppercase tracking-wider text-[var(--v-muted)]">
                 Chủ đề (Topics)
               </h3>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {repo.topics.map((topic) => (
                   <span
                     key={topic}
-                    className="rounded-md border border-slate-200/80 bg-slate-50 px-2 py-0.5 text-xs text-slate-600 dark:border-slate-700/80 dark:bg-slate-950/70 dark:text-slate-300"
+                    className="font-telemetry rounded-[3px] border border-[var(--v-rule)] bg-[var(--v-bg)] px-2 py-0.5 text-[11px] text-[var(--v-muted)]"
                   >
                     #{topic}
                   </span>
                 ))}
               </div>
-            </Card>
+            </div>
           )}
 
-          <Card className="p-5">
-            <CardHeader className="p-0 pb-2">
-              <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                <Link2 className="size-3.5" />
-                Provenance
-              </h3>
-            </CardHeader>
-            <CardContent className="p-0 space-y-2 text-xs text-slate-500 dark:text-slate-400">
-              <p className="tabular-nums">GitHub ID: {repo.github_id ?? "Chưa đồng bộ"}</p>
+          {/* Provenance */}
+          <div className="rounded-[6px] border border-[var(--v-rule)] bg-[var(--v-surface)] p-5">
+            <h3 className="font-telemetry flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-[var(--v-muted)]">
+              <Link2 className="size-3.5" />
+              Provenance
+            </h3>
+            <div className="mt-2.5 space-y-2 text-xs text-[var(--v-muted)]">
+              <p className="font-telemetry tabular-nums">
+                GitHub ID: {repo.github_id ?? "Chưa đồng bộ"}
+              </p>
               {safeSources.length > 0 ? (
                 <ul className="space-y-1">
                   {safeSources.map((src) => (
@@ -278,7 +298,7 @@ export default async function DetailPage({
                         href={src}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-start gap-1 break-all text-teal-700 hover:underline dark:text-teal-400"
+                        className="inline-flex items-start gap-1 break-all text-[var(--v-accent)] hover:underline"
                       >
                         <span>{src}</span>
                         <ArrowUpRight className="mt-0.5 size-3 shrink-0" />
@@ -287,10 +307,10 @@ export default async function DetailPage({
                   ))}
                 </ul>
               ) : (
-                <p>Nguồn mặc định: {repo.url}</p>
+                <p className="break-all">Nguồn mặc định: {repo.url}</p>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </aside>
       </div>
     </div>
