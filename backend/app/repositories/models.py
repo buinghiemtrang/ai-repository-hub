@@ -1,4 +1,4 @@
-from sqlalchemy import String, Text, Integer, BigInteger, DateTime
+from sqlalchemy import String, Text, Integer, BigInteger, DateTime, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 from app.db import Base
@@ -17,3 +17,4 @@ class Repository(Base):
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     license: Mapped[str | None] = mapped_column(String(100))
+    source_urls: Mapped[list[str] | None] = mapped_column(JSON)
