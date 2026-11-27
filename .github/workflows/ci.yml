@@ -57,6 +57,10 @@ jobs:
               && curl -fsS http://localhost:3000/api/repositories \
               && curl -fsS http://localhost:3000/api/repositories/stats \
               && curl -fsS http://localhost:3000/api/repositories/sync/status \
+              && curl -fsS http://localhost:3000/api/mcp/servers \
+              && curl -fsS http://localhost:3000/api/mcp/stats \
+              && curl -fsS http://localhost:3000/api/mcp/sync/status \
+              && curl -fsS -o /dev/null http://localhost:3000/mcp \
               && curl -fsS -o /dev/null http://localhost:3000/ \
               && curl -fsS -o /dev/null http://localhost:3000/sync \
               && curl -fsS -o /dev/null http://localhost:3000/modules \

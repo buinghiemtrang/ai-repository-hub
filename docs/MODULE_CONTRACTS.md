@@ -30,8 +30,17 @@ Mỗi module là một feature slice độc lập:
 ## 3. Lộ trình module chờ phê duyệt phạm vi
 
 - `ai_skills`: Quản lý cấu trúc skill (`SKILL.md`), compatibility tags (Claude Code, Codex, Gemini CLI, OpenCode).
-- `mcp`: Danh mục MCP server, transport (`stdio`/`http`), schema biến môi trường (không lưu giá trị secret).
+- `mcp`: **Đã triển khai (2026-11-27)**, xem mục 4.
 - `models`: Danh mục model mở (Ollama/GGUF/HuggingFace), thông số context window, license, yêu cầu VRAM.
 - `tools`: Danh mục CLI/SDK AI và ghi chú tích hợp.
 - `workflows`: Mẫu pipeline tự động hóa và trigger contracts.
 - `knowledge`: Kho ghi chú cá nhân, bookmark nâng cao và tài liệu đối chiếu.
+
+## 4. Module `mcp` (MCP Registry) — phạm vi đã duyệt
+
+- **Nguồn**: chỉ các repo thuộc danh mục `MCP` (cấu hình `MCP_CATEGORIES`) trong catalog; liên kết `mcp_servers.repository_id` → `repositories.id` (unique, `ON DELETE CASCADE`). Không thêm nguồn ngoài.
+- **Bảng**: `mcp_servers` (hồ sơ trích xuất), `mcp_sync_runs` (nhật ký) — migration `0007`.
+- **Trích xuất** (`app/mcp/extractor.py`): `server.json` ưu tiên, sau đó khối `mcpServers`/`servers` và lệnh `claude mcp add` trong README. Chỉ parse văn bản; chỉ lưu tên biến env/header; loại lệnh có toán tử shell, tham số dạng mẫu `${...}`; giá trị `-e NAME=value` trong lệnh docker bị cắt còn `-e NAME`.
+- **API** (`/mcp`): `GET /servers` (lọc `q`, `transport`, `secret`, `status`, `language`, `sort`, `page`), `GET /servers/{repository_id}` (kèm `client_configs`), `GET /stats`, `GET /sync/status`, `POST /sync/trigger` (bảo vệ bằng `ADMIN_API_KEY` qua `app/admin_auth.py`).
+- **Frontend**: `/mcp`, `/mcp/[id]`; proxy allowlist chỉ đọc tại `frontend/app/api/mcp/`.
+- **Ngoài phạm vi MVP**: nhập từ Official MCP Registry, tự cài/chạy server, kiểm tra server có hoạt động hay không.

@@ -20,6 +20,7 @@ docker compose up --build
 ```
 
 - Giao diện web: http://localhost:3000
+- Danh mục MCP server: http://localhost:3000/mcp
 - Trang trạng thái đồng bộ: http://localhost:3000/sync
 - Lộ trình modules: http://localhost:3000/modules
 - API Docs (Swagger): http://localhost:8000/docs
@@ -34,6 +35,18 @@ Docker Compose chỉ publish cổng trên loopback (`127.0.0.1`). Dữ liệu Po
   docker compose exec backend python -m app.repositories.sync
   ```
 - **Endpoint thủ công (`POST /repositories/sync/trigger`)**: Mặc định bị vô hiệu hóa (`503`) cho tới khi cấu hình `ADMIN_API_KEY` trong `.env`; khi bật cần truyền header `X-Admin-Key`. Không bao giờ đưa token/key lên frontend hoặc git.
+
+## Module MCP Registry
+
+- **Nguồn dữ liệu**: các repo thuộc danh mục `MCP` trong catalog (đổi bằng `MCP_CATEGORIES`, phân tách bằng dấu phẩy). Module không thêm nguồn bên ngoài mới.
+- **Trích xuất**: đọc `server.json` (định dạng manifest của MCP Registry chính thức) và README gốc qua GitHub API, nhận diện khối JSON `mcpServers`/`servers` và lệnh `claude mcp add`. Chỉ phân tích văn bản, không chạy lệnh nào. Chỉ lưu **tên** biến môi trường/header, không lưu giá trị; lệnh chứa toán tử shell (`;`, `|`, `&&`, `$(`…) bị loại.
+- **Mẫu cấu hình**: sinh snippet cho Claude Desktop, Claude Code và Cursor với placeholder `<TÊN_BIẾN>` để người dùng tự điền.
+- **Lịch tự động**: chạy sau đồng bộ repository 5 phút, chu kỳ `MCP_SYNC_INTERVAL_HOURS` (mặc định `24`), bỏ qua repo đã trích xuất trong `MCP_SYNC_MIN_AGE_HOURS` (mặc định `12`), batch `MCP_SYNC_BATCH_LIMIT`; tắt bằng `MCP_SYNC_ENABLED=false`. Nhật ký ở bảng `mcp_sync_runs` và trang `/sync`.
+- **Chạy thủ công**:
+  ```sh
+  docker compose exec backend python -m app.mcp.sync
+  ```
+  Hoặc `POST /mcp/sync/trigger` với header `X-Admin-Key` (cần `ADMIN_API_KEY`; frontend không proxy endpoint này).
 
 ## Discovery & Import catalog
 
