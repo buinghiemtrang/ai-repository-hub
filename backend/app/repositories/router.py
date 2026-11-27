@@ -1,12 +1,11 @@
 """Repository catalog API routes."""
-import hmac
-import os
 import unicodedata
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from app.admin_auth import require_admin_key
 from app.db import get_db
 from app.repositories.models import Repository, SyncRun
 from app.repositories.scheduler import scheduler_config
@@ -173,15 +172,7 @@ def sync_trigger(
     authorization: str | None = Header(default=None, alias="Authorization"),
     db: Session = Depends(get_db),
 ):
-    configured_key = os.getenv("ADMIN_API_KEY", "").strip()
-    if not configured_key:
-        raise HTTPException(503, "Admin sync endpoint is disabled until ADMIN_API_KEY is configured.")
-
-    provided = (x_admin_key or "").strip()
-    if not provided and authorization and authorization.lower().startswith("bearer "):
-        provided = authorization[7:].strip()
-    if not provided or not hmac.compare_digest(provided, configured_key):
-        raise HTTPException(401, "Invalid or missing admin credentials.")
+    require_admin_key(x_admin_key, authorization)
 
     running = db.scalar(select(SyncRun.id).where(SyncRun.status == "running").limit(1))
     if running is not None:

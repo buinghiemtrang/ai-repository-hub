@@ -79,6 +79,11 @@ def _get_with_retry(client: httpx.Client, url: str, headers: dict[str, str] | No
     raise RuntimeError("Unexpected retry state")
 
 
+# Public alias so other modules reuse the same retry/redirect/rate-limit policy.
+def get_with_retry(client: httpx.Client, url: str, headers: dict[str, str] | None = None, max_retries: int = 2) -> httpx.Response:
+    return _get_with_retry(client, url, headers=headers, max_retries=max_retries)
+
+
 def fetch_repo_and_readme(client: httpx.Client, full_name: str, include_readme: bool = True) -> GitHubFetchResult:
     """Fetch public GitHub metadata and optional raw README markdown."""
     res = _get_with_retry(client, f"https://api.github.com/repos/{full_name}")
