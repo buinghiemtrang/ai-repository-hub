@@ -11,6 +11,7 @@ import {
   GitFork,
   Globe,
   Link2,
+  Plug,
   Scale,
   Star,
 } from "lucide-react";
@@ -46,6 +47,15 @@ export default async function DetailPage({
   if (!res.ok) throw new Error("API unavailable");
 
   const repo: RepoItem = await res.json();
+  let hasMcpProfile = false;
+  try {
+    const mcpRes = await fetch(`${process.env.API_URL || "http://localhost:8000"}/mcp/servers/${repo.id}`, {
+      cache: "no-store",
+    });
+    hasMcpProfile = mcpRes.ok;
+  } catch {
+    hasMcpProfile = false;
+  }
   const safeSources = (repo.source_urls || []).filter((u) => u.startsWith("https://"));
   const { owner, name } = splitName(repo.full_name);
 
@@ -165,6 +175,17 @@ export default async function DetailPage({
                 <ArrowUpRight className="size-3.5 text-slate-400" />
               </a>
             </Button>
+            {hasMcpProfile && (
+              <Button asChild variant="outline" className="w-full justify-between">
+                <Link href={`/mcp/${repo.id}`}>
+                  <span className="inline-flex items-center gap-2">
+                    <Plug className="size-4 text-slate-500 dark:text-slate-400" />
+                    Cấu hình MCP server
+                  </span>
+                  <ArrowUpRight className="size-3.5 text-slate-400" />
+                </Link>
+              </Button>
+            )}
             {repo.homepage && (
               <Button asChild variant="outline" className="w-full justify-between">
                 <a href={repo.homepage} target="_blank" rel="noreferrer">

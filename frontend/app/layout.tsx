@@ -2,7 +2,7 @@ import "./globals.css";
 import type { ReactNode } from "react";
 import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
-import { BookOpen, Boxes, RefreshCw, Sparkles } from "lucide-react";
+import { BookOpen, Boxes, Plug, RefreshCw, Sparkles } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const beVietnamPro = Be_Vietnam_Pro({
@@ -63,11 +63,20 @@ export default function Layout({ children }: { children: ReactNode }) {
                   <span>Thư viện</span>
                 </Link>
                 <Link
+                  href="/mcp"
+                  aria-label="MCP"
+                  className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-1.5 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-white"
+                >
+                  <Plug className="size-3.5 text-slate-500 dark:text-slate-400" />
+                  <span className="hidden sm:inline">MCP</span>
+                </Link>
+                <Link
                   href="/sync"
+                  aria-label="Đồng bộ"
                   className="pressable inline-flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-1.5 font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/80 dark:hover:text-white"
                 >
                   <RefreshCw className="size-3.5 text-slate-500 dark:text-slate-400" />
-                  <span>Đồng bộ</span>
+                  <span className="hidden sm:inline">Đồng bộ</span>
                 </Link>
                 <Link
                   href="/modules"

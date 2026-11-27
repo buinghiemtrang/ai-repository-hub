@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { type McpSyncStatus } from "@/lib/mcp/types";
 import { type SyncStatusResponse, formatViDate } from "@/lib/repositories/types";
 
 function statusVariant(status: string): "accent" | "secondary" | "warning" {
@@ -16,6 +17,7 @@ function statusVariant(status: string): "accent" | "secondary" | "warning" {
 
 export default function SyncStatusPage() {
   const [status, setStatus] = useState<SyncStatusResponse | null>(null);
+  const [mcpStatus, setMcpStatus] = useState<McpSyncStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [tick, setTick] = useState(0);
@@ -35,6 +37,10 @@ export default function SyncStatusPage() {
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
+    fetch("/api/mcp/sync/status", { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then(setMcpStatus)
+      .catch(() => {});
     return () => controller.abort();
   }, [tick]);
 
@@ -170,9 +176,69 @@ export default function SyncStatusPage() {
             </CardContent>
           </Card>
 
+          {mcpStatus && (
+            <Card className="overflow-hidden">
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800">
+                <h2 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                  Trích xuất cấu hình MCP
+                </h2>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {mcpStatus.scheduler.enabled
+                    ? `Tự động mỗi ${mcpStatus.scheduler.interval_hours}h · tối đa ${mcpStatus.scheduler.batch_limit} repo/đợt`
+                    : "Lịch tự động đang tắt"}
+                </span>
+              </CardHeader>
+              <CardContent className="p-0">
+                {mcpStatus.recent_runs.length === 0 ? (
+                  <p className="p-6 text-sm text-slate-500 dark:text-slate-400">
+                    Chưa có lần trích xuất MCP nào. Chạy CLI{" "}
+                    <code className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-xs dark:bg-slate-800 dark:text-slate-200">
+                      docker compose exec backend python -m app.mcp.sync
+                    </code>{" "}
+                    hoặc đợi lịch tự động chạy.
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead className="border-b border-slate-200 bg-slate-50/80 text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-950/60 dark:text-slate-400">
+                        <tr>
+                          <th className="px-5 py-3 font-medium">ID</th>
+                          <th className="px-5 py-3 font-medium">Nguồn kích hoạt</th>
+                          <th className="px-5 py-3 font-medium">Trạng thái</th>
+                          <th className="px-5 py-3 font-medium">Kết quả</th>
+                          <th className="px-5 py-3 font-medium">Bắt đầu</th>
+                          <th className="px-5 py-3 font-medium">Ghi chú</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
+                        {mcpStatus.recent_runs.map((run) => (
+                          <tr key={run.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/40">
+                            <td className="tabular-nums px-5 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">#{run.id}</td>
+                            <td className="px-5 py-3 font-medium text-slate-800 dark:text-slate-200">{run.trigger}</td>
+                            <td className="px-5 py-3">
+                              <Badge variant={statusVariant(run.status)}>{run.status}</Badge>
+                            </td>
+                            <td className="tabular-nums px-5 py-3 text-slate-700 dark:text-slate-300">
+                              {run.detected_count}/{run.total_repos} nhận diện
+                              {run.failed_count > 0 ? ` · ${run.failed_count} lỗi` : ""}
+                            </td>
+                            <td className="tabular-nums px-5 py-3 text-xs text-slate-500 dark:text-slate-400">
+                              {formatViDate(run.started_at)}
+                            </td>
+                            <td className="px-5 py-3 text-xs text-slate-600 dark:text-slate-400">{run.error_summary || "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="bg-slate-50/75 p-5 text-xs leading-relaxed text-slate-600 dark:bg-slate-900/60 dark:text-slate-400">
             <strong className="text-slate-800 dark:text-slate-200">Bảo mật vận hành:</strong> Endpoint kích hoạt đồng bộ thủ công (
-            <code className="font-mono">POST /repositories/sync/trigger</code>) được bảo vệ bởi header{" "}
+            <code className="font-mono">POST /repositories/sync/trigger</code>, <code className="font-mono">POST /mcp/sync/trigger</code>) được bảo vệ bởi header{" "}
             <code className="font-mono">X-Admin-Key</code> và chỉ bật khi{" "}
             <code className="font-mono">ADMIN_API_KEY</code> được cấu hình trên backend. Không bao giờ gửi token lên trình duyệt.
           </Card>

@@ -18,9 +18,10 @@ const PLANNED_MODULES = [
   },
   {
     name: "MCP Registry",
-    status: "Chờ phê duyệt phạm vi (M7)",
-    active: false,
-    scope: "Danh mục Model Context Protocol servers, transport (stdio/HTTP), biến môi trường yêu cầu (không lưu secret).",
+    status: "Đang hoạt động (Module 2)",
+    active: true,
+    scope:
+      "Danh mục MCP server lấy từ repo danh mục MCP trong catalog: transport (stdio/HTTP/SSE), biến môi trường (chỉ lưu tên), mẫu cấu hình Claude Desktop/Claude Code/Cursor và đồng bộ định kỳ.",
   },
   {
     name: "Models",

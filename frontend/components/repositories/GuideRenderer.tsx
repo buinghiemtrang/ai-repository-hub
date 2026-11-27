@@ -59,7 +59,7 @@ function parseGuideBlocks(markdown: string): Block[] {
   return blocks;
 }
 
-function CodeBlock({ lang, code }: { lang: string; code: string }) {
+export function CodeBlock({ lang, code }: { lang: string; code: string }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
